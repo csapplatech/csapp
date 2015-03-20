@@ -8,10 +8,10 @@
 class Course_model extends CI_Model
 {
     // Member variables, use getter / setter functions for access
-    private $courseID;
-    private $courseName;
-    private $courseNumber;
-    private $courseDescription;
+    private $courseID = null;
+    private $courseName = null;
+    private $courseNumber = null;
+    private $courseDescription = null;
     
     /**
      * Main constructor for Course_model
@@ -21,6 +21,13 @@ class Course_model extends CI_Model
         parent::__construct();
     }
     
+    /**
+     * Summary of loadPropertiesFromPrimaryKey
+     * Loads a course model's data from the database into this object using a CourseID as a primary key lookup
+     * 
+     * @param int $courseID The primary key (CourseID) to lookup course properties in the database with
+     * @return boolean True if a course model's properties were successfully loaded from database, false otherwise
+     */
     public function loadPropertiesFromPrimaryKey($courseID)
     {
         if($courseID != null && filter_var($courseID, FILTER_VALIDATE_INT))
@@ -43,41 +50,89 @@ class Course_model extends CI_Model
         return false;
     }
     
+    /**
+     * Summary of getCourseID
+     * Get the course id primary key of this model
+     * 
+     * @return int The course id associated with this course model
+     */
     public function getCourseID()
     {
         return $this->courseID;
     }
     
+    /**
+     * Summary of getCourseName
+     * Get the course name of this model
+     * 
+     * @return string The course name associated with this course model
+     */
     public function getCourseName()
     {
         return $this->courseName;
     }
     
+    /**
+     * Summary of getCourseNumber
+     * Get the course number of this model
+     * 
+     * @return int The course number associated with this course model
+     */
     public function getCourseNumber()
     {
         return $this->courseNumber;
     }
     
+    /**
+     * Summary of getCourseDescription
+     * Get the course description of this model
+     * 
+     * @return string The course description of this course model or null if no description is set
+     */
     public function getCourseDescription()
     {
         return $this->courseDescription;
     }
     
+    /**
+     * Summary of setCourseName
+     * Set the course name for this model
+     * 
+     * @param string $courseName The course name to be associated with this model
+     */
     public function setCourseName($courseName)
     {
         $this->courseName = filter_var($courseName, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+    /**
+     * Summary of setCourseNumber
+     * Set the course number for this model
+     * 
+     * @param int $courseNumber The course number to be associated with this model
+     */
     public function setCourseNumber($courseNumber)
     {
         $this->courseNumber = filter_var($courseNumber, FILTER_SANITIZE_NUMBER_INT);
     }
     
+    /**
+     * Summary of setCourseDescription
+     * Set the course description for this model
+     * 
+     * @param string $courseDescription The course description to be associated with this model or null to set no description
+     */
     public function setCourseDescription($courseDescription)
     {
         $this->courseDescription = filter_var($courseDescription, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+    /**
+     * Summary of update
+     * Update existing rows in the database associated with this course model with newly modified information
+     * 
+     * @return boolean True if all rows associated with this model were successfully modified in the database, false otherwise
+     */
     public function update()
     {
         if($this->courseID != null && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
@@ -95,6 +150,12 @@ class Course_model extends CI_Model
         return false;
     }
     
+    /**
+     * Summary of create
+     * Save a new course model into the Courses table in the database
+     * 
+     * @return boolean True if all rows were successfully saved in the database, false otherwise
+     */
     public function create()
     {
         if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
@@ -152,7 +213,9 @@ class Course_model extends CI_Model
      */
     public static function getAllCourses()
     {
-        $results = $this->db->get('Courses');
+        $db = get_instance()->db;
+        
+        $results = $db->get('Courses');
         
         $data_arr = array();
         
