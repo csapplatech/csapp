@@ -135,7 +135,7 @@ class Course_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseID != null && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
+        if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
         {
             $data = array('CourseName' => $this->courseName, 'CourseNumber' => $this->courseNumber, 'CourseDescription' => $this->courseDescription);
             

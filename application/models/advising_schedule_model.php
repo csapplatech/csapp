@@ -2,9 +2,9 @@
 
 class Advising_schedule_model extends CI_Model
 {
-    public $advisingScheduleID;
-    public $advisorUserID;
-    public $academicQuarterID;
+    private $advisingScheduleID;
+    private $advisorUserID;
+    private $academicQuarterID;
     
     function __construct()
     {
@@ -60,40 +60,106 @@ class Advising_schedule_model extends CI_Model
    	
    	public function update()
    	{
-   		$this->advisorUserID = filter_var($this->advisorUserID, FILTER_VALIDATE_INT);
-   		
-   		if ($this->advisorUserID == false)
-   		{
-   			$this->advisorUserID == NULL;
-   		}
-   		
-   		$this->academicQuarterID = filter_var($this->academicQuarterID, FILTER_VALIDATE_INT);
-   		
-   		if ($this->academicQuarterID == false)
-   		{
-   			$this->academicQuarterID == NULL;
-   		}
-   	
-   		$data = array('AdvisorUserID' => $this->advisorUserID, 'AcademicQuarterID' => $this->academicQuarterID);
-   		
-   		$this->db->where('AdvisingScheduleID', $this->advisingScheduleID);
+   		if($this->advisingScheduleID != null && filter_var($this->advisingScheduleID) && $this->advisorUserID != null && filter_var($this->advisorUserID, FILTER_VALIDATE_INT) && $this->academicQuarterID != null && filter_var($this->academicQuarterID, FILTER_VALIDATE_INT))
+   	  {
+        $data = array('AdvisorUserID' => $this->advisorUserID, 'AcademicQuarterID' => $this->academicQuarterID);
+        
+        $this->db->where('AdvisingScheduleID', $this->advisingScheduleID);
         $this->db->update('AdvisingSchedules', $data);
+        
+        if($this->db->affected_rows() > 0)
+        {
+          return true;
+        }
+      }
+      
+      return false;
    	}
    	
    	public function create()
    	{
-   		$data = array('AdvisorUserID' => $this->advisorUserID, 'AcademicQuarterID' => $this->academicQuarterID);
-   		
-   		$this->db->insert('AdvisingSchedules', $data);
-   		
+   	  if($this->advisorUserID != null && filter_var($this->advisorUserID, FILTER_VALIDATE_INT) && $this->academicQuarterID != null && filter_var($this->academicQuarterID, FILTER_VALIDATE_INT))
+      {
+     		$data = array('AdvisorUserID' => $this->advisorUserID, 'AcademicQuarterID' => $this->academicQuarterID);
+     		
+     		$this->db->insert('AdvisingSchedules', $data);
+        
         if($this->db->affected_rows() > 0)
         {
-            $this->advisingScheduleID = $this->db->insert_id();
-            return true;
+          $this->advisingAppointmentID = $this->db->insert_id();
+          
+          return true;
         }
-        else
-        {
-            return false;
-        }
+      }
+      
+      return false;
    	}
+    
+    public function delete()
+    {
+      if($this->advisingScheduleID != null)
+      {
+        //deletes all rows from ScheduledAdvisingAppointments having AdvisingAppointmentIDs under the current AdvisingScheduleID
+        $advising_appointment_arr = $this->db->get_where('AdvisingAppointments', $this->advisingScheduleID);
+        
+        foreach($advising_appointment_arr->results_array() as $row)
+        {
+          $this->db->where('AdvisingAppointmentID', $row['AdvisingAppointmentID']);
+          $this->db->delete('ScheduledAdvisingAppointments');  
+        }
+        
+        //deletes all AdvisingAppointments under the current AdvisingScheduleID
+        $this->db->where('AdvisingScheduleID', $this->advisingAppointmentID);
+        $this->db->delete('AdvisingAppointments');
+        
+        //deletes all AdvisingSchedules under the current AdvisingScheduleID
+        $this->db->where('AdvisingScheduleID', $this->advisingAppointmentID);
+        $this->db->delete('AdvisingSchedules');        
+      }
+      else
+      {
+        return false;
+      }
+    }
+
+    public function getAllAdvisingAppointments()
+    {
+      $results = $this->db->get_where('AdvisingAppointments', $this->advisingScheduleID);
+      
+      $data_arr = array();
+      
+      foreach($results->result_array() as $row)
+      {
+        $appt = new Advising_appointment_model;
+        
+        $appt->advisingAppointmentID = $row['AdvisingAppointmentID'];
+        $appt->advisingScheduleID = $row['AdvisingScheduleID'];
+        $appt->startTime = $row['StartTime'];
+        $appt->endTime = $row['EndTime'];
+        
+        array_push($data_arr, $course);
+      }
+      
+      return $data_arr;      
+    }
+
+    public static function getAllAdvisingSchedules()
+    {
+      $results = $this->db->get('AdvisingSchedules');
+      
+      $data_arr = array();
+      
+      foreach($results->result_array() as $row)
+      {
+        $schedule = new Advising_schedule_model;
+        
+        $schedule->advisingScheduleID = $row['AdvisingScheduleID'];
+        $schedule->advisorUserID = $row['AdvisingUserID'];
+        $schedule->academicQuarterID = $row['AcademicQuarterID'];
+        
+        array_push($data_arr, $course);
+      }
+      
+      return $data_arr;
+    }
 }

@@ -18,18 +18,21 @@ class Advising_appointment_model extends CI_Model
      */
     public function loadPropertiesFromPrimaryKey($advisingAppointmentID)
     {
-        $results = $this->db->get_where('AdvisingAppointments', array('AdvisingAppointmentID' => $advisingAppointmentID), 1);
-        
-        if($results->num_rows() > 0)
+        if($advisingAppointmentID != null && filter_var($advisingAppointmentID, FILTER_VALIDATE_INT))
         {
-            $row = $results->row_array();
+            $results = $this->db->get_where('AdvisingAppointments', array('AdvisingAppointmentID' => $advisingAppointmentID), 1);
             
-            $this->advisingAppointmentID = $row['AdvisingAppointmentID'];
-            $this->advisingScheduleID = $row['AdvisingScheduleID'];
-            $this->startTime = $row['StartTime'];
-            $this->endTime = $row['EndTime'];
-            
-            return true;
+            if($results->num_rows() > 0)
+            {
+                $row = $results->row_array();
+                
+                $this->advisingAppointmentID = $row['AdvisingAppointmentID'];
+                $this->advisingScheduleID = $row['AdvisingScheduleID'];
+                $this->startTime = $row['StartTime'];
+                $this->endTime = $row['EndTime'];
+                
+                return true;
+            }
         }
         
         return false;
@@ -37,7 +40,7 @@ class Advising_appointment_model extends CI_Model
     
     public function getAdvisingAppointmentID()
     {
-    	return $this->$advisingAppointmentID;
+    	return $this->advisingAppointmentID;
     }
     
     public function getAdvisingScheduleID()
@@ -72,39 +75,77 @@ class Advising_appointment_model extends CI_Model
    	
    	public function update()
    	{
-   		$this->advisingScheduleID = filter_var($this->advisingScheduleID, FILTER_VALIDATE_INT);
-   		
-   		if ($this->advisingScheduleID == false)
-   		{
-   			$this->advisingScheduleID == NULL;
-   		}
-   		
-   		$this->startTime = filter_var($this->startTime, FILTER_VALIDATE_INT);
-   		
-   		if ($this->startTime == false)
-   		{
-   			$this->startTime == NULL;
-   		}
-   		
-   		$this->endTime = filter_var($this->endTime, FILTER_VALIDATE_INT);
-   		
-   		if ($this->endTime == false)
-   		{
-   			$this->endTime == NULL;
-   		}
-   	
-   		$data = array('AdvisingScheduleID' => $this->advisingScheduleID, 'StartTime' => $this->startTime, 'EndTime' => $this->endTime);
-   		
-   		$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
+   		if($this->advisingScheduleID != null && filter_var($this->advisingScheduleID, FILTER_VALIDATE_INT) && $this->startTime != null && filter_var($this->startTime, FILTER_VALIDATE_INT) && $this->endTime != null && filter_var($this->endTime, FILTER_VALIDATE_INT))
+   		{   	
+     		$data = array('AdvisingScheduleID' => $this->advisingScheduleID, 'StartTime' => $this->startTime, 'EndTime' => $this->endTime);
+     		
+     		$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
         $this->db->update('AdvisingAppointments', $data);
+        
+        if($this->db->affected_rows() > 0)
+        {
+            return true;
+        }
+      }
+      
+      return false;
    	}
    	
    	public function create()
    	{
-   		$data = array('AdvisingScheduleID' => $this->advisingScheduleID, 'StartTime' => $this->startTime, 'EndTime' => $this->endTime);
-   		
-   		$this->db->insert('AdvisingAppointments', $data);
-   		
-   		return $this->db->insert_id();
+   	  if($this->startTime != null && filter_var($this->startTime, FILTER_VALIDATE_INT) && $this->endTime != null && filter_var($this->endTime, FILTER_VALIDATE_INT))
+      {
+     		$data = array('AdvisingScheduleID' => $this->advisingScheduleID, 'StartTime' => $this->startTime, 'EndTime' => $this->endTime);
+     		
+     		$this->db->insert('AdvisingAppointments', $data);
+        
+        if($this->db->affected_rows() > 0)
+        {
+            $this->advisingAppointmentID = $this->db->insert_id();
+            
+            return true;
+        }
+      }
+      
+   		return false;
    	}
+
+    public function delete()
+    {
+      if($this->advisingAppointmentID != null)
+      {
+        $this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
+        $this->db->delete('ScheduledAdvisingAppointments');
+        
+        $this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
+        $this->db->delete('AdvisingAppointments');
+        
+        return $this->db->affected_rows() > 0;        
+      }
+      else
+      {
+        return false;
+      }
+    }
+    
+    public static function getAllAdvisingAppointments()
+    {
+        $results = $this->db->get('AdvisingAppointments');
+        
+        $data_arr = array();
+        
+        foreach($results->result_array() as $row)
+        {
+            $appt = new Advising_appointment_model;
+            
+            $appt->advisingAppointmentID = $row['AdvisingAppointmentID'];
+            $appt->advisingScheduleID= $row['AdvisingScheduleID'];
+            $appt->startTime = $row['StartTime'];
+            $appt->endTime = $row['EndTime'];
+            
+            array_push($data_arr, $course);
+        }
+        
+        return $data_arr;
+    }    
 }
