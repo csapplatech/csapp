@@ -12,12 +12,12 @@ class Checklistexport extends CI_Controller
 		echo '<h1>Hello World!</h1>';
 		echo '<br />';
 		echo '<h2>Keen and Hjorth Rock</h2>';
-		$this->xls(NULL);
+		$this->export(NULL);
 		echo '</body>';
 		echo '</html>';
 	}
 
-	public function xls($person)
+	public function export($person)
 	{
 		//Assuming a userobject with classes is passed
 		//	Must be valid!
@@ -31,6 +31,8 @@ class Checklistexport extends CI_Controller
 
 		//Create file object (plaintext?)
 
+		//Change to xls or pdf or whatever
+		
 		//Return file object (PDF or XLS)
 	
 		echo "<h1>IT WORKED</h1>";		
