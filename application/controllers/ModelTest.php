@@ -117,4 +117,32 @@ class ModelTest extends CI_Controller
             }
         }
     }
+
+    public function advising_schedule()
+    {
+        // Check to see if a user id segment in the URI was specified
+        if( ! $this->uri->segment(3, 0))
+        {
+            echo "<h3>No advising schedule model Primary key specified</h3>";
+            echo "<p>Try <code>https://localhost/index.php/ModelTest/advising_schedule/1</code></p>";
+        }
+        else
+        {
+            // Load a user model instance and give the variable name 'user'
+            $this->load->model('Advising_schedule_model', 'advisingSchedule');
+            
+            // Try to load the user model values from the primary key provided in the URL
+            if($this->advisingSchedule->loadPropertiesFromPrimaryKey($this->uri->segment(3, 0)))
+            {
+                echo "<h3>Success in finding advising schedule!</h3><code>";
+                print_r($this->advisingSchedule);
+                echo "</code>";
+            }
+            // Invalid UserID format or no user of that ID was found
+            else
+            {
+                echo "<h2>Error 404 - Schedule not found";
+            }
+        }
+    }
 }
