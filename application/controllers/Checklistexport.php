@@ -3,7 +3,16 @@ class Checklistexport extends CI_Controller
 {
 	public function index()
 	{
-		echo 'Hello World!';
+		echo '<html>';
+		echo '<head>';
+		echo '<title>KEEN-HJORTH</title>';
+		echo '</head>';
+		echo '<body>';
+		echo '<h1>Hello World!</h1>';
+		echo '<br />';
+		echo '<h2>Keen and Hjorth Rock</h2>';
+		echo '</body>';
+		echo '</html>';
 	}
 
 	public function xls($userobject)
