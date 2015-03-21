@@ -13,6 +13,7 @@ class User_model extends CI_Model
     private $passwordHash = null;
     private $name = null;
     private $roles = array();
+    private $coursesTaken = array();
     
     // Constants to represent the various user roles as reflected in the CSC Web App database
     // If the table `Roles` or any of its rows are ever modified, reflect those changes in these constants
@@ -60,6 +61,18 @@ class User_model extends CI_Model
                         foreach($role_results->result_array() as $row)
                         {
                             array_push($this->roles, $row['RoleID']);
+                        }
+                    }
+                    
+                    $results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
+                    
+                    foreach($results->result_array() as $row)
+                    {
+                        $courseSection = new Course_section_model;
+                        
+                        if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
+                        {
+                            $this->addCourseSection($courseSection, $row['Grade']);
                         }
                     }
                     
@@ -263,6 +276,153 @@ class User_model extends CI_Model
     }
     
     /**
+     * Summary of getAdvisees
+     * Get all of the student users who are advisees of this advisor user
+     * 
+     * @return array An array containing user models of the students who are advised by this user, array is empty if user model does not have an advisor role
+     */
+    public function getAdvisees()
+    {
+        $advisees = array();
+        
+        if($this->isAdvisor())
+        {
+            $this->db->select('StudentUserID');
+            $this->db->from('StudentAdvisors');
+            $this->db->where('AdvisorUserID', $this->userID);
+            
+            $results = $this->db->get();
+            
+            foreach($results->result_array() as $row)
+            {
+                $student = new User_model;
+                if($student->loadPropertiesFromPrimaryKey($row['StudentUserID']))
+                {
+                    array_push($advisees, $student);
+                }
+            }
+        }
+        
+        return $advisees;
+    }
+    
+    /**
+     * Summary of getAdvisor
+     * Get the advisor user model associated with this student user model
+     * 
+     * @return User_model The user model for the advisor of this student user model, or null if no advisor exists or this model doesn't have a student role
+     */
+    public function getAdvisor()
+    {
+        if($this->isStudent())
+        {
+            $this->db->select('AdvisorUserID');
+            $this->db->from('StudentAdvisors');
+            $this->db->where('StudentUserID', $this->userID);
+            
+            $results = $this->db->get();
+            
+            $advisor = new User_model;
+            
+            $row = $results->row_array();
+            
+            if($advisor->loadPropertiesFromPrimaryKey($row['AdvisorUserID']))
+            {
+                return $advisor;
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Summary of setAdvisor
+     * Set the advisor to be associated with this student user model
+     * 
+     * @param User_model $advisor A user model that has the role of advisor
+     * @return booelan True if the advisor was successfully associated with the student in the database, false otherwise
+     */
+    public function setAdvisor($advisor)
+    {
+        if($this->userID != null && $this->isStudent() && $advisor->getUserID() != null && $advisor->isAdvisor())
+        {
+            $this->db->where('StudentUserID', $this->userID);
+            $this->db->delete('StudentAdvisors');
+            
+            $data = array('StudentUserID' => $this->userID, 'AdvisorUserID' => $advisor->getUserID());
+            
+            $this->db->insert('StudentAdvisors', $data);
+            
+            return $this->db->affected_rows() > 0;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Summary of addCourseSection
+     * Add a course section to be associated with this user model
+     * 
+     * @param mixed $courseSection The course section model to associate with this model
+     * @param mixed $grade The grade this student got for the course section (0 = F, 4 = A)
+     * @return boolean True if the course section was successfully added, false otherwise
+     */
+    public function addCourseSection($courseSection, $grade)
+    {
+        $searchstr = $courseSection->toString();
+        
+        if(!isset($this->coursesTaken[$searchstr]))
+        {
+            $this->coursesTaken[$searchstr] = array();
+            $this->coursesTaken[$searchstr][0] = $courseSection;
+            $this->coursesTaken[$searchstr][1] = $grade;
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Summary of removeCourseSection
+     * Remove a course section model from being associated with this model
+     * 
+     * @param mixed $courseSection The course section to remove from this model
+     * @return boolean True if the course section was successfully removed, false otherwise
+     */
+    public function removeCourseSection($courseSection)
+    {
+        $searchstr = $courseSection->toString();
+        
+        if(isset($this->coursesTaken[$searchstr]))
+        {
+            unset($this->coursesTaken[$searchstr]);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Summary of getAllCoursesTaken
+     * Get all of the courses that have been taken by this user model
+     * 
+     * @return Array An array containing all of the course sections taken by this user model
+     */
+    public function getAllCoursesTaken()
+    {
+        $data = array();
+        
+        foreach($this->coursesTaken as $courseTaken)
+        {
+            array_push($data, $courseTaken);
+        }
+        
+        return $data;
+    }
+    
+    /**
      * Summary of update
      * Update existing rows in the database associated with this user model with newly modified information
      * 
@@ -282,14 +442,27 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
             
-            $roledata = array();
-            
-            foreach($this->roles as $role)
+            if(count($this->coursesTaken) > 0)
             {
-                array_push($roledata, array('UserID' => $this->userID, 'RoleID' => $role));
+                foreach($this->roles as $role)
+                {
+                    $this->db->insert('UserRoles', array('UserID' => $this->userID, 'RoleID' => $role));
+                }
             }
             
-            $this->db->insert_batch('UserRoles', $roledata);
+            $this->db->where('StudentUserID', $this->userID);
+            $this->db->delete('StudentCourseSections');
+            
+            
+            if(count($this->coursesTaken) > 0)
+            {
+                $data_arr = array();
+                
+                foreach($this->coursesTaken as $courseTaken)
+                {
+                    $this->db->insert('StudentCourseSections', array('StudentUserID' => $this->userID, 'CourseSectionID' => $courseTaken[0]->getCourseSectionID(), 'Grade' => $courseTaken[1]));
+                }
+            }
             
             return $sum > 0;
         }
@@ -318,12 +491,23 @@ class User_model extends CI_Model
             {
                 $this->userID = $this->db->insert_id();
                 
-                foreach($roles as $role)
+                foreach($this->roles as $role)
                 {
                     $roledata = array('UserID' => $this->userID, 'RoleID' => $role);
                     
                     $this->db->insert('UserRoles', $roledata);
                 }
+                
+                if(count($this->coursesTaken) > 0)
+                {
+                    $data_arr = array();
+                    
+                    foreach($this->coursesTaken as $courseTaken)
+                    {
+                        $this->db->insert('StudentCourseSections', array('StudentUserID' => $this->userID, 'CourseSectionID' => $courseTaken[0]->getCourseSectionID(), 'Grade' => $courseTaken[1]));
+                    }
+                }
+                
                 return true;
             }
         }
@@ -342,6 +526,13 @@ class User_model extends CI_Model
         {
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
+            
+            $this->db->where('StudentUserID', $this->userID);
+            $this->db->delete('StudentCourseSections');
+            
+            $this->db->where('StudentUserID', $this->userID);
+            $this->db->or_where('AdvisorUserID', $this->userID);
+            $this->db->delete('StudentAdvisors');
             
             $this->db->where('UserID', $this->userID);
             $this->db->delete('Users');
