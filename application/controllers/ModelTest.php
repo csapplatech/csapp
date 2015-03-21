@@ -22,20 +22,40 @@ class ModelTest extends CI_Controller
         // Check to see if a user id segment in the URI was specified
         if( ! $this->uri->segment(3, 0))
         {
+            $user = new User_model;
+            
+            $user->setEmailAddress("jch101@latech.edu");
+            $user->setName("John Hawkins");
+            $user->setPassword("Password");
+            $user->addRole(User_model::ROLE_STUDENT);
+            
+            $user->create();
+            
             echo "<h3>No user model Primary key specified</h3>";
             echo "<p>Try <code>https://localhost/index.php/ModelTest/user/1</code></p>";
         }
         else
         {
-            // Load a user model instance and give the variable name 'user'
-            $this->load->model('User_model', 'user');
+            $user = new User_model;
             
             // Try to load the user model values from the primary key provided in the URL
-            if($this->user->loadPropertiesFromPrimaryKey($this->uri->segment(3, 0)))
+            if($user->loadPropertiesFromPrimaryKey($this->uri->segment(3, 0)))
             {
+                $courseSection = new Course_section_model;
+                
+                $courseSection->loadPropertiesFromPrimaryKey(1);
+                
+                $user->addCourseSection($courseSection, 4);
+                
+                $user->update();
+                
                 echo "<h3>Success in finding user!</h3><code>";
-                print_r($this->user);
+                print_r($user);
                 echo "</code>";
+                
+                echo "<br/><br/><br/><br/><br/><br/>";
+                
+                print_r($user->getAllCoursesTaken());
             }
             // Invalid UserID format or no user of that ID was found
             else
@@ -118,6 +138,108 @@ class ModelTest extends CI_Controller
         }
     }
 
+    public function course_section()
+    {
+        if($this->uri->segment(3, 0))
+        {
+            if($this->uri->segment(5, 0))
+            {
+                $academicQuarterID = $this->uri->segment(3, 0);
+                $courseID = $this->uri->segment(4, 0);
+                $sectionName = $this->uri->segment(5, 0);
+                
+                $courseSection = new Course_section_model;
+                $courseSection->setSectionName($sectionName);
+                
+                if($courseSection->setAcademicQuarterFromID($academicQuarterID) && $courseSection->setCourseFromID($courseID))
+                {
+                    if($courseSection->create())
+                    {
+                        echo "Course Section " . $courseSection->getCourseSectionID() . " created!<br/><br/>";
+                        print_r($courseSection);
+                    }
+                    else
+                    {
+                        echo "Course Section not created!";
+                    }
+                }
+                else
+                {
+                    echo "401 - Invalid resource ids";
+                }
+            }
+            else
+            {
+                $courseSection = new Course_section_model;
+                
+                if($courseSection->loadPropertiesFromPrimaryKey($this->uri->segment(3, 0)))
+                {
+                    print_r($courseSection);
+                }
+                else
+                {
+                    echo "404 Course Section Model not found";
+                }
+            }
+        }
+        else
+        {
+            $coureSections = Course_section_model::getAllCourseSections();
+            
+            foreach($coureSections as $courseSection)
+            {
+                echo "Course Section # " . $courseSection->getCourseSectionID() . " " . ($courseSection->delete() ? "Succeeded" : "Failed") . "<br/>";
+            }
+        }
+    }
+    
+    public function academic_quarter()
+    {
+        if($this->uri->segment(3, 0))
+        {
+            $quarter = new Academic_quarter_model;
+            
+            if($quarter->loadPropertiesFromPrimaryKey($this->uri->segment(3, 0)))
+            {
+                print_r($quarter);
+            }
+            else
+            {
+                echo "404 Academic Quarter not found";
+            }
+        }
+        else
+        {
+            $quarter = new Academic_quarter_model;
+            
+            $quarter->setName(Academic_quarter_model::NAME_FALL);
+            $quarter->setYear(2014);
+            
+            echo "Fall 2014: " . $quarter->create();
+            
+            $quarter = new Academic_quarter_model;
+            
+            $quarter->setName(Academic_quarter_model::NAME_WINTER);
+            $quarter->setYear(2015);
+            
+            echo "Winter 2015: " . $quarter->create();
+            
+            $quarter = new Academic_quarter_model;
+            
+            $quarter->setName(Academic_quarter_model::NAME_SPRING);
+            $quarter->setYear(2015);
+            
+            echo "Spring 2015: " . $quarter->create();
+            
+            $quarter = new Academic_quarter_model;
+            
+            $quarter->setName(Academic_quarter_model::NAME_SUMMER);
+            $quarter->setYear(2015);
+            
+            echo "Summer 2015: " . $quarter->create();
+        }
+    }
+    
     public function advising_schedule()
     {
         // Check to see if a user id segment in the URI was specified

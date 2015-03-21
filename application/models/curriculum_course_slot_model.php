@@ -11,6 +11,7 @@ class Curriculum_course_slot_model extends CI_Model
     private $curriculumCourseSlotID = null;
     private $curriculumID = null;
     private $name = null;
+    private $minimumGrade = null;
     private $validCourseIDs = array();
     
     /**
@@ -97,6 +98,17 @@ class Curriculum_course_slot_model extends CI_Model
     }
     
     /**
+     * Summary of getMinimumGrade
+     * Get the minimum grade for this curriculum course slot
+     * 
+     * @return int The minimum grade for this curriculum course slot
+     */
+    public function getMinimumGrade()
+    {
+        return $this->minimumGrade;
+    }
+    
+    /**
      * Summary of getValidCourseIDs
      * Get all of the course ids for courses that are valid to fill this curriculum course slot model
      * 
@@ -130,6 +142,17 @@ class Curriculum_course_slot_model extends CI_Model
         {
             $this->curriculumID = $curriculum->getCurriculumID();
         }
+    }
+    
+    /**
+     * Summary of setMinimumGrade
+     * Set the minimum grade for this curriculum course slot model
+     * 
+     * @param int $minimumGrade The minimum grade to be associated with this curriculum course slot
+     */
+    public function setMinimumGrade($minimumGrade)
+    {
+        $this->minimumGrade = filter_var($minimumGrade, FILTER_SANITIZE_NUMBER_INT);
     }
     
     /**
