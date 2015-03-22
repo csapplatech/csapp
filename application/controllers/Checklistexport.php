@@ -1,23 +1,7 @@
 <?php
 class Checklistexport extends CI_Controller
 {
-	public function index()
-	{
-		$this->load->helper('form');
-		echo '<html>';
-		echo '<head>';
-		echo '<title>KEEN-HJORTH</title>';
-		echo '</head>';
-		echo '<body>';
-		echo '<h1>Hello World!</h1>';
-		echo '<br />';
-		echo '<h2>Keen and Hjorth Rock</h2>';
-		$this->export(NULL);
-		echo '</body>';
-		echo '</html>';
-	}
-
-	public function export($person)
+	public function index($person = NULL)	
 	{
 		//Assuming a userobject with classes is passed
 		//	Must be valid!
@@ -35,19 +19,8 @@ class Checklistexport extends CI_Controller
 		
 		//Return file object (PDF or XLS)
 	
-		echo "<h1>IT WORKED</h1>";		
-	
-		$file = "ck.php";
-		if (!file_exists($file)) die("Error: File doesn't exist!");
-		$type = filetype($file);
-		$today = date("F y, Y, g:i a");
-		$time = time();
-		header("Content-type: $type");
-		header("Content-Disposition: attachment;filename=Checklist.php");
-		header("Content-Transfer-Encoding: binary");
-		header('Pragma: no-cache');
-		header('Expires: 0');
-		set_time_limit(0);
-		readfile($file);
+		header("Content-type: text/plain");
+		header("Content-Disposition: attachment; filename=test.txt");
+	        print "TESTING";
 	}
 }
