@@ -36,5 +36,18 @@ class Checklistexport extends CI_Controller
 		//Return file object (PDF or XLS)
 	
 		echo "<h1>IT WORKED</h1>";		
+	
+		$file = "ck.php";
+		if (!file_exists($file)) die("Error: File doesn't exist!");
+		$type = filetype($file);
+		$today = date("F y, Y, g:i a");
+		$time = time();
+		header("Content-type: $type");
+		header("Content-Disposition: attachment;filename=Checklist.php");
+		header("Content-Transfer-Encoding: binary");
+		header('Pragma: no-cache');
+		header('Expires: 0');
+		set_time_limit(0);
+		readfile($file);
 	}
 }
