@@ -1,4 +1,6 @@
 <?php
+require_once('application/libraries/phpexcel/PHPExcel/IOFactory.php');
+
 class Checklistexport extends CI_Controller
 {
 	//Funciton must be given the user and a curriculum
@@ -21,13 +23,13 @@ class Checklistexport extends CI_Controller
 		switch ($type)
 		{
 		    case "xls":
-			header("Content-type: application/vnd.ms-exel; charset=utf-8");
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load("checklist.xls");
+
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			header("Content-type: application/vnd.ms-exel");
 			header("Content-Disposition: attachment; filename=test.xls");
-			echo "TESTING";
-			echo "\r\n";
-			echo $user;
-			echo "\r\n";
-			echo $curriculum;
+			$objWriter->save('php://output');
 		    	break;
 		    case "pdf":
 			echo "NOT IMPLEMENTED YET";
