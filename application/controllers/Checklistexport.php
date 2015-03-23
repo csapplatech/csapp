@@ -23,5 +23,9 @@ class Checklistexport extends CI_Controller
 		header("Content-type: text/plain");
 		header("Content-Disposition: attachment; filename=test.txt");
 	        print "TESTING";
+		print "\r\n";
+		print $user;
+		print "\r\n";
+		print $curriculum;
 	}
 }
