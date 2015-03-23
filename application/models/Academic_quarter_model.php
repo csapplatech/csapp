@@ -51,6 +51,67 @@ class Academic_quarter_model extends CI_Model
         return false;
     }
     
+	/**
+     * Summary of loadPropertiesFromPrimaryKey
+     * Loads an academic quarter model's data from the database into this object using the name and year of the quarter as lookup
+     * 
+     * @param string $name The name of the quarter to lookup user properties in the database with
+     * @param int $year The year of the quarter to lookup user properties in the database with
+	 * @return boolean True if an academic quarter model's properties were successfully loaded from database, false otherwise
+     */
+	public function loadPropertiesFromNameAndYear($name, $year)
+	{
+		if($name != null && $year != null && filter_var($year, FILTER_VALIDATE_INT))
+		{
+			$name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
+			
+			$this->db->where('Name', $name);
+			$this->db->where('Year', $year);
+			
+			$results = $this->db->get('AcademicQuarters');
+			
+			$row = $results->row_array();
+			
+			$this->academicQuarterID = $row['AcademicQuarterID'];
+            $this->name = $row['Name'];
+            $this->year = $row['Year'];
+            
+            return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Summary of getAllCourseSections
+	 * Get all of the course section models that are associated with this Academic Quarter model
+	 *
+	 * @return Array An array containing all of the course section models for this quarter
+	 */
+	public function getAllCourseSections()
+	{
+		$models = array();
+		
+		if($this->AcademicQuarterID != null)
+		{
+			$this->db->select('CourseSectionID');
+			$this->db->where('AcademicQuarterID', $this->AcademicQuarterID);
+			
+			$results = $this->db->get('CourseSections');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_section_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $results;
+	}
+	
     /**
      * Summary of getAcademicQuarterID
      * Get the academic quarter id (primary key) associated with this model

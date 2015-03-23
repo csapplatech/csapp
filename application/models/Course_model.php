@@ -13,6 +13,10 @@ class Course_model extends CI_Model
     private $courseNumber = null;
     private $courseDescription = null;
     
+	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
+	const COURSE_REQUISITE_PREREQUISITE = 1;
+	const COURSE_REQUISITE_COREQUISITE = 2;
+	
     /**
      * Main constructor for Course_model
      */
@@ -127,6 +131,83 @@ class Course_model extends CI_Model
         $this->courseDescription = filter_var($courseDescription, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+	 * Summary of getPrerequisiteCourses
+	 * Get all of the prerequisite courses for this course
+	 *
+	 * @return Array An array containing all the courses that are prerequisites to this course
+	 */
+	public function getPrerequisiteCourses()
+	{
+		$models = array();
+		
+		if($this->CourseID != null)
+		{
+			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseID', $this->CourseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getCorequisiteCourses
+	 * Get all of the co-requisite courses for this course
+	 *
+	 * @return Array An array containing all the courses that are co-requisites to this course
+	 */
+	public function getCorequisiteCourses()
+	{
+		$models = array();
+		
+		if($this->CourseID != null)
+		{
+			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseID', $this->CourseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+			
+			$this->db->select('CourseID');
+			$this->db->where('RequisiteCourseID', $this->CourseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this course model with newly modified information

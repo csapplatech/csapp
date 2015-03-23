@@ -421,7 +421,28 @@ class User_model extends CI_Model
         
         return $data;
     }
-    
+	
+	/**
+	 * Summary of getGradeForCourseSection
+	 * Get the grade the student user model got for a particular course section
+	 *
+	 * @param Course_section_model The course section model to look up a grade for
+	 * @return mixed Returns the grade a student got for that course section or false if no grade was found
+	 */
+	public function getGradeForCourseSection($courseSection)
+	{
+		$searchstr = $courseSection->toString();
+		
+		if(isset($this->coursesTaken[$searchstr]))
+		{
+			return $this->coursesTaken[$searchstr][1];
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this user model with newly modified information
