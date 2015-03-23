@@ -1,9 +1,10 @@
 <?php
 class Checklistexport extends CI_Controller
 {
-	public function index($person = NULL)	
+	//Funciton must be given the user and a curriculum
+	public function index($user = NULL, $curriculum = NULL)	
 	{
-		//Assuming a userobject with classes is passed
+		//Assuming a user with classes is passed and curriculum
 		//	Must be valid!
 		
 		//Parse classes
