@@ -2,30 +2,39 @@
 class Checklistexport extends CI_Controller
 {
 	//Funciton must be given the user and a curriculum
-	public function index($user = NULL, $curriculum = NULL)	
+	public function index($user = NULL, $curriculum = NULL, $type = "xls")	
 	{
 		//Assuming a user with classes is passed and curriculum
 		//	Must be valid!
 		
 		//Parse classes
-		//	Curriculum in database
-		//		Has associated slots on the curriculum
-		//		Curriculum slots have valid classes associated that can fill those slots
-		//	User has list of taken classes in an array
-		//	All classes are simply plain text names
-
+		//	Taken classes are under StudentCourseSections, 
+		//		which has a Student ID, Course ID, Grade
+		//	Curriculums have a CurriculumCourseSlot which has CurriculumSlotValidCourse 
+		//		joined on CirriculumCourseSlotID which have CourseID for the valid courses
+			
 		//Create file object (plaintext?)
 
 		//Change to xls or pdf or whatever
 		
 		//Return file object (PDF or XLS)
-	
-		header("Content-type: text/plain");
-		header("Content-Disposition: attachment; filename=test.txt");
-	        print "TESTING";
-		print "\r\n";
-		print $user;
-		print "\r\n";
-		print $curriculum;
+		switch ($type)
+		{
+		    case "xls":
+			header("Content-type: application/vnd.ms-exel; charset=utf-8");
+			header("Content-Disposition: attachment; filename=test.xls");
+			echo "TESTING";
+			echo "\r\n";
+			echo $user;
+			echo "\r\n";
+			echo $curriculum;
+		    	break;
+		    case "pdf":
+			echo "NOT IMPLEMENTED YET";
+		    	break;
+		    default:
+			echo "UNSUPPORTED TYPE";
+			break;
+		}
 	}
 }
