@@ -6,20 +6,21 @@ class Checklistexport extends CI_Controller
 	//Funciton must be given the user and a curriculum
 	public function index($user = NULL, $curriculum = NULL, $type = "xls")	
 	{
-            //Assuming a user with classes is passed and curriculum
+	    //Assuming a user with classes is passed and curriculum
             //	Must be valid!
-
-            //Parse classes
-            //	Taken classes are under StudentCourseSections, 
-            //		which has a Student ID, Course ID, Grade
-            //	Curriculums have a CurriculumCourseSlot which has CurriculumSlotValidCourse 
-            //		joined on CirriculumCourseSlotID which have CourseID for the valid courses
-
-            //Create file object (plaintext?)
-
-            //Change to xls or pdf or whatever
             
-            /*
+	    //Load necessary data from spreadsheet
+	    $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load("checklist.xls");
+            
+            $objPHPExcel->getActiveSheet()->setCellValue('C2', 'Test Student Name')	//Student Name
+	    				  ->setCellValue('I2', '2015')			//Catalog year
+					  ->setCellValue('C4', '698-42-478')		//Student ID
+					  ->setCellValue('I4', 'test@latech.edu')	//Email
+					  ->setCellValue('C6', 'Dr. Keen')		//Advisor
+					  ->setCellValue('I6', date(DATE_RFC2822));	//Last Updated
+	    
+	    /*
             //get usable transcript info
             //From Users:
             $courseSections = $user->getAllCoursesTaken(); //array of course sections
@@ -47,12 +48,10 @@ class Checklistexport extends CI_Controller
                             //check off checklist
             }    */
             
-            //Return file object (PDF or XLS)
+            //Download file object (PDF or XLS)
             switch ($type)
             {
                 case "xls":
-                    $objReader = PHPExcel_IOFactory::createReader('Excel5');
-                    $objPHPExcel = $objReader->load("checklist.xls");
 
                     $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
                     header("Content-type: application/vnd.ms-exel");
