@@ -23,7 +23,16 @@ class Login extends CI_Controller {
                 if ($user->authenticate($password))
                 {
                     echo "password correct";
-                    $this->load->view('mainpage');
+                    $data = array(
+                        'name' => $user->getName(),
+                        'id' => $user->getUserID(),
+                        'is_logged_in' => TRUE,
+                        'isStudent' => $user->isStudent(),
+                        'isAdmin' => $user->isAdmin(),
+                        'isProgramChair' => $user->isProgramChair(),
+                        'isAdvisor' => $user->isAdvisor(),
+                    );
+                    $this->load->view('main_page', $data);
                 }
             }
         }
