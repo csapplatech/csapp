@@ -35,5 +35,6 @@ class Login extends CI_Controller {
                     $this->load->view('main_page', $data);
                 }
             }
+            $this->load->view('login', array("error"=>TRUE));
         }
 }
