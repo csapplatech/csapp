@@ -14,10 +14,15 @@ class Login extends CI_Controller {
             $username = $this->input->post('username');
             $password = $this->input->post('password');
             
-            if ($this->User_model->loadPropertiesFromPrimaryKey($username) || $this->User_model->loadPropertiesFromEmailAddress($username))
+            $user = new User_model;
+            
+            if ($user->loadPropertiesFromPrimaryKey($username) || $user->loadPropertiesFromEmailAddress($username))
             {
-                if ($this->User_model->authenticate($password))
+                echo "username exists";
+                $user->create();
+                if ($user->authenticate($password))
                 {
+                    echo "password correct";
                     $this->load->view('mainpage');
                 }
             }
