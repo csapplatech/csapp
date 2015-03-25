@@ -32,6 +32,8 @@ class Login extends CI_Controller {
                         'isProgramChair' => $user->isProgramChair(),
                         'isAdvisor' => $user->isAdvisor(),
                     );
+                    $_SESSION['UserID'] = $user->getUserID();
+                    redirect('Mainpage');
                     $this->load->view('main_page', $data);
                 }
             }
