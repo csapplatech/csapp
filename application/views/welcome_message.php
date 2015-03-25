@@ -86,9 +86,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 
 <h1>BUTTON FOR TESTING EXPORT</h1>
-<button type="button">
-	<a href="index.php/checklistexport/index/USERNAME/CURRICULUM">Download</a>
-</button>
+
+<?php
+echo '<button type="button">';
+echo "<a href=\"index.php/checklistexport/index/10210078/CURRICULUM\">Download</a>";
+echo '</button>';
+?>
 
 </body>
 </html>

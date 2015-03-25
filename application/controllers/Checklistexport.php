@@ -8,17 +8,26 @@ class Checklistexport extends CI_Controller
 	{
 	    //Assuming a user with classes is passed and curriculum
             //	Must be valid!
-            
+	   $filename = "checklist.xls";
+
 	    //Load necessary data from spreadsheet
 	    $objReader = PHPExcel_IOFactory::createReader('Excel5');
-            $objPHPExcel = $objReader->load("checklist.xls");
+            $outputfile = $objReader->load($filename);
             
-            $objPHPExcel->getActiveSheet()->setCellValue('C2', 'Test Student Name')	//Student Name
-	    				  ->setCellValue('I2', '2015')			//Catalog year
-					  ->setCellValue('C4', '698-42-478')		//Student ID
-					  ->setCellValue('I4', 'test@latech.edu')	//Email
-					  ->setCellValue('C6', 'Dr. Keen')		//Advisor
-					  ->setCellValue('I6', date(DATE_RFC2822));	//Last Updated
+            $sheets = $outputfile->getSheetNames();
+	    
+	    for ($i = 0; $i < count($sheets); $i++)
+		if (strcasecmp($sheets[$i], "checklist") == 0)
+			$outputfile->setActiveSheetIndex($i);
+
+	    $checksheet = $outputfile->getActiveSheet();
+	    
+	    $checksheet	->setCellValue('C2', 'Test Student Name')	//Student Name
+	    		->setCellValue('I2', '2015')			//Catalog year
+			->setCellValue('C4', '698-42-478')		//Student ID
+			->setCellValue('I4', 'test@latech.edu')	//Email
+			->setCellValue('C6', 'Dr. Keen')		//Advisor
+			->setCellValue('I6', date(DATE_RFC2822));	//Last Updated
 	    
 	    /*
             //get usable transcript info
@@ -52,8 +61,7 @@ class Checklistexport extends CI_Controller
             switch ($type)
             {
                 case "xls":
-
-                    $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+                    $objWriter = PHPExcel_IOFactory::createWriter($outputfile, 'Excel5');
                     header("Content-type: application/vnd.ms-exel");
                     header("Content-Disposition: attachment; filename=test.xls");
                     $objWriter->save('php://output');
