@@ -32,6 +32,16 @@
   <body>
 
     <div class="container">
+        
+        <div class="error-div" style="background-color: #FF6363">   
+            <?php
+                if (isset($error))
+                {
+                    echo 'WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.';
+                }
+            ?> 
+        </div>
+      
 
       <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">
         <h2 class="form-signin-heading">Please sign in</h2>
