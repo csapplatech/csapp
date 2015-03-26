@@ -8,7 +8,7 @@ class Checklistexport extends CI_Controller
 	//	A curriculumID represnting the curriculum to use (from the database)
 	//	The file extensions/type (example pdf for PDF and xls for excel spreadsheet)
 	//		Only xls is supported right now
-	public function index($userID = NULL, $curriculumID = NULL, $type = "xls")
+	public function index($userID = NULL, $curriculumID = 1, $type = "xls")
 	{
 	    //Assuming a user with classes is passed and curriculum
             //	Must be valid!
@@ -73,8 +73,29 @@ class Checklistexport extends CI_Controller
 	    $location["date"]->setValue(date(DATE_RFC2822));
 	    $location["year"]->setValue("2015");
 	    
+	    $course = NULL;
+	    for ($row = 0; $row < count($cells); $row++)
+	    	for ($col = 0; $col < count($cells[$row]); $col++)
+	    		if (strcmp($checksheet->getCellByColumnAndRow($row, $col)->getValue(), "COURSE") == 0)
+				$course = array($row, $col);
+	    
 	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
 	    $takenCourses    = $user->getAllCoursesTaken();
+	    
+	    //$course holds the row/col of the COURSE cell, the following cells are the headers for courses
+	    $year  = NULL;
+	    $term  = NULL;
+	    $grade = NULL;
+	    for ($col = 0; $col < count($cells[$course[0]]); $col++)
+	    {
+		$val = $checksheet->getCellByColumnAndRow($course[0], $col)->getValue();
+	    	if ($year  == NULL && strcmp($val, "YEAR") == 0)
+			$year = array($course[0], $col);
+	    	if ($term  == NULL && strcmp($val, "TERM") == 0)
+			$term = array($course[0], $col);
+	    	if ($grade == NULL && strcmp($val, "GRADE") == 0)
+			$grade = array($course[0], $col);
+	    }
 
 	    /*
             //get usable transcript info
