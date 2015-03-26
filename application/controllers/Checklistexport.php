@@ -4,11 +4,15 @@ require_once('application/libraries/phpexcel/PHPExcel/IOFactory.php');
 class Checklistexport extends CI_Controller
 {
 	//Funciton must be given the user and a curriculum
-	public function index($user = NULL, $curriculum = NULL, $type = "xls")	
+	public function index($userID = NULL, $curriculum = NULL, $type = "xls")
 	{
 	    //Assuming a user with classes is passed and curriculum
             //	Must be valid!
-	   $filename = "checklist.xls";
+	    $this->load->model('User_model');
+	    $user = new User_Model();
+	    $user->loadPropertiesFromPrimaryKey($userID);
+
+	    $filename = "checklist.xls";
 
 	    //Load necessary data from spreadsheet
 	    $objReader = PHPExcel_IOFactory::createReader('Excel5');
@@ -21,14 +25,36 @@ class Checklistexport extends CI_Controller
 			$outputfile->setActiveSheetIndex($i);
 
 	    $checksheet = $outputfile->getActiveSheet();
+	    $cells = $checksheet->toArray();
+	    $location = array(
+	    	"name"    => NULL,
+		"email"   => NULL,
+		"advisor" => NULL);
+	    //Find and set user information (name, email, etc)
+	    for ($row = 0; $row < count($cells); $row++)
+	    	for ($col = 0; $col < count($cells[$row]); $col++)
+		{
+			$val = $checksheet->getCellByColumnAndRow($row, $col)->getValue();
+			if (strcasecmp($val, "name")    == 0)
+				$location["name"]    = array($row, $col);
+			if (strcasecmp($val, "advisor") == 0)
+				$location["advisor"] = array($row, $col);
+			if (strcasecmp($val, "email")   == 0)
+				$location["email"]   = array($row, $col);
+		}
+	    //Default to two cells over from label, but should do a search instead of static
+	    $location["name"] = $checksheet->getCellByColumnAndRow($location["name"][0]+2, $location["name"][1]);
+	    $location["email"] = $checksheet->getCellByColumnAndRow($location["email"][0]+2, $location["email"][1]);
+	    $location["advisor"] = $checksheet->getCellByColumnAndRow($location["advisor"][0]+2, $location["advisor"][1]);
 	    
-	    $checksheet	->setCellValue('C2', 'Test Student Name')	//Student Name
-	    		->setCellValue('I2', '2015')			//Catalog year
+	    $location["name"]->setValue($user->getName());
+	    $location["email"]->setValue($user->getEmailAddress());
+	    $location["advisor"]->setValue($user->getAdvisor());
+ 
+	    
+	    $checksheet	->setCellValue('I2', '2015')			//Catalog year
 			->setCellValue('C4', '698-42-478')		//Student ID
-			->setCellValue('I4', 'test@latech.edu')	//Email
-			->setCellValue('C6', 'Dr. Keen')		//Advisor
 			->setCellValue('I6', date(DATE_RFC2822));	//Last Updated
-	    
 	    /*
             //get usable transcript info
             //From Users:
