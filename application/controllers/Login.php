@@ -6,37 +6,47 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
-		$this->load->view('login');
+            $this->load->view('login');
 	}
         
         public function auth()
         {
+            //Get the username and password from the field
             $username = $this->input->post('username');
             $password = $this->input->post('password');
-            
+            //Create a new user object
             $user = new User_model;
-            
+            //If username exists
             if ($user->loadPropertiesFromPrimaryKey($username) || $user->loadPropertiesFromEmailAddress($username))
             {
-                echo "username exists";
                 $user->create();
+                //If password is correct
                 if ($user->authenticate($password))
                 {
-                    echo "password correct";
-                    $data = array(
-                        'name' => $user->getName(),
-                        'id' => $user->getUserID(),
-                        'is_logged_in' => TRUE,
-                        'isStudent' => $user->isStudent(),
-                        'isAdmin' => $user->isAdmin(),
-                        'isProgramChair' => $user->isProgramChair(),
-                        'isAdvisor' => $user->isAdvisor(),
-                    );
+                    //Activate the session
                     $_SESSION['UserID'] = $user->getUserID();
+                    //Redirect to the mainpage controller
                     redirect('Mainpage');
-                    $this->load->view('main_page', $data);
                 }
             }
+            //Incorrect username or password, reload login and display an error
             $this->load->view('login', array("error"=>TRUE));
+        }
+        
+        
+        public function logout() 
+        {
+            //Unset session array
+            $_SESSION = array();
+            //Destroy Cookie
+            if (ini_get("session.use_cookies")) 
+            {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]);
+            }
+            //Destroy the session.
+            session_destroy();
         }
 }

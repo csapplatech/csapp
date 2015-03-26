@@ -290,8 +290,4 @@ switch (ENVIRONMENT)
  * And away we go...
  */
 session_start();
-if (!isset($_SESSION['UserID']))
-{
-    
-}
 require_once BASEPATH.'core/CodeIgniter.php';
