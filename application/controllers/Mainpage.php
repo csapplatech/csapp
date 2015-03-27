@@ -23,7 +23,7 @@ class Mainpage extends CI_Controller
         elseif ($user->isAdmin())
             $this->load->view('MainPages/admin_main_page', array('user'=>$user));
         else
-            $this->load->view('MainPages/guest_main_page');
+            $this->load->view('MainPages/guest_main_page', array('user'=>$user));
     }
     
     public function student()
@@ -89,7 +89,7 @@ class Mainpage extends CI_Controller
     public function guest()
     {
         //Load the guest mainpage
-        $this->load->view('MainPages/guest_main_page');
+        $this->load->view('MainPages/guest_main_page', array('user'=>$user));
     }
 }
 
