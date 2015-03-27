@@ -16,7 +16,7 @@ class Login extends CI_Controller {
             $password = $this->input->post('password');
             //Create a new user object
             $user = new User_model;
-            //If username exists
+            //If username exists load userdata
             if ($user->loadPropertiesFromPrimaryKey($username) || $user->loadPropertiesFromEmailAddress($username))
             {
                 $user->create();
@@ -33,6 +33,18 @@ class Login extends CI_Controller {
             $this->load->view('login', array("error"=>TRUE));
         }
         
+        public function guestLogin()
+        {
+            //Create a new user object
+            $user = new User_model;
+            //Load userdata
+            $user->loadPropertiesFromPrimaryKey('guest');
+            $user->create();
+            //Setup session
+            $_SESSION['UserID'] = $user->getUserID();
+            //Redirect to the mainpage controller
+            redirect('Mainpage');
+        }
         
         public function logout() 
         {
