@@ -38,7 +38,7 @@ class Login extends CI_Controller {
             //Create a new user object
             $user = new User_model;
             //Load userdata
-            $user->loadPropertiesFromPrimaryKey('guest');
+            $user->loadPropertiesFromPrimaryKey('123');
             $user->create();
             //Setup session
             $_SESSION['UserID'] = $user->getUserID();
