@@ -48,5 +48,6 @@ class Login extends CI_Controller {
             }
             //Destroy the session.
             session_destroy();
+            index();
         }
 }
