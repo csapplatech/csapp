@@ -66,7 +66,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	</style>
 </head>
 <body>
-
+<?php $active='user'?>
 <div id="container">
 	<h1>Welcome to CodeIgniter!</h1>
 
@@ -80,6 +80,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<code>application/controllers/Welcome.php</code>
 
 		<p>If you are exploring CodeIgniter for the very first time, you should start by reading the <a href="user_guide/">User Guide</a>.</p>
+                <a href="index.php/user/initCreateUser" >Add New User</a>
+                <a href="index.php/user/prepareRemoveUser" >Remove User</a>
 	</div>
 
 	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds. <?php echo  (ENVIRONMENT === 'development') ?  'CodeIgniter Version <strong>' . CI_VERSION . '</strong>' : '' ?></p>
