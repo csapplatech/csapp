@@ -6,7 +6,10 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
-            $this->load->view('login');
+            if (isset($_SESSION['UserID']))
+                redirect('Mainpage');
+            else
+                $this->load->view('login');
 	}
         
         public function auth()
@@ -60,6 +63,6 @@ class Login extends CI_Controller {
             }
             //Destroy the session.
             session_destroy();
-            index();
+            redirect('Login');
         }
 }
