@@ -54,11 +54,11 @@ class User extends CI_Controller {
         $data = array(
             'userID' => '0'
         );
-        
+
         $data['userID'] = $this->input->post('userID');
         $userExists = $this->User_model->loadPropertiesFromPrimaryKey($data['userID']);
         if ($userExists) {
-            echo 'A user with userID: '.$data['userID'];
+            echo 'A user with userID: ' . $data['userID'];
             $this->load->view('confirm_remove_user', $data);
         } else {
             $this->load->view('prepare_remove_user');
@@ -69,15 +69,53 @@ class User extends CI_Controller {
         $userID = $this->input->post('userID');
         $remUser = new User_model();
         $remUser->loadPropertiesFromPrimaryKey($userID);
-        
-        if($remUser) {
+
+        if ($remUser) {
             $remUser->delete();
         }
-        
     }
 
     public function addUserCourses() {
         
+    }
+
+    public function prepareEditUser() {
+        $this->load->view('prepare_edit_user');
+    }
+
+    public function editUser() {
+        //this loads the userID given by 'prepare_edit_user'
+        $userID = $this->input->post('userID');
+        //the next 2 lines create the editable user data model and fill it with the information associated with the
+        //given userID
+        $edUser = new User_model();
+        $edUser->loadPropertiesFromPrimaryKey($userID);
+        //
+        $data = array(
+            'emailAddress' => null,
+            'password' => null,
+            'name' => null,
+            'role1' => null,
+            'role2' => null,
+            'role3' => null,
+            'role4' => null
+        );
+        //fill data with edUser's attributes
+        $data['emailAddress'] = $edUser->getEmailAddress();
+        $data['name'] = $edUser->getName();
+        $data['role1'] = $edUser->isAdmin();
+        $data['role2'] = $edUser->isProgramChair();
+        $data['role3'] = $edUser->isAdvisor();
+        $data['role4'] = $edUser->isStudent();
+        //if the user exists load the edit_user1 page
+        if ($edUser) {
+
+            $this->load->view('edit_user1', $data);
+            //otherwise reload the id request page    
+        } else {
+            $this->load->view('prepare_edit_user');
+            //$this->load->view('prepare_edit_user_e'); _e for error page
+        }
     }
 
 }
