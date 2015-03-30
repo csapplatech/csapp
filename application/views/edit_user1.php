@@ -74,9 +74,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr><p>New User Name: <input type="text" name="<?=$name?> "value="<?=$name ?>"></p></tr>
             </table>
             <p><b>Please select user Roles.</b></p><br/>
-
+            <!--fix these checkboxes-->
+            <!--fix these checkboxes-->
+            <!--fix these checkboxes-->
             <input type="checkbox" name="<?=$role4 ?>" id="<?=$role4 ?>"/>Student<br />
-            <input type="checkbox" name="<?=$role3 ?>" id="<?=$role3 ?>"/>Advisor<br />
+            <input type="checkbox" name="Advisor" id="3"/>Advisor<br />
             <input type="checkbox" name="<?=$role2 ?>" id="<?=$role2 ?>"/>Program Chair<br />
             <input type="checkbox" name="<?=$role1 ?>" id="<?=$role1 ?>"/>Administrator<br />
             <br />

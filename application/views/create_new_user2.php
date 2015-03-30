@@ -69,7 +69,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <body>
         <p><b>Please select your curriculum.</b></p><br/>
         <form action="addUserCourses" method="POST"> 
-            <select name="cirriculum">
+            
+            <select name="curriculum">
                 <option />
                 <?php
                 $Curriculums = $this->Curriculum_model->getAllCurriculums();
@@ -80,6 +81,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 }
                 ?>
             </select>   
+            <input type="hidden" name="userID" value="<?=$userID ?>" />
             <input type="submit" value="NEXT" />
         </form>
     </body>

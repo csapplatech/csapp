@@ -11,45 +11,84 @@ class User extends CI_Controller {
 //    public function __construct() {
 //        parent::__construct();
 //    }
-
+    //First View of Creating a User
     public function initCreateUser() {
         $this->load->view('create_new_user1');
     }
 
+    //Grabs data from First view and combines it with rest of User attributes
+    //to complete user creation
     public function initUser() {
+         $data = array(
+            'userID' => '0'
+        );
+        //creating variables to hold the data from view 1
         $activeUser = new User_model();
-        $userName = $this->input->post('userName');
+        $userFName = $this->input->post('userFName');
+        $userLName = $this->input->post('userLName');
         $emailAddress = $this->input->post('emailAddress');
         $password = $this->input->post('password');
 
-        $activeUser->setName($userName);
+        $activeUser->setName($userLName . ',' . $userFName);
         $activeUser->setEmailAddress($emailAddress);
         $activeUser->setPassword($password);
 
+        //adds selected roles to user being created
         for ($role = 1; $role <= 4; $role = $role + 1) {
             $hasRole = $this->input->post($role);
             if ($hasRole) {
                 $activeUser->addRole($role);
             }
         }
-
-        if (!$activeUser->isStudent()) {
-            if ($activeUser->create()) {
-                $this->load->view('confirm_user_added');
-            } else {
-                $this->load->view('create_new_user1');
-            }
+        //if user being created is not a student the creation process ends here
+        //otherwise...
+        if(!$activeUser->create()) {
+             $this->load->view('create_new_user1');
+             return;
         }
-//        $allCurriculums = $this->Curriculum_model->getAllCurriculums();
-        //$allCourses = $this->Course_model->getAllCourses();
 
-        $this->load->view('create_new_user2'); //, $allCurriculums);
+        if ($activeUser->isStudent()) {
+            $data['userID'] = $activeUser->getUserID();
+            echo 'data->userID: '.$data['userID'];
+            $this->load->view('create_new_user2', $data);
+        } else {
+            $this->load->view('confirm_user_added');
+        }
+        //$allCurriculums = $this->Curriculum_model->getAllCurriculums();
+        //$allCourses = $this->Course_model->getAllCourses();
     }
 
+    //method to add courses to new user
+    public function addUserCourses() {
+        $studentID = $this->input->post('userID');
+        echo 'studentID: '.$studentID;
+        $selectedCurriculumID = $this->input->post('curriculum');
+        $selectedCurriculum = new Curriculum_model();
+        $selectedCurriculum = loadPropertiesFromPrimaryKey($selectedCurriculumID);
+        $selectedCurriculumCSlots = new Curriculum_course_slot_model();
+        $selectedCurriculumCslots = $selectedCurriculum->getCurriculumCourseSlots();
+        foreach($sectionSlot as $selectedCurriculumCslots){
+            
+            $courseNames[] = $sectionSlot->strtoupper(getName());
+        }
+        //get all courses compare (to-upper)"courseNames" to getCourseName().getCourseNumber()
+        //for all matches get CourseIDs
+        //
+        //from the CourseIDs we can use the Course_section_model function get
+        $this->load->view('new_student_courses');
+        //use curriculumID and getCurriculumCourseSlots()
+        //use curriculumCourseSlot model function getName() to populate name list
+        //look at courses(model) in data base for same names to getCourseID()
+        //use courseID's and courseSection model function getAllSections() /w 
+        //matching courseID's and pull scourseSectionID's
+    }
+
+    //loads view to select user to be removed
     public function prepareRemoveUser() {
         $this->load->view('prepare_remove_user');
     }
 
+    //method to confirm user removal
     public function confirmRemoveUser() {
         $data = array(
             'userID' => '0'
@@ -65,6 +104,7 @@ class User extends CI_Controller {
         }
     }
 
+    //method to remove the selected user after confirmation
     public function removeUser() {
         $userID = $this->input->post('userID');
         $remUser = new User_model();
@@ -75,14 +115,12 @@ class User extends CI_Controller {
         }
     }
 
-    public function addUserCourses() {
-        
-    }
-
+    //method to load the view to select a user for editing
     public function prepareEditUser() {
         $this->load->view('prepare_edit_user');
     }
 
+    //method to edit the selected user with user creation views
     public function editUser() {
         //this loads the userID given by 'prepare_edit_user'
         $userID = $this->input->post('userID');

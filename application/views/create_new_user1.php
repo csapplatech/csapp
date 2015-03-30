@@ -73,7 +73,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <tr><p>New Email Address: <input type="text" name="emailAddress"></p></tr>
                 <tr><p>New Password: <input type="password" name="password"></p></tr>
                 <tr><p>Confirm New Password: <input type="password" name="password"></p></tr>
-                <tr><p>New User Name: <input type="text" name="userName"></p></tr>
+                <tr><p>New User Last Name: <input type="text" name="userLName"> New User First Name: <input type="text" name="userFName"></p></tr>
             </table>
             <p><b>Please select user Roles.</b></p><br/>
 
