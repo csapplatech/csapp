@@ -141,10 +141,10 @@ class Course_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->CourseID != null)
+		if($this->courseID != null)
 		{
 			$this->db->select('RequisiteCourseID');
-			$this->db->where('CourseID', $this->CourseID);
+			$this->db->where('CourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
 			
@@ -172,10 +172,10 @@ class Course_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->CourseID != null)
+		if($this->courseID != null)
 		{
 			$this->db->select('RequisiteCourseID');
-			$this->db->where('CourseID', $this->CourseID);
+			$this->db->where('CourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
 			
@@ -190,7 +190,7 @@ class Course_model extends CI_Model
 			}
 			
 			$this->db->select('CourseID');
-			$this->db->where('RequisiteCourseID', $this->CourseID);
+			$this->db->where('RequisiteCourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
 			
