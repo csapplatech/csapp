@@ -74,22 +74,22 @@ class Checklistexport extends CI_Controller
 	    $location["year"]->setValue("2015");
 	    
 	    $course = NULL;
-	    for ($row = 0; $row < count($cells); $row++)
-	    	for ($col = 0; $col < count($cells[$row]); $col++)
-	    		if (strcmp($checksheet->getCellByColumnAndRow($row, $col)->getValue(), "COURSE") == 0)
+	    for ($col = 0; $col < count($cells); $col++)
+	    	for ($row = 0; $row < count($cells[$col]); $row++)
+	    		if (strcmp($checksheet->getCellByColumnAndRow($col, $row)->getValue(), "COURSE") == 0)
 				$course = array($row, $col);
 	    
 	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
 	    $takenCourses    = $user->getAllCoursesTaken();
-	    
+
 	    //$course holds the row/col of the COURSE cell, the following cells are the headers for courses
 	    $year  = NULL;
 	    $term  = NULL;
 	    $grade = NULL;
 	    for ($col = 0; $col < count($cells[$course[0]]); $col++)
 	    {
-		$val = $checksheet->getCellByColumnAndRow($course[0], $col)->getValue();
-	    	if ($year  == NULL && strcmp($val, "YEAR") == 0)
+		$val = $checksheet->getCellByColumnAndRow($col, $course[0])->getValue();
+		if ($year  == NULL && strcmp($val, "YEAR") == 0)
 			$year = array($course[0], $col);
 	    	if ($term  == NULL && strcmp($val, "TERM") == 0)
 			$term = array($course[0], $col);
@@ -97,15 +97,27 @@ class Checklistexport extends CI_Controller
 			$grade = array($course[0], $col);
 	    }
 
-	    /*
-            //get usable transcript info
-            //From Users:
-            $courseSections = $user->getAllCoursesTaken(); //array of course sections
+	    //Based on $course, get the major class types and their associated class numbers
+	    
 
-            //From Course Section Model:
-            foreach ($courseSections as $courseSection) 
-                    array_push($courses, $courseSection->getCourse()); //creates array of taken courses ids
+	    //Get usable transcript info
+	    $courseSections = $user->getAllCoursesTaken(); //array of course sections
 
+	    //Get the class names from the checklist
+	    //	Each slot as validCourseIDs which is an array of the classes that fill the slot
+	    $curriculumCourses = $curriculum->getCurriculumCourseSlots();
+	    foreach ($curriculumCourses as $currCourse)
+		    //Check every curriculum course against taken courses
+		    foreach ($courseSections as $key=>$courseSection)
+		    {
+			//courseSection should be an array with a courseSection and associated grade
+			//   Each courseSection should be matched against the valid course slots.
+			//	The grade is a number, 4 for A, 3 for B, etc
+			//	Once the class has been matched it should be removed from the array
+		    }
+	    //Any leftover classes from courseSections should be put in the box on the right
+
+/*
             //get usable curriculum info
             //From curriculum model:
             // need this $curriculum = $user->getCurriculum();
@@ -119,12 +131,12 @@ class Checklistexport extends CI_Controller
 
                     foreach ($validCourses as $currentValidCourse) 
                             //need to be able to check for grades
-                            $currentCourseSlot = in_array($currentValidCourse, $courses [, bool $strict = FALSE] );
+                            $currentCourseSlot = in_array($currentValidCourse, $courses, bool $strict = FALSE] );
 
                     if ($courseTaken)
                             //check off checklist
-            }    */
-            
+            }    
+ */           
             //Download file object (PDF or XLS)
             switch ($type)
             {
