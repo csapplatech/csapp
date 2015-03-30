@@ -208,6 +208,37 @@ class Course_model extends CI_Model
 		return $models;
 	}
 	
+	/**
+	 * Summary of getAllCurriculumCourseSlots
+	 * Get all of the curriculum course slots that this course is compatible with
+	 *
+	 * @return Array An array containing curriculum course slot models that are compatible with this course
+	 */
+	public function getAllCurriculumCourseSlots()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->where("CourseID", $this->courseID);
+			$this->db->select("CurriculumCourseSlotID");
+			
+			$results = $this->db->get("CurriculumSlotValidCourses");
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Curriculum_course_slot_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this course model with newly modified information
