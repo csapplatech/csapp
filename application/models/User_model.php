@@ -582,7 +582,7 @@ class User_model extends CI_Model
         
         $finalFlag = true;
         
-		$len2 = strlen($this->passwordHash[$i]);
+		$len2 = strlen($this->passwordHash);
 		
 		if($len < 1 || $len2 != $len)
 		{
