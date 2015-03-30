@@ -42,6 +42,7 @@ class Curriculum_course_slot_model extends CI_Model
                 $this->curriculumCourseSlotID = $row['CurriculumCourseSlotID'];
                 $this->curriculumID = $row['CurriculumID'];
                 $this->name = $row['Name'];
+                $this->minimumGrade = $row['MinimumGrade'];
                 
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
