@@ -71,8 +71,8 @@ class Checklistexport extends CI_Controller
 	    $location["email"]->setValue($user->getEmailAddress());
 	    $location["advisor"]->setValue($user->getAdvisor());
 	    $location["date"]->setValue(date(DATE_RFC2822));
-	    $location["year"]->setValue("2015");
-	    
+	    $location["year"]->setValue("2015"); 
+
 	    $course = NULL;
 	    for ($col = 0; $col < count($cells); $col++)
 	    	for ($row = 0; $row < count($cells[$col]); $row++)
@@ -98,46 +98,51 @@ class Checklistexport extends CI_Controller
 	    }
 
 	    //Based on $course, get the major class types and their associated class numbers
+	    $checkCourses = array();
+	    for ($row = $course[0]+1; true; $row++)
+	    {
+	    	$val = $checksheet->getCellByColumnAndrow($course[1], $row)->getValue();
+		if ($val == NULL)
+			continue;
+		if (strlen($val) >= 5)
+			break;
+		for ($row2 = $row; true; $row2++)
+		{
+	    		$val2 = $checksheet->getCellByColumnAndrow($course[1]+1, $row2)->getValue();
+			if ($val2 == NULL)
+				break;
+			$checkCourses[] = array($val . $val2, $row2);
+		}
+	    }
 	    
-
 	    //Get usable transcript info
 	    $courseSections = $user->getAllCoursesTaken(); //array of course sections
-
+	    
 	    //Get the class names from the checklist
 	    //	Each slot as validCourseIDs which is an array of the classes that fill the slot
 	    $curriculumCourses = $curriculum->getCurriculumCourseSlots();
 	    foreach ($curriculumCourses as $currCourse)
-		    //Check every curriculum course against taken courses
-		    foreach ($courseSections as $key=>$courseSection)
+	    {
+	        $validCourseIDs = $currCourse->getValidCourseIDs();
+	        //Check every curriculum course against taken courses
+	        foreach ($courseSections as $key => $courseSection)
+		    if (in_array($courseSection[0]->getCourseSectionID(), $validCourseIDs))
 		    {
-			//courseSection should be an array with a courseSection and associated grade
-			//   Each courseSection should be matched against the valid course slots.
-			//	The grade is a number, 4 for A, 3 for B, etc
-			//	Once the class has been matched it should be removed from the array
-		    }
+		        $c = $courseSection[0]->getCourse()->getCourseName().$courseSection[0]->getCourse()->getCourseNumber();
+		        foreach ($checkCourses as $checkCourse)
+			    if (strcmp($c, $checkCourse[0]) == 0)
+			    {
+			    	$checksheet->getCellByColumnAndrow($grade[1], $checkCourse[1])->setValue($courseSection[1]);
+				$q = $courseSection[0]->getAcademicQuarter();
+			    	$checksheet->getCellByColumnAndrow($year[1], $checkCourse[1])->setValue($q->getYear());
+			    	$checksheet->getCellByColumnAndrow($term[1], $checkCourse[1])->setValue($q->getName());
+			    }
+			    unset($courseSections[$key]);
+		}
+	    }
 	    //Any leftover classes from courseSections should be put in the box on the right
-
-/*
-            //get usable curriculum info
-            //From curriculum model:
-            // need this $curriculum = $user->getCurriculum();
-            $courseSlots = $curriculum->getCurriculumCourseSlots(); //array of course slots
-
-            //put them together
-            foreach ($courseSlots as $currentCourseSlot) {
-                    $courseTaken = FALSE;
-
-                    $validCourses = $currentCourseSlot->getValidCourseIDS(); //From course slot model
-
-                    foreach ($validCourses as $currentValidCourse) 
-                            //need to be able to check for grades
-                            $currentCourseSlot = in_array($currentValidCourse, $courses, bool $strict = FALSE] );
-
-                    if ($courseTaken)
-                            //check off checklist
-            }    
- */           
-            //Download file object (PDF or XLS)
+            
+	    //Download file object (PDF or XLS)
             switch ($type)
             {
                 case "xls":
