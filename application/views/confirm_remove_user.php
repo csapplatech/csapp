@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?><!DOCTYPE html>
 <html lang="en">
     <head>
+        <title><?php 'User:'.$userID ?></title>
         <style type="text/css">
 
             ::selection { background-color: #E13300; color: white; }
@@ -65,7 +66,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     <body>
         <form action="removeUser" method="POST" >
-            <p>Remove user: </p><br />
+            <p>Remove user: <?=$userID ?></p><br />
+            <input type="hidden" name="userID" value="<?=$userID ?>" />
             <input type="submit" value="Confirm"><br />
         </form>
         <form action="prepareRemoveUser" method="GET" >

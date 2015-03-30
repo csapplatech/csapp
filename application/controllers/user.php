@@ -51,17 +51,29 @@ class User extends CI_Controller {
     }
 
     public function confirmRemoveUser() {
-        $userID = $this->input->post('userID');
-        $userExists = $this->User_model->loadPropertiesFromPrimaryKey($userID);
+        $data = array(
+            'userID' => '0'
+        );
+        
+        $data['userID'] = $this->input->post('userID');
+        $userExists = $this->User_model->loadPropertiesFromPrimaryKey($data['userID']);
         if ($userExists) {
-            $this->load->view('confirm_remove_user');
+            echo 'A user with userID: '.$data['userID'];
+            $this->load->view('confirm_remove_user', $data);
         } else {
             $this->load->view('prepare_remove_user');
         }
     }
 
-    public function removeUser($userID) {
-        echo $userID;
+    public function removeUser() {
+        $userID = $this->input->post('userID');
+        $remUser = new User_model();
+        $remUser->loadPropertiesFromPrimaryKey($userID);
+        
+        if($remUser) {
+            $remUser->delete();
+        }
+        
     }
 
     public function addUserCourses() {
