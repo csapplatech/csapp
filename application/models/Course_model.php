@@ -11,6 +11,7 @@ class Course_model extends CI_Model
     private $courseID = null;
     private $courseName = null;
     private $courseNumber = null;
+	private $courseTitle = null;
     private $courseDescription = null;
     
 	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
@@ -45,6 +46,7 @@ class Course_model extends CI_Model
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
                 $this->courseNumber = $row['CourseNumber'];
+				$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
                 
                 return true;
@@ -87,6 +89,17 @@ class Course_model extends CI_Model
         return $this->courseNumber;
     }
     
+	/**
+     * Summary of getCourseTitle
+     * Get the course title of this model
+     * 
+     * @return string The course title associated with this course model
+     */
+	public function getCourseTitle()
+	{
+		return $this->courseTitle;
+	}
+	
     /**
      * Summary of getCourseDescription
      * Get the course description of this model
@@ -108,7 +121,7 @@ class Course_model extends CI_Model
     {
         $this->courseName = filter_var($courseName, FILTER_SANITIZE_MAGIC_QUOTES);
     }
-    
+	
     /**
      * Summary of setCourseNumber
      * Set the course number for this model
@@ -120,6 +133,17 @@ class Course_model extends CI_Model
         $this->courseNumber = filter_var($courseNumber, FILTER_SANITIZE_NUMBER_INT);
     }
     
+	/**
+     * Summary of setCourseTitle
+     * Set the course title for this model
+     * 
+     * @param string $courseTitle The course title to be associated with this model
+     */
+	public function setCourseTitle($courseTitle)
+	{
+		$this->courseTitle = filter_var($courseTitle, FILTER_SANITIZE_MAGIC_QUOTES);
+	}
+	
     /**
      * Summary of setCourseDescription
      * Set the course description for this model
@@ -218,7 +242,12 @@ class Course_model extends CI_Model
     {
         if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseName' => $this->courseName, 'CourseNumber' => $this->courseNumber, 'CourseDescription' => $this->courseDescription);
+            $data = array(
+				'CourseName' => $this->courseName, 
+				'CourseNumber' => $this->courseNumber, 
+				'CourseTitle' => $this->courseTitle,
+				'CourseDescription' => $this->courseDescription
+			);
             
             $this->db->where('CourseID', $this->courseID);
             $this->db->update('Courses', $data);
@@ -241,7 +270,12 @@ class Course_model extends CI_Model
     {
         if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseName' => $this->courseName, 'CourseNumber' => $this->courseNumber, 'CourseDescription' => $this->courseDescription);
+            $data = array(
+				'CourseName' => $this->courseName, 
+				'CourseNumber' => $this->courseNumber, 
+				'CourseTitle' => $this->courseTitle,
+				'CourseDescription' => $this->courseDescription
+			);
             
             $this->db->insert('Courses', $data);
             
