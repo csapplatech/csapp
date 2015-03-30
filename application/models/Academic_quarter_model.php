@@ -91,10 +91,10 @@ class Academic_quarter_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->AcademicQuarterID != null)
+		if($this->academicQuarterID != null)
 		{
 			$this->db->select('CourseSectionID');
-			$this->db->where('AcademicQuarterID', $this->AcademicQuarterID);
+			$this->db->where('AcademicQuarterID', $this->academicQuarterID);
 			
 			$results = $this->db->get('CourseSections');
 			
@@ -109,7 +109,8 @@ class Academic_quarter_model extends CI_Model
 			}
 		}
 		
-		return $results;
+		//return $results;
+                return $models;
 	}
 	
     /**
