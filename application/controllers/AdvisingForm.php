@@ -24,30 +24,18 @@ class AdvisingForm extends CI_Controller
         //Next, load the current user and get his courses taken
         $usermod = new user_model();
         $usermod->loadPropertiesFromPrimaryKey($uid);
-        $ct = $usermod->getAllCoursesTaken();
+        $courses_taken = $usermod->getAllCoursesTaken();
         $courseIDs_passed = array();
-        foreach($ct as $c)
-        {
-            array_push($courseIDs_taken, $c[0]->getCourse()->getCourseID())
-        }
         
-        //Remove all courses from the master list that have been taken by the user
-        foreach ($course_sections as $key => $tag)
+        //Populate an array of course IDs for which the course was passed by the student
+        foreach($courses_taken as $key => $value)
         {
-            foreach ($ct as $course)
+            $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
+            if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
             {
-                if ($course[0]->getCourse()->getCourseID() == $tag->getCourse()->getCourseID())
-                {
-                    unset($course_sections[$key]);
-                    break;
-                }
+                array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
             }
         }
         
-        //Now print the remaining available courses as a subject/number pair
-        foreach ($course_sections as $cs)
-        {
-            
-        }
     }
 }
