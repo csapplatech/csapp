@@ -18,7 +18,7 @@
   </head>
 
   <body style="padding-top:60px">
-      
+
         <nav class="navbar navbar-default navbar-fixed-top">
           <div class="container">
             <div class="navbar-header">
@@ -35,7 +35,7 @@
               </ul>
               <ul class="nav navbar-nav navbar-right">
               </ul>
-            </div><!--/.nav-collapse -->
+            </div>
            </div>
         </nav>
       
@@ -58,7 +58,6 @@
             </form>
             <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
         </div>
-        
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
