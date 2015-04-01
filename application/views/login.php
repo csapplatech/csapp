@@ -44,7 +44,7 @@
             <?php
               if (isset($error))
               {
-                  echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
+                  echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG UuSERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
               }
             ?>
 
