@@ -104,6 +104,7 @@ class ModelTest extends CI_Controller
                 $curriculum = new Curriculum_model;
                 
                 $curriculum->setName("Curriculum " . ($i + 1));
+				$curriculum->setCurriculumType(Curriculum_model::CURRICULUM_TYPE_DEGREE);
                 
                 for($j=0;$j<$num2;$j++)
                 {
@@ -209,6 +210,10 @@ class ModelTest extends CI_Controller
             }
             else
             {
+				$model = Academic_quarter_model::getLatestAcademicQuarter();
+				
+				print_r($model);
+				
                 echo "404 Academic Quarter not found";
             }
         }
