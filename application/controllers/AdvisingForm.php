@@ -37,5 +37,35 @@ class AdvisingForm extends CI_Controller
             }
         }
         
+        //Now, what we need is classes that can be taken.  To that end, we will
+        //pull all of the course sections for a quarter and unset and move those
+        //classes whose prerequisites are not met
+        
+        //First, the array which will hold all course sections where signatures
+        //are required (prerequisites not met)
+        $signature_required = array();
+        
+        foreach($course_sections as $key => $value)
+        {
+            $prereqs = $value->getCourse()->getPrerequisiteCourses();
+            if (count($prereqs) == 0)
+                echo $value->getCourse()->getCourseName() . "\n" .
+                    $value->getCourse()->getCourseNumber() . "\n" .
+                    $value->getSectionName() . "\nnext\n";
+            else
+            {
+                foreach($prereqs as $prereq)
+                {
+                    if (array_search($prereq->getCourseID(), $courseIDs_passed) == true)
+                    {
+                        echo $value->getCourse()->getCourseName() . "\n" .
+                        $value->getCourse()->getCourseNumber() . "\n" .
+                        $value->getSectionName() . "\nnext\n";
+                        break;
+                    }
+                }
+            }
+        }
+        
     }
 }
