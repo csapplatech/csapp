@@ -28,6 +28,7 @@ class ModelTest extends CI_Controller
             $user->setName("John Hawkins");
             $user->setPassword("Password");
             $user->addRole(User_model::ROLE_STUDENT);
+			$user->setState(User_model::STATE_ACTIVATED);
             
             $user->create();
             
@@ -77,6 +78,7 @@ class ModelTest extends CI_Controller
             
             $newCourse->setCourseName("CSC");
             $newCourse->setCourseNumber(100 + $i);
+			$newCourse->setCourseTitle("Intro to Databases");
             $newCourse->setCourseDescription("An example course for the database unit testing");
             
             if($newCourse->create())
@@ -150,6 +152,8 @@ class ModelTest extends CI_Controller
                 
                 $courseSection = new Course_section_model;
                 $courseSection->setSectionName($sectionName);
+				$courseSection->setHours(3);
+				$courseSection->setCallNumber(111222);
                 
                 if($courseSection->setAcademicQuarterFromID($academicQuarterID) && $courseSection->setCourseFromID($courseID))
                 {

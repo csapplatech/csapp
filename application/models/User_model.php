@@ -12,6 +12,7 @@ class User_model extends CI_Model
     private $emailAddress = null;
     private $passwordHash = null;
     private $name = null;
+	private $userStateID = null;
     private $roles = array();
     private $coursesTaken = array();
     
@@ -22,6 +23,12 @@ class User_model extends CI_Model
     const ROLE_ADVISOR = 3;
     const ROLE_STUDENT = 4;
     
+	// Constants to represent the various user states as reflected in the CSC Web app database
+	// If the table `UserStates` or any of its rows are ever modified, reflect those changes in these constants
+	const STATE_NOT_ACTIVATED = 1;
+	const STATE_ACTIVATED = 2;
+	const STATE_BLOCKED = 3;
+	
     /**
      * Main Constructor for User_model
      */
@@ -53,6 +60,7 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
+					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -108,6 +116,7 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
+					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -192,6 +201,17 @@ class User_model extends CI_Model
         $this->name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setState
+     * Set the user account state of the user
+     * 
+     * @param integer $state The state of this user model (see the STATE constants)
+     */
+    public function setState($state)
+    {
+        $this->userStateID = filter_var($state, FILTER_SANITIZE_NUMBER_INT);
+    }
+	
     /**
      * Summary of getName
      * Get the name of the user
@@ -203,6 +223,17 @@ class User_model extends CI_Model
         return $this->name;
     }
     
+	/**
+     * Summary of getState
+     * Get the user account state of the user (see STATE constants of this class)
+     * 
+     * @return integer The state of this user model or null if model not saved in database
+     */
+    public function getState()
+    {
+        return $this->userStateID;
+    }
+	
     /**
      * Summary of isStudent
      * Check whether this user has the role of a student
@@ -451,9 +482,9 @@ class User_model extends CI_Model
      */
     public function update()
     {
-        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
@@ -502,9 +533,9 @@ class User_model extends CI_Model
      */
     public function create()
     {   
-        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->insert('Users', $data);
             
