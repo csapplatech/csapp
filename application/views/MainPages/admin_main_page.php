@@ -9,7 +9,9 @@
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
 
-        <link href="magic-bootstrapV2.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+        <link href="navbar-fixed-top.css" rel="stylesheet">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
     <body style="padding-top: 60px">
@@ -27,11 +29,16 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="<?php echo site_url('Account Info'); ?>">Account Info</a></li>
-                <li class="active"><a href="<?php echo site_url('Curriculum'); ?>">Curriculum</a></li>
-                <li class="active"><a href="<?php echo site_url('Courses'); ?>">Courses</a></li>
-                <li class="active"><a href="<?php echo site_url('Bug Reports'); ?>">Bug Reports</a></li>
-                <li class="active"><a href="<?php echo site_url('Manage Users'); ?>">Manage Users</a></li>
+                <?php
+                  if ($user->isAdvisor())
+                      echo "<li><a href='" .site_url('Mainpage/advisor'). "'>Advisor Home</a></li>";
+                  if ($user->isStudent())
+                      echo "<li><a href='" .site_url('Mainpage/student'). "'>Student Home</a></li>";
+                  if ($user->isAdmin())
+                      echo "<li class='active'><a href='" .site_url('Mainpage/admin'). "'>Admin Home</a></li>";
+                  if ($user->isProgramChair())
+                      echo "<li><a href='" .site_url('Mainpage/programChair'). "'>Program Chair Home</a></li>";
+                ?>
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="<?php echo site_url('Login/logout'); ?>">Logout</a></li>
@@ -39,18 +46,6 @@
             </div><!--/.nav-collapse -->
            </div>
         </nav>
-
-        <body>
-          <div id="wrapper">
-            <div id="footer"></div>
-          </div>
-        </body>
-
-        <footer>
-          <p>Louisiana Tech University</p>
-          <p>Ruston, LA</p>
-          <p>(318)257-3036</p>
-        </footer>
 
         <p> Welcome to the Admin Main Page, <?php echo $user->getName(); ?>!</p>
         
