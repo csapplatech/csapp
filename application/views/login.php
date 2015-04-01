@@ -9,11 +9,10 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>CSAPP Login</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-    <link href="navbar-fixed-top.css" rel="stylesheet">
-    <link href="signin.css" rel="stylesheet">
+    <title>CS App Login</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="magic-bootstrapV2.css" rel="stylesheet">
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
   </head>
 
@@ -41,27 +40,43 @@
       
         <div class="container">
 
-            <?php
-              if (isset($error))
-              {
-                  echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG UuSERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
-              }
-            ?>
+    <div class="container">
 
-            <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">
-              <h2 class="form-signin-heading" style="margin-bottom:15px">Please sign in</h2>
-              <label for="inputUsername" class="sr-only">Username</label>
-              <input type="text" id="username" name="username" class="form-control" placeholder="Username" style="margin-bottom:5px" required autofocus>
-              <label for="inputPassword" class="sr-only">Password</label>
-              <input type="password" id="password" name="password" class="form-control" placeholder="Password" style="margin-bottom:25px" required>
-              <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Sign in</button>
-            </form>
-            <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
-        </div>
+      <?php
+        if(isset($error))
+        {
+          echo 'div class="alert alert-danger alert-dismissbale" role="alert">WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.,<div>';
+        }
+      ?>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+      <header>
+        <p style="font-size:250%"><font color="white">Welcome to LA Tech's CS Advising Application</p>
+      </header>
+
+      <headings>
+        <img src="tech_official_logo.jpg" alt="Tech Logo" style="width:333px;heigh283px">
+      </headings>
+
+      <form class="form-signin">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" id="username" class="form-control" placeholder="Username" style="margin-bottom:5px" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" style="margin-bottom:25px" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Sign in</button>
+      </form>
+
+      <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Guest</a>
+
+      <footer>
+        <p>Louisiana Tech University</p>
+        <p>Ruston, LA</p>
+        <p>(318)257-3036</p>
+      </footer>
+
+    </div> <!-- /container -->
+    
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
   </body>

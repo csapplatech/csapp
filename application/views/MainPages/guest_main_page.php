@@ -9,9 +9,7 @@
         <meta name="author" content="">
         <link rel="icon" href="../../favicon.ico">
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-        <link href="navbar-fixed-top.css" rel="stylesheet">
+        <link href="magic-bootstrapV2.css" rel="stylesheet">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
     <body style="padding-top: 60px">
@@ -30,6 +28,9 @@
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
                 <li class="active"><a href="<?php echo site_url('Mainpage/index'); ?>">Home</a></li>
+                <li class="active"><a href="<?php echo site_url('Curriculum'); ?>">Curriculum</a></li>
+                <li class="active"><a href="<?php echo site_url('Courses'); ?>">Courses</a></li>
+                
               </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="<?php echo site_url('Login/logout'); ?>">Logout</a></li>
@@ -37,6 +38,18 @@
             </div><!--/.nav-collapse -->
            </div>
         </nav>
+
+        <body>
+        	<div id="wrapper">
+        		<div id="footer"></div>
+        	</div>
+        </body>
+
+        <footer>
+        	<p>Louisiana Tech University</p>
+        	<p>Ruston, LA</p>
+        	<p>(318)257-3036</p>
+        </footer>
 
         <p> Welcome to the Guest Main Page, <?php echo $user->getName(); ?>!</p>
         
