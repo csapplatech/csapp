@@ -12,14 +12,15 @@ class AdvisingForm extends CI_Controller
         {
             redirect('login');
         }*/
-        $uid = 10210078;
-        $year = 2015;
+        //$uid = 10210078;
+        $uid = $_SESSION['UserID'];
+        //$year = 2015;
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
-        $quarter = academic_quarter_model::NAME_SPRING;
-        $aqm = new academic_quarter_model();
-        $aqm->loadPropertiesFromNameAndYear($quarter, $year);
+        //$quarter = academic_quarter_model::NAME_SPRING;
+        $aqm = academic_quarter_model::getLatestAcademicQuarter();
+        //$aqm->loadPropertiesFromNameAndYear($quarter, $year);
         $qid = $aqm->getAcademicQuarterID();
         $course_sections = $aqm->getAllCourseSections(); 
         
