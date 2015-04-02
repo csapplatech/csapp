@@ -52,8 +52,8 @@ class Course_section_model extends CI_Model
             
             $this->courseSectionID = $row['CourseSectionID'];
             $this->sectionName = $row['SectionName'];
-			$this->callNumber = $row['CallNumber'];
-			$this->hours = $row['Hours'];
+			//  $this->callNumber = $row['CallNumber'];
+			//$this->hours = $row['Hours'];
 			
             $this->course = new Course_model;
             

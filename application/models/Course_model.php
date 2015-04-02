@@ -46,7 +46,7 @@ class Course_model extends CI_Model
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
                 $this->courseNumber = $row['CourseNumber'];
-				$this->courseTitle = $row['CourseTitle'];
+				//$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
                 
                 return true;
