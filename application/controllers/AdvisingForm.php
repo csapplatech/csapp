@@ -123,14 +123,27 @@ class AdvisingForm extends CI_Controller
                 }
             }
         }*/
-        foreach ($working_list as $cat)
+        /*foreach ($working_list as $cat)
         {
             echo $cat->getName() . "\n" . $cat->getSubjects()[0]->getName() . "\n" .
                     $cat->getSubjects()[0]->getCourses()[0]->getName() . "\n" .
                     $cat->getSubjects()[0]->getCourses()[0]->getSections()[0]->getSectionName() . "\n";
-        }
-        $data = array('courses' => $working_list);
-        //$this->load->view('advising_view', $data);
+        }*/
+        /*foreach($working_list['Recommended']->getSubjects() as $subj)
+        {
+            foreach ($subj->getCourses() as $crs)
+            {
+                foreach($crs->getSections() as $sec)
+                {
+                    echo $subj->getName() . "\n" . $crs->getName() . "\n" . $sec->getSectionName() . "\n";
+                }
+            }
+        }*/
+        $data = array('courses' => $working_list,
+                    'quarter_id' => $qid,
+                    'cwid' => $usermod->getUserID(),
+                    'student_name' => $usermod->getName());
+        $this->load->view('advising_view', $data);
     }
     
     public function get_list($signature_required, $courseSections_passed, $course_sections)
@@ -241,6 +254,7 @@ class AdvisingForm extends CI_Controller
             {
                 $course = new Course();
                 $course->setName(reset($crs)->getCourse()->getCourseNumber());
+                $course->setTitle(reset($crs)->getCourse()->getCourseTitle());
                 $course->setSections($crs);
                 array_push($courses, $course);
             }
@@ -278,11 +292,17 @@ class Subject
 class Course
 {
     private $name;
+    private $title;
     private $sections;
     
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getTitle()
+    {
+        return $this->title;
     }
     
     public function getSections()
@@ -293,6 +313,11 @@ class Course
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
     
     public function setSections($sections)
