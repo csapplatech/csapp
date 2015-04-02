@@ -39,7 +39,6 @@ class AdvisingForm extends CI_Controller
                 array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
             }
         }
-        
         //Container holding course sections for courses already passed
         $courseSections_passed = array();
         
@@ -50,7 +49,7 @@ class AdvisingForm extends CI_Controller
         {
             //We've already gotten an array of passed courses.  Now we must remove
             //all sections whose course ID matches a passed one
-            if (array_search($value->getCourse()->getCourseID(), $courseIDs_passed) != false)
+            if (in_array($value->getCourse()->getCourseID(), $courseIDs_passed))
             {
                 array_push($courseSections_passed, $value);
                 unset($course_sections[$key]);
