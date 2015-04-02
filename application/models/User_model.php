@@ -61,7 +61,7 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
-					$this->userStateID = $row['UserStateID'];
+					//$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
