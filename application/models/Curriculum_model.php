@@ -10,9 +10,16 @@ class Curriculum_model extends CI_Model
     // Member variables, use getter / setter functions for access
     private $curriculumID = null;
     private $name = null;
+	private $curriculumType = null;
     private $dateCreated = null;
     private $curriculumCourseSlots = array();
     
+	// Constants to represent the various curriculum types as reflected in the CSC Web App database
+    // If the table `CurriculumTypes` or any of its rows are ever modified, reflect those changes in these constants
+	const CURRICULUM_TYPE_DEGREE = 1;
+	const CURRICULUM_TYPE_MINOR = 2;
+	const CURRICULUM_TYPE_CONCENTRATION = 3;
+	
     /**
      * Main constructor for Curriculum_model
      */
@@ -40,6 +47,7 @@ class Curriculum_model extends CI_Model
                 
                 $this->curriculumID = $row['CurriculumID'];
                 $this->name = $row['Name'];
+				$this->curriculumType = $row['CurriculumTypeID'];
                 $this->dateCreated = $row['DateCreated'];
                 
                 $this->db->select('CurriculumCourseSlotID');
@@ -88,6 +96,17 @@ class Curriculum_model extends CI_Model
         return $this->name;
     }
     
+	/**
+     * Summary of getCurriculumType
+     * Get the curriculum type associated with this model
+     * 
+     * @return integer The curriculum type associated with this model (See the curriculum type constants)
+     */
+	public function getCurriculumType()
+	{
+		return $this->curriculumType;
+	}
+	
     /**
      * Summary of getDateCreated
      * Get the creation date associated with this model
@@ -121,6 +140,17 @@ class Curriculum_model extends CI_Model
         $this->name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setCurriculumType
+     * Set the curriculum type to be associated with this model
+     * 
+     * @param integer $curriculumType The curriculum type associated with this model (See the curriculum type constants)
+     */
+	public function setCurriculumType($curriculumType)
+	{
+		$this->curriculumType = filter_var($curriculumType, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
     /**
      * Summary of addCurriculumCourseSlot
      * Add a new curriculum course slot model to this curriculum model
@@ -163,11 +193,11 @@ class Curriculum_model extends CI_Model
      */
     public function create()
     {
-        if($this->name != null)
+        if($this->name != null && $this->curriculumType != null && filter_var($this->curriculumType, FILTER_VALIDATE_INT))
         {
             $this->dateCreated = date('Y-m-d H:i:s');
             
-            $data = array('Name' => $this->name, 'DateCreated' => $this->dateCreated);
+            $data = array('Name' => $this->name, 'CurriculumTypeID' => $this->curriculumType, 'DateCreated' => $this->dateCreated);
             
             $this->db->insert('Curriculums', $data);
             
@@ -195,9 +225,9 @@ class Curriculum_model extends CI_Model
      */
     public function update()
     {
-        if($this->curriculumID != null && $this->name != null)
+        if($this->curriculumID != null && $this->name != null && $this->curriculumType != null && filter_var($this->curriculumType, FILTER_VALIDATE_INT))
         {
-            $data = array('Name' => $this->name);
+            $data = array('Name' => $this->name, 'CurriculumTypeID' => $this->curriculumType);
             
             $this->db->where('CurriculumID', $this->curriculumID);
             $this->db->update('Curriculums');

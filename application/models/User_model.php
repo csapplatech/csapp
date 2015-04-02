@@ -15,6 +15,7 @@ class User_model extends CI_Model
 	private $userStateID = null;
     private $roles = array();
     private $coursesTaken = array();
+	private $curriculums = array();
     
     // Constants to represent the various user roles as reflected in the CSC Web App database
     // If the table `Roles` or any of its rows are ever modified, reflect those changes in these constants
@@ -179,6 +180,17 @@ class User_model extends CI_Model
         return $this->emailAddress;
     }
     
+	/**
+	 * Summary of getCurriculums
+	 * Get all of the curriculums that this user model is bound to
+	 *
+	 * @return Array An array containing all of the curriculum models this user is bound to
+	 */
+	public function getCurriculums()
+	{
+		return $this->curriculums;
+	}
+	
     /**
      * Summary of setEmailAddress
      * Set the email address to be assoicated with this user model
@@ -211,6 +223,48 @@ class User_model extends CI_Model
     {
         $this->userStateID = filter_var($state, FILTER_SANITIZE_NUMBER_INT);
     }
+	
+	/**
+	 * Summary of addCurriculum
+	 * Add a curriculum model to bind to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to bind to this user model
+	 *
+	 * @return boolean True if the curriculum was added, false otherwise
+	 */
+	public function addCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			$this->curriculums[$curriculum->getCurriculumID()] = $curriculum;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of removeCurriculum
+	 * Remove a curriculum model that is bound to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to remove from this user model
+	 *
+	 * @return boolean True if the curriculum was removed, false otherwise
+	 */
+	public function removeCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			unset($this->curriculums[$curriculum->getCurriculumID()]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
     /**
      * Summary of getName
@@ -502,6 +556,17 @@ class User_model extends CI_Model
                 }
             }
             
+			$this->db->where('UserID', $this->userID);
+			$this->db->delete('UserCurriculums');
+			
+			if(count($this->curriculums) > 0)
+			{
+				foreach($this->curriculums as $curriculum)
+				{
+					$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+				}
+			}
+			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
             
@@ -550,6 +615,14 @@ class User_model extends CI_Model
                     $this->db->insert('UserRoles', $roledata);
                 }
                 
+				if(count($this->curriculums) > 0)
+				{
+					foreach($this->curriculums as $curriculum)
+					{
+						$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+					}
+				}
+				
                 if(count($this->coursesTaken) > 0)
                 {
                     $data_arr = array();

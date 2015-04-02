@@ -39,13 +39,16 @@ class Academic_quarter_model extends CI_Model
         {
             $results = $this->db->get_where('AcademicQuarters', array('AcademicQuarterID'=>$academicQuarterID), 1);
             
-            $row = $results->row_array();
+			if($results->num_rows() > 0)
+			{
+				$row = $results->row_array();
             
-            $this->academicQuarterID = $row['AcademicQuarterID'];
-            $this->name = $row['Name'];
-            $this->year = $row['Year'];
-            
-            return true;
+				$this->academicQuarterID = $row['AcademicQuarterID'];
+				$this->name = $row['Name'];
+				$this->year = $row['Year'];
+				
+				return true;
+			}
         }
         
         return false;
@@ -210,4 +213,36 @@ class Academic_quarter_model extends CI_Model
         
         return false;
     }
+	
+	/**
+	 * Summary of getLatestAcademicQuarter
+	 * Get the latest Academic Quarter Model available in the database
+	 *
+	 *	@return Academic_quarter_model The latest Academic Quarter model found in the database or null if no models exist
+	 */
+	public static function getLatestAcademicQuarter()
+	{
+		$db = get_instance()->db;
+		
+		$db->order_by("AcademicQuarterID", "DESC");
+		
+		$results = $db->get("AcademicQuarters", 1, 0);
+		
+		if($results->num_rows() > 0)
+		{
+			$row = $results->row_array();
+			
+			$model = new Academic_quarter_model;
+			
+			$model->academicQuarterID = $row['AcademicQuarterID'];
+			$model->name = $row['Name'];
+			$model->year = $row['Year'];
+			
+			return $model;
+		}
+		else
+		{
+			return null;
+		}
+	}
 }
