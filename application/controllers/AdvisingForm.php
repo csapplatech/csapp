@@ -123,14 +123,17 @@ class AdvisingForm extends CI_Controller
                 }
             }
         }*/
-        foreach ($working_list as $cat)
+        /*foreach ($working_list as $cat)
         {
             echo $cat->getName() . "\n" . $cat->getSubjects()[0]->getName() . "\n" .
                     $cat->getSubjects()[0]->getCourses()[0]->getName() . "\n" .
                     $cat->getSubjects()[0]->getCourses()[0]->getSections()[0]->getSectionName() . "\n";
-        }
-        $data = array('courses' => $working_list);
-        //$this->load->view('advising_view', $data);
+        }*/
+        $data = array('courses' => $working_list,
+                    'quarter_id' => $qid,
+                    'cwid' => $usermod->getUserID(),
+                    'student_name' => $usermod->getName());
+        $this->load->view('advising_view', $data);
     }
     
     public function get_list($signature_required, $courseSections_passed, $course_sections)
