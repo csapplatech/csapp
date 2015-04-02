@@ -104,9 +104,9 @@ class AdvisingForm extends CI_Controller
         //then by section.
         
         $working_list = $this->get_list($signature_required, $courseSections_passed, $course_sections);
-        $name_arr = array('Recommended', 'Passed', 'Signature');
-        $index = 0;
-        foreach ($working_list as $cat)
+        //$name_arr = array('Recommended', 'Passed', 'Signature');
+        //$index = 0;
+        /*foreach ($working_list as $cat)
         {
             $name = $name_arr[$index];
             $index = $index + 1;
@@ -122,15 +122,36 @@ class AdvisingForm extends CI_Controller
                     }
                 }
             }
+        }*/
+        foreach ($working_list as $cat)
+        {
+            echo $cat->getName() . "\n" . $cat->getSubjects()[0]->getName() . "\n" .
+                    $cat->getSubjects()[0]->getCourses()[0]->getName() . "\n" .
+                    $cat->getSubjects()[0]->getCourses()[0]->getSections()[0]->getSectionName() . "\n";
         }
+        $data = array('courses' => $working_list);
+        //$this->load->view('advising_view', $data);
     }
     
     public function get_list($signature_required, $courseSections_passed, $course_sections)
     {
         $result = array();
-        array_push($result, $this->course_sort($course_sections));
-        array_push($result, $this->course_sort($courseSections_passed));
-        array_push($result, $this->course_sort($signature_required));
+        $sig = new Category();
+        $sig->setName(Category::NAME_SIG);
+        $sig->setSubjects($this->course_sort($signature_required));
+        
+        
+        $passed = new Category();
+        $passed->setName(Category::NAME_PASSED);
+        $passed->setSubjects($this->course_sort($courseSections_passed));
+        
+        $rec = new Category();
+        $rec->setName(Category::NAME_REC);
+        $rec->setSubjects($this->course_sort($course_sections));
+        
+        $result['Recommended'] = $rec;
+        $result['Passed'] = $passed;
+        $result['Signature'] = $sig;
         return $result;
     }
     
@@ -209,8 +230,102 @@ class AdvisingForm extends CI_Controller
                     reset(reset($b))->getCourse()->getCourseName() ? 1 : -1;
         });
         
-        
-        
+        $copy = $result;
+        $result = array();
+        foreach($copy as $subj)
+        {
+            $subject = new Subject();
+            $subject->setName(reset(reset($subj))->getCourse()->getCourseName());
+            $courses = array();
+            foreach($subj as $crs)
+            {
+                $course = new Course();
+                $course->setName(reset($crs)->getCourse()->getCourseNumber());
+                $course->setSections($crs);
+                array_push($courses, $course);
+            }
+            $subject->setCourses($courses);
+            array_push($result, $subject);                  
+        }
         return $result;
+    }
+}
+class Subject
+{
+    private $name;
+    private $courses;
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function getCourses()
+    {
+        return $this->courses;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    
+    public function setCourses($courses)
+    {
+        $this->courses = $courses;
+    }
+}
+class Course
+{
+    private $name;
+    private $sections;
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function getSections()
+    {
+        return $this->sections;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    
+    public function setSections($sections)
+    {
+        $this->sections = $sections;
+    }
+}
+class Category
+{
+    private $name;
+    private $subjects;
+    
+    const NAME_SIG = "Signature Required";
+    const NAME_PASSED = "Passed";
+    const NAME_REC = "Recommended";
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function getSubjects()
+    {
+        return $this->subjects;
+    }
+    
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+    
+    public function setSubjects($subjects)
+    {
+        $this->subjects = $subjects;
     }
 }
