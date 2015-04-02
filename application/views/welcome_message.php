@@ -11,7 +11,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 <?php
 echo '<button type="button">';
-echo "<a href=\"checklistexport/index/10210698\">Download</a>";
+echo "<a href=\"index.php/checklistexport/index/10210698\">Download</a>";
 echo '</button>';
 ?>
 
@@ -19,7 +19,7 @@ echo '</button>';
 
 <?php
 echo '<button type="button">';
-echo "<a href=\"activation/index/10210698\">Download</a>";
+echo "<a href=\"index.php/activation/index/10210698\">Download</a>";
 echo '</button>';
 ?>
 
