@@ -68,23 +68,27 @@ class Course_section_model extends CI_Model
 			
 			if(isset($t[Course_section_time_model::DAY_MONDAY]))
 			{
-				$tStr = $tStr . $t[Course_section_time_model::DAY_MONDAY]
+				$tStr = $tStr . $t[Course_section_time_model::DAY_MONDAY];
 			}
-			else if(isset($t[Course_section_time_model::DAY_TUESDAY]))
+			
+			if(isset($t[Course_section_time_model::DAY_TUESDAY]))
 			{
-				$tStr = $tStr . $t[Course_section_time_model::DAY_TUESDAY]
+				$tStr = $tStr . $t[Course_section_time_model::DAY_TUESDAY];
 			}
-			else if(isset($t[Course_section_time_model::DAY_WEDNESDAY]))
+			
+			if(isset($t[Course_section_time_model::DAY_WEDNESDAY]))
 			{
-				$tStr = $tStr . $t[Course_section_time_model::DAY_WEDNESDAY]
+				$tStr = $tStr . $t[Course_section_time_model::DAY_WEDNESDAY];
 			}
-			else if(isset($t[Course_section_time_model::DAY_THURSDAY]))
+			
+			if(isset($t[Course_section_time_model::DAY_THURSDAY]))
 			{
-				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY]
+				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY];
 			}
-			else if(isset($t[Course_section_time_model::DAY_FRIDAY]))
+			
+			if(isset($t[Course_section_time_model::DAY_FRIDAY]));
 			{
-				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY]
+				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
 			}
 			$outputString = $outputString . $tStr . " " . key($temp) . ";";
 		}
