@@ -255,6 +255,7 @@ class AdvisingForm extends CI_Controller
                 $course = new Course();
                 $course->setName(reset($crs)->getCourse()->getCourseNumber());
                 $course->setTitle(reset($crs)->getCourse()->getCourseTitle());
+                $course->setHours(reset($crs)->getHours());
                 $course->setSections($crs);
                 array_push($courses, $course);
             }
@@ -293,6 +294,7 @@ class Course
 {
     private $name;
     private $title;
+    private $hours;
     private $sections;
     
     public function getName()
@@ -303,6 +305,11 @@ class Course
     public function getTitle()
     {
         return $this->title;
+    }
+    
+    public function getHours()
+    {
+        return $this->hours;
     }
     
     public function getSections()
@@ -318,6 +325,11 @@ class Course
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+    
+    public function setHours($hours)
+    {
+        $this->hours = $hours;
     }
     
     public function setSections($sections)
