@@ -60,7 +60,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('database');
+$autoload['libraries'] = array();
 
 
 /*
@@ -88,7 +88,7 @@ $autoload['drivers'] = array();
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('url','form','string','array','file','email');
+$autoload['helper'] = array();
 
 
 /*
@@ -137,4 +137,4 @@ $autoload['language'] = array();
 |	$autoload['model'] = array('first_model' => 'first');
 */
 
-$autoload['model'] = array('User_model', 'Course_model', 'Curriculum_model', 'Curriculum_course_slot_model', 'Course_section_model', 'Course_section_time_model', 'Advising_appointment_model', 'Advising_schedule_model', 'Academic_quarter_model');
+$autoload['model'] = array();
