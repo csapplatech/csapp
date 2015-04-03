@@ -53,6 +53,7 @@ and open the template in the editor.
 
 th, td {
     border: 1px solid grey;
+    text-align: center;
 }
 
 table {
@@ -129,4 +130,8 @@ h4 {
 #namecwid {
     height: 26px;  
     vertical-align: middle;
+}
+
+#hidden {
+    display:none;
 }

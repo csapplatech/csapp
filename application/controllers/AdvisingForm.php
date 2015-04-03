@@ -12,9 +12,9 @@ class AdvisingForm extends CI_Controller
         {
             redirect('login');
         }*/
-        //$uid = 10210078;
-        $uid = $_SESSION['UserID'];
-        //$year = 2015;
+        $uid = 10210078;
+        //$uid = $_SESSION['UserID'];
+        $year = 2015;
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
