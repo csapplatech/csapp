@@ -111,7 +111,10 @@
                     <th><table class='noborder'>
                         <tr><th class="noborder">Louisiana Tech University</th></tr>
                         <tr><th class="noborder">ADVISING FORM</th></tr>
-                        <tr><th class="noborder">Quarter <u><?php echo $quarter_id; ?></u></th></tr>
+                        <tr><th class="noborder">Quarter <u><?php
+                        $quarter = new academic_quarter_model();
+                        $quarter->loadPropertiesFromPrimaryKey($quarter_id);
+                        echo $quarter->getName() . " " . $quarter->getYear();?></u></th></tr>
                 </table> </th>
                     <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
                 </tr>

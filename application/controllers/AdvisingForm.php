@@ -18,8 +18,9 @@ class AdvisingForm extends CI_Controller
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
-        //$quarter = academic_quarter_model::NAME_SPRING;
+        $quarter = academic_quarter_model::NAME_SPRING;
         $aqm = academic_quarter_model::getLatestAcademicQuarter();
+        //$aqm = new academic_quarter_model();
         //$aqm->loadPropertiesFromNameAndYear($quarter, $year);
         $qid = $aqm->getAcademicQuarterID();
         $course_sections = $aqm->getAllCourseSections(); 
