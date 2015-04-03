@@ -23,6 +23,7 @@ class User_model extends CI_Model
     const ROLE_PROGRAM_CHAIR = 2;
     const ROLE_ADVISOR = 3;
     const ROLE_STUDENT = 4;
+	const ROLE_GUEST = 5;
     
 	// Constants to represent the various user states as reflected in the CSC Web app database
 	// If the table `UserStates` or any of its rows are ever modified, reflect those changes in these constants
@@ -287,6 +288,17 @@ class User_model extends CI_Model
     {
         return $this->userStateID;
     }
+	
+	/**
+     * Summary of isGuest
+     * Check whether this user has the role of a guest
+     * 
+     * @return boolean True is the user has a guest role, false otherwise
+     */
+	public function isGuest()
+	{
+		return in_array(self::ROLE_GUEST, $this->roles);
+	}
 	
     /**
      * Summary of isStudent
