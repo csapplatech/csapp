@@ -35,6 +35,88 @@ class Course_section_model extends CI_Model
         return $this->course->getCourseName() . $this->course->getCourseNumber() . $this->courseSectionName . $this->hours . $this->callNumber . $this->academicQuarter->getName() . $this->academicQuarter->getYear();
     }
     
+	/**
+	 * Summary of getCourseSectionTimesAsString
+	 * Get the course sections times for this course section as a string similar to how they are represented on BOSS
+	 *
+	 * @return string A string representing all the course section times like on BOSS
+	 */
+	public function getCourseSectionTimesAsString()
+	{
+		$outputString = "";
+		
+		$temp = array();
+		
+		foreach($this->courseSectionTimes as $courseSectionTime)
+		{
+			$startTime = militaryToStandardTime($courseSectionTime->getStartTime());
+			$endTime = militaryToStandardTime($courseSectionTime->getEndTime());
+			
+			$index = $startTime . " - " . $endTime;
+			
+			if(!isset($temp[$index]))
+			{
+				$temp[$index] = array();
+			}
+			
+			$temp[$index][$courseSectionTime->getDayOfWeek()] = $courseSectionTime->getDayOfWeekLetter();
+		}
+		
+		foreach($temp as $t)
+		{
+			$tStr = "";
+			
+			if(isset($t[Course_section_time_model::DAY_MONDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_MONDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_TUESDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_TUESDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_WEDNESDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_WEDNESDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_THURSDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_FRIDAY]));
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
+			}
+			$outputString = $outputString . $tStr . " " . key($temp) . ";";
+		}
+		
+		return $outputString;
+	}
+	
+	/**
+	 * Summary of militaryToStandardTime
+	 * Convert the database stored military time to a standard time notation
+	 *
+	 *	@param integer $time The time expressed in military time
+	 *	@return string The time converted to standard time notation
+	 */
+	private static function militaryToStandardTime($time)
+	{
+		$hour = intval($time / 100);
+		
+		if($hour > 12)
+		{
+			$hour = $hour - 12;
+		}
+		
+		$minute = intval($time % 100);
+		
+		return $hour . ":" . $minute;
+	}
+	
     /**
      * Summary of loadPropertiesFromPrimaryKey
      * Loads a course section model's data from the database into this object using a CourseSectionID as a primary key lookup

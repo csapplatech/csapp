@@ -13,13 +13,15 @@ class AdvisingForm extends CI_Controller
             redirect('login');
         }*/
         $uid = 10210078;
+        //$uid = $_SESSION['UserID'];
         $year = 2015;
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
         $quarter = academic_quarter_model::NAME_SPRING;
-        $aqm = new academic_quarter_model();
-        $aqm->loadPropertiesFromNameAndYear($quarter, $year);
+        $aqm = academic_quarter_model::getLatestAcademicQuarter();
+        //$aqm = new academic_quarter_model();
+        //$aqm->loadPropertiesFromNameAndYear($quarter, $year);
         $qid = $aqm->getAcademicQuarterID();
         $course_sections = $aqm->getAllCourseSections(); 
         
@@ -39,7 +41,6 @@ class AdvisingForm extends CI_Controller
                 array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
             }
         }
-        
         //Container holding course sections for courses already passed
         $courseSections_passed = array();
         
@@ -50,7 +51,7 @@ class AdvisingForm extends CI_Controller
         {
             //We've already gotten an array of passed courses.  Now we must remove
             //all sections whose course ID matches a passed one
-            if (array_search($value->getCourse()->getCourseID(), $courseIDs_passed) != false)
+            if (in_array($value->getCourse()->getCourseID(), $courseIDs_passed))
             {
                 array_push($courseSections_passed, $value);
                 unset($course_sections[$key]);
@@ -255,6 +256,7 @@ class AdvisingForm extends CI_Controller
                 $course = new Course();
                 $course->setName(reset($crs)->getCourse()->getCourseNumber());
                 $course->setTitle(reset($crs)->getCourse()->getCourseTitle());
+                $course->setHours(reset($crs)->getHours());
                 $course->setSections($crs);
                 array_push($courses, $course);
             }
@@ -293,6 +295,7 @@ class Course
 {
     private $name;
     private $title;
+    private $hours;
     private $sections;
     
     public function getName()
@@ -303,6 +306,11 @@ class Course
     public function getTitle()
     {
         return $this->title;
+    }
+    
+    public function getHours()
+    {
+        return $this->hours;
     }
     
     public function getSections()
@@ -318,6 +326,11 @@ class Course
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+    
+    public function setHours($hours)
+    {
+        $this->hours = $hours;
     }
     
     public function setSections($sections)
