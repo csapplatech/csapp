@@ -686,6 +686,13 @@ class User_model extends CI_Model
         
         $finalFlag = true;
         
+		$len2 = strlen($this->passwordHash);
+		
+		if($len < 1 || $len2 != $len)
+		{
+			$finalFlag = false;
+		}
+		
         for($i=0;$i<$len;$i++)
         {
             if ($finalFlag && $hashedPasswordGuess[$i] != $this->passwordHash[$i])

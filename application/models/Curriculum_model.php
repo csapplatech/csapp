@@ -303,4 +303,4 @@ class Curriculum_model extends CI_Model
         
         return $data;
     }
-}   
+}
