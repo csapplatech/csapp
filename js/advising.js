@@ -1,6 +1,5 @@
 $(document).ready(function() {
    $('.clickMe').click(function() {
-       console.log("blah");
            ($(this).next()).toggle();
    }); 
    $(".button").on("click", function(){      
@@ -9,7 +8,17 @@ $(document).ready(function() {
     {
         $(this).text("Add Alt");
         var tableID="row"+butID;
-        $('#target').append("<tr id='"+tableID+"'> <td>Eve</td><td>Jackson</td> <td></td><td>94</td>"+tableID+"<td>"+$(this).attr('id')+"</td><td></td></tr>");
+        cellAid="#a"+butID;
+        cellA =$(cellAid).text();
+        cellBid="#b"+butID;
+        cellB =$(cellBid).text();
+        cellCid="#c"+butID;
+        cellC =$(cellCid).text();
+        cellDid="#d"+butID;
+        cellD =$(cellDid).text();
+        cellEid="#e"+butID;
+        cellE =$(cellEid).text();
+        $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
     }
     else if($(this).text()=="Add Alt")
     {
@@ -17,7 +26,16 @@ $(document).ready(function() {
         $(removeID).remove();
         $(this).text("Remove");
         var tableID="row"+butID;
-        $('#altTable').append("<tr id='"+tableID+"'> <td >Eve</td><td>Jackson</td> <td></td><td>94</td>"+tableID+"<td>"+$(this).attr('id')+"</td><td></td></tr>");
+        cellA =$(cellAid).text();
+        cellBid="#b"+butID;
+        cellB =$(cellBid).text();
+        cellCid="#c"+butID;
+        cellC =$(cellCid).text();
+        cellDid="#d"+butID;
+        cellD =$(cellDid).text();
+        cellEid="#e"+butID;
+        cellE =$(cellEid).text();
+        $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
     } else {
         var removeID ="#row"+butID;
         $(this).text("Add");

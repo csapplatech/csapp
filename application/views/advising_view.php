@@ -23,11 +23,18 @@
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). " " . $cor->getName() . " ". $cor->getTitle(). "</li>" ;
+                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). "<button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">WIP</span>".
+                                     "</div>";
                                 $id++;
                             }
                         echo "</ul>";
@@ -39,16 +46,23 @@
             <h4 class="class_headers">Classes Taken</h4>
             <ul>
                 <?php 
-                $id=200;
+                $id=100;
                 foreach ($courses['Passed']->getSubjects() as $sub)
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). " " . $cor->getName() . " ". $cor->getTitle(). "</li>" ;
+                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). "<button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">WIP</span>".
+                                     "</div>";
                                 $id++;
                             }
                         echo "</ul>";
@@ -59,17 +73,25 @@
           
             <h4 class="class_headers">Requirements Not Met</h4>
             <ul>
+                
                 <?php 
-                $id=300;
+                $id=200;
                 foreach ($courses['Signature']->getSubjects() as $sub)
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). " " . $cor->getName() . " ". $cor->getTitle(). "</li>" ;
+                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). "<button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">WIP</span>".
+                                     "</div>";
                                 $id++;
                             }
                         echo "</ul>";
@@ -78,42 +100,26 @@
                 ?>
              </ul>
             <br>
-            <p id='temp'><em><u>Link to Racing form</u></em></p>
+            <p id='temp'><em><u>Link to Racing form (WIP)</u></em></p>
                
         </div>
         
         <div id="advise" class="print">
-            
-            <!--
-                <?/*php echo site_url('login/check'); */?>
-            <?php
-            
-                /*echo '<ul>';
-                foreach($courses as $cs){
-                 echo '<li>'.$cs->tostring().'</li>';
-                }
-                echo '</ul>';
-                 echo '<ul>';
-                /*foreach($sample as $cs){
-                 echo '<li>'.$cs->tostring().'</li>';
-                }*/ 
-                //echo '</ul>';
-            ?> !-->
             <table>
                 <tr>
                     <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
                     <th><table class='noborder'>
                         <tr><th class="noborder">Louisiana Tech University</th></tr>
                         <tr><th class="noborder">ADVISING FORM</th></tr>
-                        <tr><th class="noborder">Quarter <u>???????</u></th></tr>
+                        <tr><th class="noborder">Quarter <u><?php echo $quarter_id; ?></u></th></tr>
                 </table> </th>
                     <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
                 </tr>
             </table>
             <table>
                 <tr id='namecwid'>
-                    <th class="noborder" style="text-align:left; padding-left: 8%">Student Name: <u>?????????</u></th>
-            <th class="noborder" style="text-align:right; padding-right: 8%">CWID#<u>????????????</u></th>
+                    <th class="noborder" style="text-align:left; padding-left: 8%">Student Name: <u><?php echo $student_name; ?></u></th>
+            <th class="noborder" style="text-align:right; padding-right: 8%">CWID: <u><?php echo $cwid; ?></u></th>
                 </tr>
             </table>
             <table id='target'>
