@@ -156,6 +156,37 @@ class Course_model extends CI_Model
     }
     
 	/**
+	 * Summary of getCoursesPrerequisiteTo
+	 * Get all of the courses that this course is a prerequisite for
+	 *
+	 * @return Array An array containing all the courses that this course is a prerequisite for
+	 */
+	public function getCoursesPrerequisiteTo()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('CourseID');
+			$this->db->where('RequisiteCourseID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
 	 * Summary of getPrerequisiteCourses
 	 * Get all of the prerequisite courses for this course
 	 *
