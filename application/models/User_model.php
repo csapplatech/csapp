@@ -12,8 +12,10 @@ class User_model extends CI_Model
     private $emailAddress = null;
     private $passwordHash = null;
     private $name = null;
+	private $userStateID = null;
     private $roles = array();
     private $coursesTaken = array();
+	private $curriculums = array();
     
     // Constants to represent the various user roles as reflected in the CSC Web App database
     // If the table `Roles` or any of its rows are ever modified, reflect those changes in these constants
@@ -21,7 +23,14 @@ class User_model extends CI_Model
     const ROLE_PROGRAM_CHAIR = 2;
     const ROLE_ADVISOR = 3;
     const ROLE_STUDENT = 4;
+	const ROLE_GUEST = 5;
     
+	// Constants to represent the various user states as reflected in the CSC Web app database
+	// If the table `UserStates` or any of its rows are ever modified, reflect those changes in these constants
+	const STATE_NOT_ACTIVATED = 1;
+	const STATE_ACTIVATED = 2;
+	const STATE_BLOCKED = 3;
+	
     /**
      * Main Constructor for User_model
      */
@@ -53,6 +62,7 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
+					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -108,6 +118,7 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
+					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -170,6 +181,17 @@ class User_model extends CI_Model
         return $this->emailAddress;
     }
     
+	/**
+	 * Summary of getCurriculums
+	 * Get all of the curriculums that this user model is bound to
+	 *
+	 * @return Array An array containing all of the curriculum models this user is bound to
+	 */
+	public function getCurriculums()
+	{
+		return $this->curriculums;
+	}
+	
     /**
      * Summary of setEmailAddress
      * Set the email address to be assoicated with this user model
@@ -192,6 +214,59 @@ class User_model extends CI_Model
         $this->name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setState
+     * Set the user account state of the user
+     * 
+     * @param integer $state The state of this user model (see the STATE constants)
+     */
+    public function setState($state)
+    {
+        $this->userStateID = filter_var($state, FILTER_SANITIZE_NUMBER_INT);
+    }
+	
+	/**
+	 * Summary of addCurriculum
+	 * Add a curriculum model to bind to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to bind to this user model
+	 *
+	 * @return boolean True if the curriculum was added, false otherwise
+	 */
+	public function addCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			$this->curriculums[$curriculum->getCurriculumID()] = $curriculum;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of removeCurriculum
+	 * Remove a curriculum model that is bound to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to remove from this user model
+	 *
+	 * @return boolean True if the curriculum was removed, false otherwise
+	 */
+	public function removeCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			unset($this->curriculums[$curriculum->getCurriculumID()]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of getName
      * Get the name of the user
@@ -203,6 +278,28 @@ class User_model extends CI_Model
         return $this->name;
     }
     
+	/**
+     * Summary of getState
+     * Get the user account state of the user (see STATE constants of this class)
+     * 
+     * @return integer The state of this user model or null if model not saved in database
+     */
+    public function getState()
+    {
+        return $this->userStateID;
+    }
+	
+	/**
+     * Summary of isGuest
+     * Check whether this user has the role of a guest
+     * 
+     * @return boolean True is the user has a guest role, false otherwise
+     */
+	public function isGuest()
+	{
+		return in_array(self::ROLE_GUEST, $this->roles);
+	}
+	
     /**
      * Summary of isStudent
      * Check whether this user has the role of a student
@@ -364,7 +461,7 @@ class User_model extends CI_Model
      * Add a course section to be associated with this user model
      * 
      * @param mixed $courseSection The course section model to associate with this model
-     * @param mixed $grade The grade this student got for the course section (0 = F, 4 = A)
+     * @param string $grade The grade this student got for the course section (0 = F, 4 = A)
      * @return boolean True if the course section was successfully added, false otherwise
      */
     public function addCourseSection($courseSection, $grade)
@@ -421,7 +518,28 @@ class User_model extends CI_Model
         
         return $data;
     }
-    
+	
+	/**
+	 * Summary of getGradeForCourseSection
+	 * Get the grade the student user model got for a particular course section
+	 *
+	 * @param Course_section_model The course section model to look up a grade for
+	 * @return string Returns the grade a student got for that course section or false if no grade was found
+	 */
+	public function getGradeForCourseSection($courseSection)
+	{
+		$searchstr = $courseSection->toString();
+		
+		if(isset($this->coursesTaken[$searchstr]))
+		{
+			return $this->coursesTaken[$searchstr][1];
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this user model with newly modified information
@@ -430,9 +548,9 @@ class User_model extends CI_Model
      */
     public function update()
     {
-        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
@@ -450,6 +568,17 @@ class User_model extends CI_Model
                 }
             }
             
+			$this->db->where('UserID', $this->userID);
+			$this->db->delete('UserCurriculums');
+			
+			if(count($this->curriculums) > 0)
+			{
+				foreach($this->curriculums as $curriculum)
+				{
+					$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+				}
+			}
+			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
             
@@ -481,9 +610,9 @@ class User_model extends CI_Model
      */
     public function create()
     {   
-        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->insert('Users', $data);
             
@@ -498,6 +627,14 @@ class User_model extends CI_Model
                     $this->db->insert('UserRoles', $roledata);
                 }
                 
+				if(count($this->curriculums) > 0)
+				{
+					foreach($this->curriculums as $curriculum)
+					{
+						$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+					}
+				}
+				
                 if(count($this->coursesTaken) > 0)
                 {
                     $data_arr = array();
@@ -561,6 +698,13 @@ class User_model extends CI_Model
         
         $finalFlag = true;
         
+		$len2 = strlen($this->passwordHash);
+		
+		if($len < 1 || $len2 != $len)
+		{
+			$finalFlag = false;
+		}
+		
         for($i=0;$i<$len;$i++)
         {
             if ($finalFlag && $hashedPasswordGuess[$i] != $this->passwordHash[$i])

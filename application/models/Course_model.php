@@ -11,8 +11,13 @@ class Course_model extends CI_Model
     private $courseID = null;
     private $courseName = null;
     private $courseNumber = null;
+	private $courseTitle = null;
     private $courseDescription = null;
     
+	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
+	const COURSE_REQUISITE_PREREQUISITE = 1;
+	const COURSE_REQUISITE_COREQUISITE = 2;
+	
     /**
      * Main constructor for Course_model
      */
@@ -41,6 +46,7 @@ class Course_model extends CI_Model
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
                 $this->courseNumber = $row['CourseNumber'];
+				//$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
                 
                 return true;
@@ -83,6 +89,17 @@ class Course_model extends CI_Model
         return $this->courseNumber;
     }
     
+	/**
+     * Summary of getCourseTitle
+     * Get the course title of this model
+     * 
+     * @return string The course title associated with this course model
+     */
+	public function getCourseTitle()
+	{
+		return $this->courseTitle;
+	}
+	
     /**
      * Summary of getCourseDescription
      * Get the course description of this model
@@ -104,7 +121,7 @@ class Course_model extends CI_Model
     {
         $this->courseName = filter_var($courseName, FILTER_SANITIZE_MAGIC_QUOTES);
     }
-    
+	
     /**
      * Summary of setCourseNumber
      * Set the course number for this model
@@ -116,6 +133,17 @@ class Course_model extends CI_Model
         $this->courseNumber = filter_var($courseNumber, FILTER_SANITIZE_NUMBER_INT);
     }
     
+	/**
+     * Summary of setCourseTitle
+     * Set the course title for this model
+     * 
+     * @param string $courseTitle The course title to be associated with this model
+     */
+	public function setCourseTitle($courseTitle)
+	{
+		$this->courseTitle = filter_var($courseTitle, FILTER_SANITIZE_MAGIC_QUOTES);
+	}
+	
     /**
      * Summary of setCourseDescription
      * Set the course description for this model
@@ -127,6 +155,145 @@ class Course_model extends CI_Model
         $this->courseDescription = filter_var($courseDescription, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+	 * Summary of getCoursesPrerequisiteTo
+	 * Get all of the courses that this course is a prerequisite for
+	 *
+	 * @return Array An array containing all the courses that this course is a prerequisite for
+	 */
+	public function getCoursesPrerequisiteTo()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('CourseID');
+			$this->db->where('RequisiteCourseID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getPrerequisiteCourses
+	 * Get all of the prerequisite courses for this course
+	 *
+	 * @return Array An array containing all the courses that are prerequisites to this course
+	 */
+	public function getPrerequisiteCourses()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getCorequisiteCourses
+	 * Get all of the co-requisite courses for this course
+	 *
+	 * @return Array An array containing all the courses that are co-requisites to this course
+	 */
+	public function getCorequisiteCourses()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+			
+			$this->db->select('CourseID');
+			$this->db->where('RequisiteCourseID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getAllCurriculumCourseSlots
+	 * Get all of the curriculum course slots that this course is compatible with
+	 *
+	 * @return Array An array containing curriculum course slot models that are compatible with this course
+	 */
+	public function getAllCurriculumCourseSlots()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->where("CourseID", $this->courseID);
+			$this->db->select("CurriculumCourseSlotID");
+			
+			$results = $this->db->get("CurriculumSlotValidCourses");
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Curriculum_course_slot_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this course model with newly modified information
@@ -137,7 +304,12 @@ class Course_model extends CI_Model
     {
         if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseName' => $this->courseName, 'CourseNumber' => $this->courseNumber, 'CourseDescription' => $this->courseDescription);
+            $data = array(
+				'CourseName' => $this->courseName, 
+				'CourseNumber' => $this->courseNumber, 
+				'CourseTitle' => $this->courseTitle,
+				'CourseDescription' => $this->courseDescription
+			);
             
             $this->db->where('CourseID', $this->courseID);
             $this->db->update('Courses', $data);
@@ -160,7 +332,12 @@ class Course_model extends CI_Model
     {
         if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseName' => $this->courseName, 'CourseNumber' => $this->courseNumber, 'CourseDescription' => $this->courseDescription);
+            $data = array(
+				'CourseName' => $this->courseName, 
+				'CourseNumber' => $this->courseNumber, 
+				'CourseTitle' => $this->courseTitle,
+				'CourseDescription' => $this->courseDescription
+			);
             
             $this->db->insert('Courses', $data);
             

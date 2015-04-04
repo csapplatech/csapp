@@ -11,6 +11,8 @@ class Course_section_model extends CI_Model
     private $courseSectionID = null;
     private $courseSectionName = null;
     private $course = null;
+	private $hours = null;
+	private $callNumber = null;
     private $academicQuarter = null;
     private $courseSectionTimes = array();
     
@@ -30,9 +32,91 @@ class Course_section_model extends CI_Model
      */
     public function toString()
     {
-        return $this->course->getCourseName() . $this->course->getCourseNumber() . $this->courseSectionName . $this->academicQuarter->getName() . $this->academicQuarter->getYear();
+        return $this->course->getCourseName() . $this->course->getCourseNumber() . $this->courseSectionName . $this->hours . $this->callNumber . $this->academicQuarter->getName() . $this->academicQuarter->getYear();
     }
     
+	/**
+	 * Summary of getCourseSectionTimesAsString
+	 * Get the course sections times for this course section as a string similar to how they are represented on BOSS
+	 *
+	 * @return string A string representing all the course section times like on BOSS
+	 */
+	public function getCourseSectionTimesAsString()
+	{
+		$outputString = "";
+		
+		$temp = array();
+		
+		foreach($this->courseSectionTimes as $courseSectionTime)
+		{
+			$startTime = militaryToStandardTime($courseSectionTime->getStartTime());
+			$endTime = militaryToStandardTime($courseSectionTime->getEndTime());
+			
+			$index = $startTime . " - " . $endTime;
+			
+			if(!isset($temp[$index]))
+			{
+				$temp[$index] = array();
+			}
+			
+			$temp[$index][$courseSectionTime->getDayOfWeek()] = $courseSectionTime->getDayOfWeekLetter();
+		}
+		
+		foreach($temp as $t)
+		{
+			$tStr = "";
+			
+			if(isset($t[Course_section_time_model::DAY_MONDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_MONDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_TUESDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_TUESDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_WEDNESDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_WEDNESDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_THURSDAY]))
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY];
+			}
+			
+			if(isset($t[Course_section_time_model::DAY_FRIDAY]));
+			{
+				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
+			}
+			$outputString = $outputString . $tStr . " " . key($temp) . ";";
+		}
+		
+		return $outputString;
+	}
+	
+	/**
+	 * Summary of militaryToStandardTime
+	 * Convert the database stored military time to a standard time notation
+	 *
+	 *	@param integer $time The time expressed in military time
+	 *	@return string The time converted to standard time notation
+	 */
+	private static function militaryToStandardTime($time)
+	{
+		$hour = intval($time / 100);
+		
+		if($hour > 12)
+		{
+			$hour = $hour - 12;
+		}
+		
+		$minute = intval($time % 100);
+		
+		return $hour . ":" . $minute;
+	}
+	
     /**
      * Summary of loadPropertiesFromPrimaryKey
      * Loads a course section model's data from the database into this object using a CourseSectionID as a primary key lookup
@@ -50,6 +134,9 @@ class Course_section_model extends CI_Model
             
             $this->courseSectionID = $row['CourseSectionID'];
             $this->sectionName = $row['SectionName'];
+			//  $this->callNumber = $row['CallNumber'];
+			//$this->hours = $row['Hours'];
+			
             $this->course = new Course_model;
             
             if($this->course->loadPropertiesFromPrimaryKey($row['CourseID']))
@@ -107,6 +194,26 @@ class Course_section_model extends CI_Model
         return $this->sectionName;
     }
     
+	/**
+     * Summary of getHours
+     * 
+     * @return integer The course credit hours of this course section model
+     */
+	public function getHours()
+	{
+		return $this->hours;
+	}
+	
+	/**
+     * Summary of getCallNumber
+     * 
+     * @return integer The call number of this course section model
+     */
+	public function getCallNumber()
+	{
+		return $this->callNumber;
+	}
+	
     /**
      * Summary of getAcademicQuarter
      * Get the academic quarter this course section model exists in
@@ -140,6 +247,28 @@ class Course_section_model extends CI_Model
         $this->sectionName = filter_var($sectionName, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setCallNumber
+     * Set the call number for this course section
+     * 
+     * @param integer $callNumber The call number to be associated with this course model
+     */
+	public function setCallNumber($callNumber)
+	{
+		$this->callNumber = filter_var($callNumber, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
+	/**
+     * Summary of setHours
+     * Set the course credit hours for this course section
+     * 
+     * @param integer $hours The credit hours for this course model
+     */
+	public function setHours($hours)
+	{
+		$this->hours = filter_var($hours, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
     /**
      * Summary of setCourseFromID
      * Look up a course model by its course id and associate it with this course section model
@@ -228,9 +357,15 @@ class Course_section_model extends CI_Model
      */
     public function create()
     {   
-        if($this->academicQuarter != null && $this->sectionName != null && $this->course != null)
+        if($this->academicQuarter != null && $this->sectionName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseID' => $this->course->getCourseID(), 'SectionName' => $this->sectionName, 'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID());
+            $data = array(
+				'CourseID' => $this->course->getCourseID(), 
+				'SectionName' => $this->sectionName, 
+				'Hours' => $this->hours,
+				'CallNumber' => $this->callNumber,
+				'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID()
+			);
             
             $this->db->insert('CourseSections', $data);
             
@@ -260,9 +395,15 @@ class Course_section_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->course != null)
+        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
-            $data = array('CourseID' => $this->course->getCourseID(), 'SectionName' => $this->sectionName, 'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID());
+            $data = array(
+				'CourseID' => $this->course->getCourseID(), 
+				'SectionName' => $this->sectionName, 
+				'Hours' => $this->hours,
+				'CallNumber' => $this->callNumber,
+				'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID()
+			);
             
             $this->db->where('CourseSectionID', $this->courseSectionID);
             $this->db->update('CourseSections');

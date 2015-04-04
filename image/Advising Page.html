@@ -1,0 +1,126 @@
+
+<!-- saved from url=(0024)https://localhost/csapp/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="https://localhost/csapp/css/advising.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://localhost/csapp/css/print.css" type="text/css" media="print">
+        <!--<link href="https://localhost/csapp/css/bootstrap.min.css" rel="stylesheet" type="text/css">!-->
+        <script type="text/javascript" src="https://localhost/csapp/js/jquery.js"></script><style type="text/css"></style>
+        <script type="text/javascript" src="https://localhost/csapp/js/bootstrap.min.js"></script>   
+        <script type="text/javascript" src="https://localhost/csapp/js/advising.js"></script>
+    
+        <title>Advising Page</title>
+    </head>
+    <body id="background">
+
+        <h1 id="head">Advising Page</h1>
+        
+        <div id="courses">
+            <h4 class="class_headers" style="margin-top:.5%">Suggested Classes</h4>
+             <ul>
+                <li class="clickMe">CSC 120</li><ul style="display: none;"><li>001</li><li>002</li></ul><li class="clickMe">MATH 242</li><ul style="display: none;"><li>001</li></ul><li class="clickMe">MATH 243</li><ul style="display: none;"><li>001</li></ul><li class="clickMe">MATH 244</li><ul style="display: none;"><li>001</li></ul><li class="clickMe">MATH 245</li><ul style="display: none;"><li>001</li></ul>             </ul>
+
+            <h4 class="class_headers">Classes Taken</h4>
+            
+            <ul>
+                <div>
+                    <li class="clickMe">example course</li>
+                    <ul class="toggleMe" style="display:none">
+                        <li>course section  <button type="button" class="button" id="11">Add</button></li>
+                        <li>course section  <button type="button" class="button" id="12">Add</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <li class="clickMe">example course</li>
+                    <ul class="toggleMe" style="display:none">
+                        <li>course section  <button type="button" class="button" id="13">Add</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <li class="clickMe">example course</li>
+                    <ul class="toggleMe" style="display:none">
+                        <li>course section  <button type="button" class="button" id="14">Add</button></li>
+                        <li>course section  <button type="button" class="button" id="15">Add</button></li>       
+                        <li>course section  <button type="button" class="button" id="16">Add</button></li>
+                    </ul>
+                </div>
+            </ul>
+            <h4 class="class_headers">Requirements Not Met</h4>
+            <ul>
+                <li>example course</li>
+                <li>example course</li>
+                <li>example course</li>
+            </ul>
+            <br>
+            <p id="temp"><em><u>Link to Racing form</u></em></p>
+               
+        </div>
+        
+        <div id="advise" class="print">
+            
+            <!--
+                <?/*php echo site_url('login/check'); */?>
+             !-->
+            <table>
+                <tbody><tr>
+                    <th><img src="https://localhost/csapp/image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><table class="noborder">
+                        <tbody><tr><th class="noborder">Louisiana Tech University</th></tr>
+                        <tr><th class="noborder">ADVISING FORM</th></tr>
+                        <tr><th class="noborder">Quarter <u>???????</u></th></tr>
+                </tbody></table> </th>
+                    <th><img src="https://localhost/csapp/image/latech.gif" alt="Tech Logo" class="logo"></th>
+                </tr>
+            </tbody></table>
+            <table>
+                <tbody><tr id="namecwid">
+                    <th class="noborder" style="text-align:left; padding-left: 8%">Student Name: <u>?????????</u></th>
+            <th class="noborder" style="text-align:right; padding-right: 8%">CWID#<u>????????????</u></th>
+                </tr>
+            </tbody></table>
+            <table id="target">
+              <tbody><tr>
+                <th style="width: 21%">Subject/Course/Section</th>
+                <th style="width: 17%">Title</th>
+                <th style="width: 9%">Call #</th>               
+                <th style="width: 7%">Hours</th>
+                <th style="width: 25%">Special Signature</th> 
+                <th style="width: 21%">Class Times</th>
+              </tr>
+            </tbody></table>
+            
+            <div id="alt">
+                <table id="altTable">
+                  <tbody><tr>
+                      <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
+                  </tr>
+                    <tr>
+                      <th style="width: 21%">Subject/Course/Section</th>
+                      <th style="width: 17%">Title</th>
+                      <th style="width: 9%">Call #</th>               
+                      <th style="width: 7%">Hours</th>
+                      <th style="width: 25%">Special Signature</th> 
+                      <th style="width: 21%">Class Times</th>
+                    </tr>
+                </tbody></table>
+            </div>
+            <table id="sig">
+                <tbody><tr>
+                   <td id="bottomcell">_____________________________________________</td><td id="bottomcell">_____________________________________________</td>
+                </tr>
+                <tr>
+                    <td id="topcell">STUDENT SIGNATURE/DATE</td><td id="topcell">ADVISOR SIGNATURE/DATE</td>
+                </tr>
+                <tr>
+                    <td id="bottomcell">_____________________________________________</td><td id="bottomcell">_____________________________________________</td>
+                </tr>
+                <tr>                                
+                    <td id="topcell">DEAN'S SIGNATURE/DATE</td><td id="topcell">VP FOR ACADEMIC AFFAIRS SIGNATURE/DATE</td>
+                </tr>
+            </tbody></table>
+        </div>
+        
+        <div id="PB"><form><input type="button" value=" Print Advising Form" onclick="window.print();return false;"></form></div>
+ 
+    
+
+</body></html>

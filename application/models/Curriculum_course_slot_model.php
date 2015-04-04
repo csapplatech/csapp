@@ -42,6 +42,7 @@ class Curriculum_course_slot_model extends CI_Model
                 $this->curriculumCourseSlotID = $row['CurriculumCourseSlotID'];
                 $this->curriculumID = $row['CurriculumID'];
                 $this->name = $row['Name'];
+                $this->minimumGrade = $row['MinimumGrade'];
                 
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
@@ -101,7 +102,7 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of getMinimumGrade
      * Get the minimum grade for this curriculum course slot
      * 
-     * @return int The minimum grade for this curriculum course slot
+     * @return string The minimum grade for this curriculum course slot
      */
     public function getMinimumGrade()
     {
@@ -148,11 +149,11 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of setMinimumGrade
      * Set the minimum grade for this curriculum course slot model
      * 
-     * @param int $minimumGrade The minimum grade to be associated with this curriculum course slot
+     * @param string $minimumGrade The minimum grade to be associated with this curriculum course slot
      */
     public function setMinimumGrade($minimumGrade)
     {
-        $this->minimumGrade = filter_var($minimumGrade, FILTER_SANITIZE_NUMBER_INT);
+        $this->minimumGrade = filter_var($minimumGrade, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
     /**
