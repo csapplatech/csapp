@@ -3,10 +3,19 @@ require_once('application/libraries/phpexcel/PHPExcel/IOFactory.php');
 
 class Checklistexport extends CI_Controller
 {
+	private $titlestyle = array(
+	 'fill' => array(
+		  'type'  => PHPExcel_Style_Fill::FILL_SOLID, 
+		  'color' => array('rgb' => 'B0B0B0')),
+	 'font' => array('bold' => true),
+	 'borders' => array('allborders' => array('style' => PHPExcel_Style_Border::BORDER_THIN))
+	);
+		    
 	public function index($userID = NULL, $curriculumID = 1, $type = "xls")
 	{
+
 	    //Assuming a user with classes is passed and curriculum
-            //	Must be valid!
+	    //	Must be valid!
 	    $this->load->model('User_model', 'Curriculum_model');
 	    
 	    $user = new User_Model();
@@ -15,14 +24,14 @@ class Checklistexport extends CI_Controller
 	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 
 	    //Create excel file
-            $Excel = new PHPExcel();
+	    $Excel = new PHPExcel();
 	    $Excel->getProperties()->setCreator("Keen-Hjorth")
-	    			   ->setLastModifiedBy("Keen-Hjorth")
+				   ->setLastModifiedBy("Keen-Hjorth")
 				   ->setTitle("Test Checklist")
 				   ->setSubject("Advising Checklist")
 				   ->setDescription("Auto Generated Checklist")
 				   ->setCategory("Advisee checklist file");
-            
+	    
 
 	    //Set global defaults
 	    $Excel->getDefaultStyle()->getFont()->setSize(10)->setName('Arial');
@@ -49,7 +58,10 @@ class Checklistexport extends CI_Controller
 
 	    //Set first six rows with the below information
 	    $this->header($checklist, $user->getName(), $user->getUserID(), 
-	                  $user->getAdvisor(), "2014-15", $user->getEmailAddress());
+			  $user->getAdvisor(), "2014-15", $user->getEmailAddress());
+
+	    $coursesTaken = $user->getAllCoursesTaken();
+	    $this->primary($checklist, $coursesTaken, $curriculum);
 
 	    //Download file object (PDF or XLS)
 	    $objWriter = PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
@@ -107,7 +119,58 @@ class Checklistexport extends CI_Controller
 	    $checklist->getStyle("G6")->getFont()->setBold(True);
 	    $checklist->mergeCells("I6:L6");
 	    $checklist->getStyle("I6")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getCell("I6")->setValue(date("m/d/y"));
-		
+	    $checklist->getCell("I6")->setValue(date("m/d/y"));	
+	}
+
+	private function primary($checklist, $coursesTaken, $curriculum)
+	{
+	    //Set an array for section headers
+	    //Get starting/title row for courses
+	    $checklist->getStyle("A8:J8")->applyFromArray($this->titlestyle);	    
+	    $checklist->getStyle("F8:J8")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	    $checklist->mergeCells("A8:B8");
+	    $checklist->mergeCells("C8:E8");
+	    $checklist->getCell("A8")->setValue("COURSE");
+	    $checklist->getCell("C8")->setValue("PREREQUISITES");
+	    $checklist->getCell("F8")->setValue("SCH");
+	    $checklist->getCell("G8")->setValue("TERM");
+	    $checklist->getCell("H8")->setValue("YEAR");
+	    $checklist->getCell("I8")->setValue("*");
+	    $checklist->getCell("J8")->setValue("GRADE");
+
+	    //for every course in the curriculum
+	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
+	    $row = 10;
+	    $prevCType = NULL;
+	    foreach ($requiredCourses as $reqCourse)
+	    {
+	    	//Grab course name
+		$cName = $reqCourse->getName();
+		$cNum  = strpbrk($cName, "0123456789");
+		$cType = substr($cName, 0, strpos($cName, $cNum));
+
+		//Put course name into checklist
+		$checklist->getCell("B$row")->setValue($cNum);
+		if (strcmp($cType, $prevCType) != 0)
+		{
+			$checklist->getCell("A$row")->setValue($cType);
+	    		$prevCType = $cType;
+		}
+
+		//Input Prerequisites
+		$checklist->mergeCells("C$row:E$row");
+
+		//Put in all credit information
+
+		//Put in term/year taken and grade
+
+		//Put in astrik if it's a prereq of another course
+
+		$row++;
+	    }
+
+	    //	Grab it's valid classes that satisfy it
+	    //		Check it against taken classes
+	    //			Once finished, fill in the information
 	}
 }

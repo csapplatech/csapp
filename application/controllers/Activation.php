@@ -35,7 +35,7 @@ class Activation extends CI_Controller
 			$pass = $pass.$charset[mt_rand(0, count($charset)-1)];
 
 		//Set user password
-
+		$user->setPassword($pass);
 
 		//Email user their login information	
 		$this->load->library('email');
@@ -55,7 +55,10 @@ class Activation extends CI_Controller
 		$this->email->from    ('testseniorcapstone@gmail.com', 'Senior');
 		$this->email->reply_to('testseniorcapstone@gmail.com', 'Senior');
 		$this->email->subject ('Subject');
-		$this->email->message ('Testing');
+		$this->email->message (
+			'Username: '.$user->userID."\r\n"
+			'Password: '.$pass."\r\n"
+		);
 
 		if ($this->email->send())
 			echo "Success!";
