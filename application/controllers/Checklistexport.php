@@ -150,27 +150,75 @@ class Checklistexport extends CI_Controller
 		$cType = substr($cName, 0, strpos($cName, $cNum));
 
 		//Put course name into checklist
-		$checklist->getCell("B$row")->setValue($cNum);
 		if (strcmp($cType, $prevCType) != 0)
 		{
+	    		if ($prevCType != NULL)
+			{
+	    			$row++;
+				$checklist->getStyle("A$row:J$row")->getBorders()->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+				$row++;
+			}
 			$checklist->getCell("A$row")->setValue($cType);
-	    		$prevCType = $cType;
+			$prevCType = $cType;
 		}
+		$checklist->getCell("B$row")->setValue($cNum);
 
 		//Input Prerequisites
-		$checklist->mergeCells("C$row:E$row");
-
-		//Put in all credit information
-
-		//Put in term/year taken and grade
+		$course = new Course_model();
+//====================================================================== POTENTIAL ISSUE, ignoring valid courses after the first one
+		$course->loadPropertiesFromPrimaryKey($reqCourse->getValidCourseIDs()[0]);
+		foreach ($course->getPrerequisiteCourses() as $preReq)
+		{
+			$cell = $checklist->getCell("C$row");
+			$cell->setValue($cell->getValue()." ".$preReq->getCourseName());
+		}
+		
+		//Put in all course credit information and term/year
+	        $checklist->getStyle("F$row:J$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		foreach ($coursesTaken as $key=>$taken)
+			foreach ($reqCourse->getValidCourseIDs() as $prereqID)
+				if ($prereqID == $taken[0]->getCourse()->getCourseID())
+				{
+					$checklist->getCell("H$row")->setValue($taken[0]->getAcademicQuarter()->getYear());
+					$term = NULL;
+					switch ($taken[0]->getAcademicQuarter()->getName())
+					{
+						case 'Fall':   $term = 'F'; break;
+						case 'Winter': $term = 'W'; break;
+						case 'Summer': $term = 'Su'; break;
+						case 'Spring': $term = 'Sp'; break;
+						default: $term = '?'; break;
+					}
+					$checklist->getCell("G$row")->setValue($term);
+					$grade = NULL;
+					switch ($taken[1])
+					{
+						case 4: $grade = 'A'; break;
+						case 3: $grade = 'B'; break;
+						case 2: $grade = 'C'; break;
+						case 1: $grade = 'D'; break;
+						case 0: $grade = 'F'; break;
+						default: $grade = $taken[1];
+					}
+					$checklist->getCell("J$row")->setValue($grade);
+					unset($coursesTaken[$key]);
+				}
 
 		//Put in astrik if it's a prereq of another course
 
 		$row++;
 	    }
 
-	    //	Grab it's valid classes that satisfy it
-	    //		Check it against taken classes
-	    //			Once finished, fill in the information
+	    //Set borders between columns for course information
+	    $checklist->getStyle("B9:B$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("F9:F$row")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("F9:F$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("G9:G$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("H9:H$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("I9:I$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->getStyle("J9:J$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    //Merge preresuiqite cells
+	    for ($i = 0; $i <= $row; $i++)
+	    	$checklist->mergeCells("C$i:E$i");
 	}
 }
