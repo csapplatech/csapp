@@ -9,7 +9,6 @@ class Activation extends CI_Controller
 	public function index($userID = NULL, $email = NULL)
 	{
 		$this->load->model('User_model');
-		$this->load->library('email');
 
 		$user = new User_Model();
 		$user->loadPropertiesFromPrimaryKey($userID);
@@ -36,17 +35,37 @@ class Activation extends CI_Controller
 			$pass = $pass.$charset[mt_rand(0, count($charset)-1)];
 
 		//Set user password
+		$user->setPassword($pass);
 
+		//Email user their login information	
+		$this->load->library('email');
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'smtp.gmail.com';
+		$config['smtp_port'] = '465';
+		$config['smtp_user'] = 'testseniorcapstone@gmail.com';
+		$config['smtp_pass'] = 'testpass';
+		$config['mailtype'] = 'html';
+		$config['charset'] = 'utf-8';
+		$config['newline'] = "\r\n";
+		$this->email->initialize($config);
+		
+		$list = array('testseniorcapstone@gmail.com');
+		$this->email->to($list);
+		
+		$this->email->from    ('testseniorcapstone@gmail.com', 'Senior');
+		$this->email->reply_to('testseniorcapstone@gmail.com', 'Senior');
+		$this->email->subject ('Subject');
+		$this->email->message (
+			'Username: '.$user->getUserID()."\r\n".
+			'Password: '.$pass."\r\n"
+		);
 
-		//Email user their login information
-		$this->email->from   ('williamgkeen@gmail.com', 'Admin Name');
-		$this->email->to     ('williamgkeen@gmail.com');
-		$this->email->subject('Subject');
-		$this->email->message(
-			'Password: '.$pass. "\r\n".
-			'Username: '.$email."\r\n"
-			);
-		$this->email->send(FALSE);
-		$this->email->print_debugger(array('headers','subject','body'));
+		if ($this->email->send())
+			echo "Success!";
+		else
+		{
+			echo "Email failed!\n";
+			echo $this->email->print_debugger();
+		}
 	}
 }
