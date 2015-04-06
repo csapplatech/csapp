@@ -56,7 +56,7 @@ class Activation extends CI_Controller
 		$this->email->reply_to('testseniorcapstone@gmail.com', 'Senior');
 		$this->email->subject ('Subject');
 		$this->email->message (
-			'Username: '.$user->userID."\r\n"
+			'Username: '.$user->getUserID()."\r\n".
 			'Password: '.$pass."\r\n"
 		);
 
