@@ -49,12 +49,12 @@
             ?>
 
             <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">
-              <h2 class="form-signin-heading" style="margin-bottom:15px">Please sign in</h2>
+              <h2 class="form-signin-heading" style="margin-bottom:15px">Please login</h2>
               <label for="inputUsername" class="sr-only">Username</label>
               <input type="text" id="username" name="username" class="form-control" placeholder="Username" style="margin-bottom:5px" required autofocus>
               <label for="inputPassword" class="sr-only">Password</label>
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" style="margin-bottom:25px" required>
-              <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Sign in</button>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Login</button>
             </form>
             <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
         </div>
