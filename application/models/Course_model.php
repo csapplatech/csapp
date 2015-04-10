@@ -13,10 +13,15 @@ class Course_model extends CI_Model
     private $courseNumber = null;
 	private $courseTitle = null;
     private $courseDescription = null;
+	private $courseTypeID = null;
     
 	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
 	const COURSE_REQUISITE_PREREQUISITE = 1;
 	const COURSE_REQUISITE_COREQUISITE = 2;
+	
+	// Constant values defined by the CourseTypes table, must reflect content in that table
+	const COURSE_TYPE_UNDERGRADUATE = 1;
+	const COURSE_TYPE_GRADUATE = 2;
 	
     /**
      * Main constructor for Course_model
@@ -46,8 +51,9 @@ class Course_model extends CI_Model
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
                 $this->courseNumber = $row['CourseNumber'];
-				//$this->courseTitle = $row['CourseTitle'];
+				$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
+				$this->courseTypeID = $row['CourseTitleID'];
                 
                 return true;
             }
@@ -111,6 +117,28 @@ class Course_model extends CI_Model
         return $this->courseDescription;
     }
     
+	/**
+	 * Summary of isUndergraduateCourse
+	 * Check whether or not this course model type id is that of an undergraduate course (see COURSE_TYPE constants)
+	 *
+	 * @return boolean True if the course type for this model is COURSE_TYPE_UNDERGRADUATE, false otherwise
+	 */
+	public function isUndergraduateCourse()
+	{
+		return $this->courseTypeID == self::COURSE_TYPE_UNDERGRADUATE;
+	}
+	
+	/**
+	 * Summary of isGraduateCourse
+	 * Check whether or not this course model type id is that of a graduate course (see COURSE_TYPE constants)
+	 *
+	 * @return boolean True if the course type for this model is COURSE_TYPE_GRADUATE, false otherwise
+	 */
+	public function isGraduateCourse()
+	{
+		return $this->courseTypeID == self::COURSE_TYPE_GRADUATE;
+	}
+	
     /**
      * Summary of setCourseName
      * Set the course name for this model
@@ -155,6 +183,17 @@ class Course_model extends CI_Model
         $this->courseDescription = filter_var($courseDescription, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+	 * Summary of setCourseType
+	 * Set the type of course that this course model is
+	 *
+	 * @param integer $courseTypeID The type of course this course model is (see COURSE_TYPE constants)
+	 */
+	public function setCourseType($courseTypeID)
+	{
+		$this->courseTypeID = filter_var($courseTypeID, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
 	/**
 	 * Summary of getCoursesPrerequisiteTo
 	 * Get all of the courses that this course is a prerequisite for
@@ -302,9 +341,10 @@ class Course_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
+        if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT) && $this->courseTypeID != null && filter_var($this->courseTypeID, FILTER_VALIDATE_INT))
         {
             $data = array(
+				'CourseTypeID' => $this->courseTypeID,
 				'CourseName' => $this->courseName, 
 				'CourseNumber' => $this->courseNumber, 
 				'CourseTitle' => $this->courseTitle,
@@ -330,9 +370,10 @@ class Course_model extends CI_Model
      */
     public function create()
     {
-        if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT))
+        if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT) && $this->courseTypeID != null && filter_var($this->courseTypeID, FILTER_VALIDATE_INT))
         {
             $data = array(
+				'CourseTypeID' => $this->courseTypeID,
 				'CourseName' => $this->courseName, 
 				'CourseNumber' => $this->courseNumber, 
 				'CourseTitle' => $this->courseTitle,
