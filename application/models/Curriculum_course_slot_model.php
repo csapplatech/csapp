@@ -17,6 +17,10 @@ class Curriculum_course_slot_model extends CI_Model
 	private $notes = null;
     private $validCourseIDs = array();
     
+	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
+	const COURSE_REQUISITE_PREREQUISITE = 1;
+	const COURSE_REQUISITE_COREQUISITE = 2;
+	
 	const YEAR_FRESHMAN = "Freshman";
 	const YEAR_SOPHOMORE = "Sophomore";
 	const YEAR_JUNIOR = "Junior";
@@ -261,6 +265,180 @@ class Curriculum_course_slot_model extends CI_Model
         }
     }
     
+	/**
+	 * Summary of getCourseSlotsPrerequisiteTo
+	 * Get all of the curriculum course slots that this curriculum course slot is a prerequisite for
+	 *
+	 * @return Array An array containing all the curriculum course slots that this curriculum course slot is a prerequisite for
+	 */
+	public function getCourseSlotsPrerequisiteTo()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('CurriculumCourseSlotID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
+			$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+			
+			$results = $this->db->get('CurriculumCourseSlotRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getPrequisiteCourseSlots
+	 * Get all of the prerequisite curriculum course slots for this curriculum course slot
+	 *
+	 * @return Array An array containing all the curriculum course slots that are prerequisites to this curriculum course slot
+	 */
+	public function getPrequisiteCourseSlots()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('RequisisteCurriculumCourseSlotID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
+			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			
+			$results = $this->db->get('CurriculumCourseSlotRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getCorequisiteCourseSlots
+	 * Get all of the co-requisite curriculum course slots for this course
+	 *
+	 * @return Array An array containing all the curriculum course slots that are co-requisites to this curriculum course slot
+	 */
+	public function getCorequisiteCourseSlots()
+	{
+		$models = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('RequisisteCurriculumCourseSlotID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
+			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			
+			$results = $this->db->get('CurriculumCourseSlotRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['RequisisteCurriculumCourseSlotID']))
+				{
+					array_push($models, $model);
+				}
+			}
+			
+			$this->db->select('CurriculumCourseSlotID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
+			$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+			
+			$results = $this->db->get('CourseRequisites');
+			
+			foreach($results->result_array() as $row)
+			{
+				$model = new Course_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of addCourseSlotPrerequisite
+	 * Add a prerequisite curriculum course slot to this model
+	 *
+	 * @param Curriculum_course_slot_model $curriculumCourseSlot The curriculum course slot model that is the prerequisite to this model
+	 * @return boolean Whether or not the prerequisite relationship was created in the database
+	 */
+	public function addCourseSlotPrerequisite($curriculumCourseSlot)
+	{
+		$data = array(
+			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
+			'RequisisteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
+		);
+		
+		$this->db->insert('CurriculumCourseSlotRequisites', $data);
+		
+		return $this->db->affected_rows() > 0;
+	}
+	
+	/**
+	 * Summary of addCourseSlotCorequisite
+	 * Add a corequisite curriculum course slot to this model
+	 *
+	 * @param Curriculum_course_slot_model $curriculumCourseSlot The curriculum course slot model that is the corequisite to this model
+	 * @return boolean Whether or not the corequisite relationship was created in the database
+	 */
+	public function addCourseSlotCorequisite($curriculumCourseSlot)
+	{
+		$data = array(
+			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
+			'RequisisteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
+		);
+		
+		$this->db->insert('CurriculumCourseSlotRequisites', $data);
+		
+		return $this->db->affected_rows() > 0;
+	}
+	
+	/**
+	 * Summary of removeCourseSlotRequisite
+	 * Remove all requisite relationships between this model and another curriculum course slot model
+	 *
+	 * @param Curriculum_course_slot_model $curriculumCourseSlot The curriculum course slot model to remove relationships with
+	 * @return boolean True if any requisite relationships were deleted from the database, false otherwise
+	 */
+	public function removeCourseSlotRequisite($curriculumCourseSlot)
+	{
+		$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
+		$this->db->where('RequisisteCurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+		$this->db->delete('CurriculumCourseSlotRequisites');
+		
+		$num = $this->db->affected_rows();
+		
+		$this->db->where('CurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+		$this->db->where('RequisisteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+		$this->db->delete('CurriculumCourseSlotRequisites');
+		
+		return ($num + $this->db->affected_rows()) > 0;
+	}
+	
     /**
      * Summary of create
      * Save a new curriculum course slot model into the CurriculumCourseSlots table and save all associated models
