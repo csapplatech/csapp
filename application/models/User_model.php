@@ -62,10 +62,19 @@ class User_model extends CI_Model
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
 					
-					$passwordComponents = explode("$", $row['PasswordHash']);
+					if(strpos($row['PasswordHash'], "$"))
+					{
+						$passwordComponents = explode("$", $row['PasswordHash']);
+						
+						$this->passwordHash = $passwordComponents[1];
+						$this->passwordSalt = $passwordComponents[0];
+					}
+					else
+					{
+						$this->passwordHash = $row['PasswordHash'];
+						$this->passwordSalt = "";
+					}
 					
-                    $this->passwordHash = $passwordComponents[1];
-					$this->passwordSalt = $passwordComponents[0];
                     $this->name = $row['Name'];
 					$this->userStateID = $row['UserStateID'];
                     
