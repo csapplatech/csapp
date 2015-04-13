@@ -11,6 +11,7 @@ class User_model extends CI_Model
     private $userID = null;
     private $emailAddress = null;
     private $passwordHash = null;
+	private $passwordSalt = null;
     private $name = null;
 	private $userStateID = null;
     private $roles = array();
@@ -60,7 +61,11 @@ class User_model extends CI_Model
                     
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
-                    $this->passwordHash = $row['PasswordHash'];
+					
+					$passwordComponents = explode("$", $row['PasswordHash']);
+					
+                    $this->passwordHash = $passwordComponents[1];
+					$this->passwordSalt = $passwordComponents[0];
                     $this->name = $row['Name'];
 					$this->userStateID = $row['UserStateID'];
                     
@@ -116,11 +121,15 @@ class User_model extends CI_Model
                     
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
-                    $this->passwordHash = $row['PasswordHash'];
+                    
+					$passwordComponents = explode("$", $row['PasswordHash']);
+					
+                    $this->passwordHash = $passwordComponents[1];
+					$this->passwordSalt = $passwordComponents[0];
                     $this->name = $row['Name'];
 					$this->userStateID = $row['UserStateID'];
                     
-                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
+                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $this->userID));
                     
                     if($role_results->num_rows() > 0)
                     {
@@ -145,7 +154,9 @@ class User_model extends CI_Model
      */
     public function setPassword($password)
     {
-        $this->passwordHash = hash('sha512', $password);
+		$this->passwordSalt = md5(time() * rand());
+		
+        $this->passwordHash = hash('sha512', $this->passwordSalt . $password);
     }
     
     /**
@@ -159,6 +170,17 @@ class User_model extends CI_Model
         return $this->passwordHash;
     }
     
+	/**
+     * Summary of getPasswordSalt
+     * Get the password hash salt string associated with this user model
+     * 
+     * @return string The salt of the password hash associated with this user model or null if model not saved in database
+     */
+    public function getPasswordSalt()
+    {
+        return $this->passwordSalt;
+    }
+	
     /**
      * Summary of getUserID
      * Get the UserID (Primary key) of this user model
@@ -550,7 +572,7 @@ class User_model extends CI_Model
     {
         if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
@@ -612,7 +634,7 @@ class User_model extends CI_Model
     {   
         if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
+            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
             
             $this->db->insert('Users', $data);
             
@@ -692,12 +714,12 @@ class User_model extends CI_Model
      */
     public function authenticate($passwordGuess)
     {
-        $hashedPasswordGuess = hash('sha512', $passwordGuess);
+        $hashedPasswordGuess = hash('sha512', $this->passwordSalt . $passwordGuess);
         
         $len = strlen($hashedPasswordGuess);
         
         $finalFlag = true;
-        
+		
 		$len2 = strlen($this->passwordHash);
 		
 		if($len < 1 || $len2 != $len)
