@@ -406,7 +406,7 @@ class Course_section_model extends CI_Model
 			);
             
             $this->db->where('CourseSectionID', $this->courseSectionID);
-            $this->db->update('CourseSections');
+            $this->db->update('CourseSections', $data);
             
             $sum = $this->db->affected_rows() > 0;
             

@@ -230,7 +230,7 @@ class Curriculum_model extends CI_Model
             $data = array('Name' => $this->name, 'CurriculumTypeID' => $this->curriculumType);
             
             $this->db->where('CurriculumID', $this->curriculumID);
-            $this->db->update('Curriculums');
+            $this->db->update('Curriculums', $data);
             
             $results = $this->db->get_where('CurriculumCourseSlots', array('CurriculumID' => $this->curriculumID));
             
