@@ -10,3 +10,4 @@ RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
 <Files README.md>
 	Deny from All
 </Files>
+

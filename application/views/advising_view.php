@@ -3,6 +3,7 @@
     <head>
         <link href = "css/advising.css" rel ="stylesheet">
         <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
+        <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
         <!--<link href="<?php echo base_url('css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css">!-->
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   

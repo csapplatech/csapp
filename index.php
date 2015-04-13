@@ -282,6 +282,20 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder);
 
+
+session_start();                            //Start a session if none exists
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 900)) {
+    // last request was more than 30 minutes ago
+    session_unset();                        //unset $_SESSION variable for the run-time 
+    session_destroy();                      //destroy session data in storage
+    $_SESSION = array();                    //Destroy session array
+}
+$_SESSION['LAST_ACTIVITY'] = time();        //update last activity time stamp
+define("URL", "https://localhost");   //Static Base URL
+define("CSS", URL."/css");                  //Static CSS URL
+define("IMG", URL."/image");                //Static Image URL
+define("JS", URL."/js");                    //Static JavaScript URL
+
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE
@@ -289,12 +303,4 @@ switch (ENVIRONMENT)
  *
  * And away we go...
  */
-session_start();
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 900)) {
-    // last request was more than 30 minutes ago
-    session_unset();     // unset $_SESSION variable for the run-time 
-    session_destroy();   // destroy session data in storage
-    $_SESSION = array();
-}
-$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 require_once BASEPATH.'core/CodeIgniter.php';
