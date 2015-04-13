@@ -59,8 +59,6 @@
             <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
         </div>
 
-    <?php include 'Keen-Hjorth-Test.php';?>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
