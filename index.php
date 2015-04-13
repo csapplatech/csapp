@@ -291,7 +291,7 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
     $_SESSION = array();                    //Destroy session array
 }
 $_SESSION['LAST_ACTIVITY'] = time();        //update last activity time stamp
-define("URL", "https://localhost/csapp");   //Static Base URL
+define("URL", "https://localhost");   //Static Base URL
 define("CSS", URL."/css");                  //Static CSS URL
 define("IMG", URL."/image");                //Static Image URL
 define("JS", URL."/js");                    //Static JavaScript URL
