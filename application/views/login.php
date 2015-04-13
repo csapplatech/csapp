@@ -7,13 +7,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
+    <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
 
     <title>CSAPP Login</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-    <link href="navbar-fixed-top.css" rel="stylesheet">
-    <link href="signin.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
   </head>
   
@@ -47,16 +45,15 @@
                   echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
               }
             ?>
-
-            <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">
-              <h2 class="form-signin-heading" style="margin-bottom:15px">Please login</h2>
+            <form class="form-signin" action="<?php echo site_url('Login/auth'); ?>" method="POST">
+              <h2 class="form-signin-heading" style="margin-bottom:15px">Please sign in</h2>
               <label for="inputUsername" class="sr-only">Username</label>
               <input type="text" id="username" name="username" class="form-control" placeholder="Username" style="margin-bottom:5px" required autofocus>
               <label for="inputPassword" class="sr-only">Password</label>
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" style="margin-bottom:25px" required>
-              <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Login</button>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Sign in</button>
             </form>
-            <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
+            <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('Login/guestLogin'); ?>">Proceed as Guest</a>
         </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -64,5 +61,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    
+    <footer>
+            <font color ="white"</font>
+            <p>Ruston, LA 2015</p> 
+            <p>Louisiana Tech University</p>
+            <p>Created by: Caleb Baze, Azriel Richardson, Ryan Gardiner and Zachary Behnke</p>
+    </footer>
   </body>
 </html>
