@@ -12,16 +12,22 @@ and open the template in the editor.
     background-color:#002f8b;
 }
 
+#main {
+    overflow:auto;
+    width: 1024px;
+    height: 860px;
+}
+
 #head{
     color:white;
-    margin-left:300px;
+    margin-left:330px;
     margin-top: 0;
     position:fixed;
     display:inline-block;
 }
 
 #courses{
-    width:270px;
+    width:320px;
     height:600px;
     background-color:#e31b23;
     position:fixed;
@@ -36,7 +42,7 @@ and open the template in the editor.
     background-color:white;
     display:inline-block;
     position:fixed;
-    margin-left:300px;
+    margin-left:330px;
     margin-top:50px;
     border-radius:5px;
       
@@ -65,7 +71,7 @@ table {
 
 #PB  {
     position:fixed;
-    margin-left: 30%;
+    margin-left: 330px;
     bottom: 10px;
 }
 
