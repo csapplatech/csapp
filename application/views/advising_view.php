@@ -3,7 +3,6 @@
     <head>
         <link href = "css/advising.css" rel ="stylesheet">
         <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
-        <!--<link href="<?php echo base_url('css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css">!-->
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
@@ -41,67 +40,7 @@
                     }
                 }
                 ?>
-             </ul>
-
-            <h4 class="class_headers">Classes Taken</h4>
-            <ul>
-                <?php 
-                $id=100;
-                foreach ($courses['Passed']->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>
-          
-            <h4 class="class_headers">Requirements Not Met</h4>
-            <ul>
-                
-                <?php 
-                $id=200;
-                foreach ($courses['Signature']->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>
-            <br>
-            <p id='temp'><em><u>Link to Racing form (WIP)</u></em></p>
-               
+             </ul>    
         </div>
         
         <div id="advise" class="print">
