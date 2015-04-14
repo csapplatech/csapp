@@ -22,7 +22,7 @@
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." Hrs)</li>" ;
+                        echo "<li class='clickMe'><span title=\"". $cor->getTitle(). "\">". $sub->getName(). "-" . $cor->getName() . " (".$cor->getHours()." Hrs)</span></li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
@@ -41,6 +41,12 @@
                 }
                 ?>
              </ul>    
+            <?php
+            echo"hi";
+            function helloworld (){
+                echo "Hello World";
+            }
+            ?>
         </div>
         
         <div id="advise" class="print">
@@ -108,8 +114,8 @@
         
         <div id="PB">
             <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
-            <button type="button">Reset</button>
-            <button type="button">Save</button>
+            <button type="button" id="reset">Reset</button>
+            <button type="button" id="save">Save</button>
         </div>
  
     
