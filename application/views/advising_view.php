@@ -22,7 +22,7 @@
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
+                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." Hrs)</li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
@@ -66,28 +66,28 @@
             </table>
             <table id='target'>
               <tr>
-                <th style="width: 21%">Subject/Course/Section</th>
-                <th style="width: 17%">Title</th>
-                <th style="width: 9%">Call #</th>               
-                <th style="width: 7%">Hours</th>
-                <th style="width: 25%">Special Signature</th> 
-                <th style="width: 21%">Class Times</th>
+                <th style="width: 16%">Subj-Cor-Sec</th>
+                <th >Title</th>
+                <th style="width: 8%">Call #</th>               
+                <th style="width: 7%">Hrs</th>
+                <th style="width: 20%">Special Signature</th> 
+                <th style="width: 18%">Class Times</th>
               </tr>
             </table>
             
             <div id='alt'>
                 <table id='altTable'>
-                  <tr>
-                      <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
-                  </tr>
-                    <tr>
-                      <th style="width: 21%">Subject/Course/Section</th>
-                      <th style="width: 17%">Title</th>
-                      <th style="width: 9%">Call #</th>               
-                      <th style="width: 7%">Hours</th>
-                      <th style="width: 25%">Special Signature</th> 
-                      <th style="width: 21%">Class Times</th>
-                    </tr>
+                <tr>
+                    <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
+                </tr>
+                <tr>
+                  <th style="width: 16%">Subj-Cor-Sec</th>
+                  <th >Title</th>
+                  <th style="width: 8%">Call #</th>               
+                  <th style="width: 7%">Hrs</th>
+                  <th style="width: 20%">Special Signature</th> 
+                  <th style="width: 18%">Class Times</th>
+                </tr>
                 </table>
             </div>
             <table ID='sig'>
@@ -106,8 +106,11 @@
             </table>
         </div>
         
-        <div id="PB"><form><input type="button" value=" Print Advising Form"
-                          onclick="window.print();return false;" /></form></div>
+        <div id="PB">
+            <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
+            <button type="button">Reset</button>
+            <button type="button">Save</button>
+        </div>
  
     
 </body>
