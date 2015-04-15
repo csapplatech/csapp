@@ -49,8 +49,8 @@ class Course_section_model extends CI_Model
 		
 		foreach($this->courseSectionTimes as $courseSectionTime)
 		{
-			$startTime = militaryToStandardTime($courseSectionTime->getStartTime());
-			$endTime = militaryToStandardTime($courseSectionTime->getEndTime());
+			$startTime = course_section_model::militaryToStandardTime($courseSectionTime->getStartTime());
+			$endTime = course_section_model::militaryToStandardTime($courseSectionTime->getEndTime());
 			
 			$index = $startTime . " - " . $endTime;
 			

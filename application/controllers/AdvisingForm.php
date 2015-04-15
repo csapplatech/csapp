@@ -333,6 +333,12 @@ class AdvisingForm extends CI_Controller
         }
         return $result;
     }
+    
+    public function save(){
+        echo "TEST";
+        
+        
+    }
 }
 class Subject
 {
