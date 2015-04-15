@@ -7,14 +7,14 @@ class AdvisingForm extends CI_Controller
     {
         error_reporting(E_ALL & ~E_WARNING & ~E_STRICT);
         $this->load->helper('url');
-        /*$uid = $_SESSION['UserID'];
-        if (!isset($_SESSION['UserID']))
+        //$uid = $_SESSION['UserID'];
+        /*if (!isset($_SESSION['UserID']))
         {
             redirect('login');
         }*/
         $uid = 10210078;
         //$uid = $_SESSION['UserID'];
-        $year = 2015;
+        //$year = 2015;
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
@@ -28,6 +28,67 @@ class AdvisingForm extends CI_Controller
         //Next, load the current user and get his courses taken
         $usermod = new user_model();
         $usermod->loadPropertiesFromPrimaryKey($uid);
+        
+        $courseids = array();
+        //Get all of the course IDs for courses in the student's curricula
+        $curricula = $usermod->getCurriculums();
+        foreach($curricula as $curriculum)
+        {
+            $slots = $curriculum->getCurriculumCourseSlots();
+            foreach($slots as $slot)
+            {
+                $validIDs = $slot->getValidCourseIDs();
+                foreach($validIDs as $cor)
+                {
+                    if (!in_array($cor, $courseids))
+                    {
+                        array_push($courseids, $cor);
+                    }
+                }
+            }
+        }
+        
+        
+        
+        //Now, remove each course section that does not fit into the student's curricula
+        foreach($course_sections as $key => $value)
+        {
+            if (!in_array($value->getCourse()->getCourseID(), $courseids))
+            {
+                unset($course_sections[$key]);
+            }
+        }
+        
+        //Then, we can remove courses whose prerequisites are not met
+        
+        foreach($course_sections as $key => $value)
+        {
+            $prereqs = $value->getCourse()->getPrerequisiteCourses();
+        
+            if (count($prereqs) != 0)
+            {
+                $sig_required = true;
+                foreach($prereqs as $prereq)
+                {
+                    if (array_search($prereq->getCourseID(), $courseIDs_passed) == true)
+                    {
+                        $sig_required = false;
+                        break;
+                    }
+                }
+                if ($sig_required)
+                {
+                    unset($course_sections[$key]);
+                }
+            }
+        }
+        
+        //Now, we should have a complete list of course sections that are eligible
+        //as well as available
+        $working_list = $this->get_list($course_sections);
+        
+        
+        
         $courses_taken = $usermod->getAllCoursesTaken();
         
         $courseIDs_passed = array();
@@ -41,13 +102,17 @@ class AdvisingForm extends CI_Controller
                 array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
             }
         }
+        
+        $course_sections = $aqm->getAllCourseSections();
+        
+        $full_list = $this->get_list($course_sections);
         //Container holding course sections for courses already passed
-        $courseSections_passed = array();
+        //$courseSections_passed = array();
         
         //At this point, the available course sections will be whittled down
         //based on what courses have already been taken.  First, the classes
         //already completed will be extracted
-        foreach($course_sections as $key => $value)
+        /*foreach($course_sections as $key => $value)
         {
             //We've already gotten an array of passed courses.  Now we must remove
             //all sections whose course ID matches a passed one
@@ -56,7 +121,7 @@ class AdvisingForm extends CI_Controller
                 array_push($courseSections_passed, $value);
                 unset($course_sections[$key]);
             }
-        }
+        }*/
         
         //Now, what we need is classes that can be taken.  To that end, we will
         //pull all of the course sections for a quarter and unset and move those
@@ -64,10 +129,10 @@ class AdvisingForm extends CI_Controller
         
         //First, the array which will hold all course sections where signatures
         //are required (prerequisites not met) must be declared
-        $signature_required = array();
+        //$signature_required = array();
         
         //Now, parse through and selectively move sig_required courses
-        foreach($course_sections as $key => $value)
+        /*foreach($course_sections as $key => $value)
         {
             $prereqs = $value->getCourse()->getPrerequisiteCourses();
         
@@ -88,7 +153,7 @@ class AdvisingForm extends CI_Controller
                     unset($course_sections[$key]);
                 }
             }
-        }
+        }*/
         //Now, we have a three lists of course sections.  One, $courseSections_passed,
         //contains all course sections for courses offered this quarter that the
         //student has passed in the past
@@ -104,7 +169,7 @@ class AdvisingForm extends CI_Controller
         //At this point, we need to sort each array by subject, then by number,
         //then by section.
         
-        $working_list = $this->get_list($signature_required, $courseSections_passed, $course_sections);
+        //$working_list = $this->get_list($signature_required, $courseSections_passed, $course_sections);
         //$name_arr = array('Recommended', 'Passed', 'Signature');
         //$index = 0;
         /*foreach ($working_list as $cat)
@@ -140,33 +205,36 @@ class AdvisingForm extends CI_Controller
                 }
             }
         }*/
-        $data = array('courses' => $working_list,
+        
+        
+        $data = array('recommended' => $working_list,
+                    'all_courses' => $full_list,
                     'quarter_id' => $qid,
                     'cwid' => $usermod->getUserID(),
                     'student_name' => $usermod->getName());
         $this->load->view('advising_view', $data);
     }
     
-    public function get_list($signature_required, $courseSections_passed, $course_sections)
+    public function get_list($course_sections)
     {
-        $result = array();
-        $sig = new Category();
+        //$result = array();
+        /*$sig = new Category();
         $sig->setName(Category::NAME_SIG);
         $sig->setSubjects($this->course_sort($signature_required));
         
         
         $passed = new Category();
         $passed->setName(Category::NAME_PASSED);
-        $passed->setSubjects($this->course_sort($courseSections_passed));
+        $passed->setSubjects($this->course_sort($courseSections_passed));*/
         
         $rec = new Category();
         $rec->setName(Category::NAME_REC);
         $rec->setSubjects($this->course_sort($course_sections));
         
-        $result['Recommended'] = $rec;
-        $result['Passed'] = $passed;
-        $result['Signature'] = $sig;
-        return $result;
+        //$result['Recommended'] = $rec;
+        //$result['Passed'] = $passed;
+        //$result['Signature'] = $sig;
+        return $rec;
     }
     
     public function course_sort($courseSections)
