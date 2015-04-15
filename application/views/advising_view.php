@@ -4,14 +4,13 @@
         <link href = "css/advising.css" rel ="stylesheet">
         <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-        <!--<link href="<?php echo base_url('css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css">!-->
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
     
         <title>Advising Page</title>
     </head>
-    <body id="background" >
+    <body id="background" ><div id="main">
         <h1 id="head">Advising Page</h1>
         
         <div id="courses">
@@ -33,7 +32,7 @@
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
+                                "<span id=\"e".$id."\">WIP</span>".
                                      "</div>";
                                 $id++;
                             }
@@ -67,12 +66,12 @@
             </table>
             <table id='target'>
               <tr>
-                <th style="width: 16%">Subj-Cor-Sec</th>
+                <th style="width: 15%">Subj-Cor-Sec</th>
                 <th >Title</th>
                 <th style="width: 8%">Call #</th>               
                 <th style="width: 7%">Hrs</th>
                 <th style="width: 20%">Special Signature</th> 
-                <th style="width: 18%">Class Times</th>
+                <th style="width: 20%">Class Times</th>
               </tr>
             </table>
             
@@ -82,12 +81,12 @@
                     <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
                 </tr>
                 <tr>
-                  <th style="width: 16%">Subj-Cor-Sec</th>
+                  <th style="width: 15%">Subj-Cor-Sec</th>
                   <th >Title</th>
                   <th style="width: 8%">Call #</th>               
                   <th style="width: 7%">Hrs</th>
                   <th style="width: 20%">Special Signature</th> 
-                  <th style="width: 18%">Class Times</th>
+                  <th style="width: 20%">Class Times</th>
                 </tr>
                 </table>
             </div>
@@ -112,5 +111,5 @@
             <button type="button" id="reset">Reset</button>
             <button type="button" id="save">Save</button>
         </div>
-</body>
+</div></body>
 </html>
