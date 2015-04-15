@@ -12,8 +12,16 @@ class Curriculum_course_slot_model extends CI_Model
     private $curriculumID = null;
     private $name = null;
     private $minimumGrade = null;
+	private $recommendedQuarter = null;
+	private $recommendedYear = null;
+	private $notes = null;
     private $validCourseIDs = array();
     
+	const YEAR_FRESHMAN = "Freshman";
+	const YEAR_SOPHOMORE = "Sophomore";
+	const YEAR_JUNIOR = "Junior";
+	const YEAR_SENIOR = "Senior";
+	
     /**
      * Main constructor for Curriculum_course_slot_model
      */
@@ -43,7 +51,14 @@ class Curriculum_course_slot_model extends CI_Model
                 $this->curriculumID = $row['CurriculumID'];
                 $this->name = $row['Name'];
                 $this->minimumGrade = $row['MinimumGrade'];
+<<<<<<< HEAD
                 
+=======
+                $this->recommendedQuarter = $row['RecommendedQuarter'];
+				$this->recommendedYear = $row['RecommendedYear'];
+				$this->notes = $row['Notes'];
+				
+>>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
                 $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
@@ -65,6 +80,39 @@ class Curriculum_course_slot_model extends CI_Model
         return false;
     }
     
+	/**
+     * Summary of getNotes
+     * Get the notes associated with this model
+     * 
+     * @return string The notes associated with this curriculum course slot model
+     */
+	public function getNotes()
+	{
+		return $this->notes;
+	}
+	
+	/**
+     * Summary of getRecommendedQuarter
+     * Get the recommended quarter associated with this model
+     * 
+     * @return string The recommended quarter associated with this curriculum course slot model
+     */
+	public function getRecommendedQuarter()
+	{
+		return $this->recommendedQuarter;
+	}
+	
+	/**
+     * Summary of getRecommendedYear
+     * Get the recommended year associated with this model
+     * 
+     * @return string The recommended year associated with this curriculum course slot model
+     */
+	public function getRecommendedYear()
+	{
+		return $this->recommendedYear;
+	}
+	
     /**
      * Summary of getCurriculumCourseSlotID
      * Get the curriculum course slot model id (primary key)
@@ -102,7 +150,7 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of getMinimumGrade
      * Get the minimum grade for this curriculum course slot
      * 
-     * @return int The minimum grade for this curriculum course slot
+     * @return string The minimum grade for this curriculum course slot
      */
     public function getMinimumGrade()
     {
@@ -131,6 +179,39 @@ class Curriculum_course_slot_model extends CI_Model
         $this->name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setNotes
+     * Set the notes associated with this model
+     * 
+     * @param string $notes The notes associated with this curriculum course slot model
+     */
+	public function setNotes($notes)
+	{
+		$this->notes = filter_var($notes, FILTER_SANITIZE_MAGIC_QUOTES);
+	}
+	
+	/**
+     * Summary of setRecommendedQuarter
+     * Set the recommended quarter associated with this model (SEE Academic Quarter Model QUARTER constants)
+     * 
+     * @return string $recommendedQuarter The recommended quarter associated with this curriculum course slot model
+     */
+	public function setRecommendedQuarter($recommendedQuarter)
+	{
+		$this->recommendedQuarter = filter_var($recommendedQuarter, FILTER_SANITIZE_MAGIC_QUOTES);
+	}
+	
+	/**
+     * Summary of setRecommendedYear
+     * Set the recommended year associated with this model (See YEAR constants)
+     * 
+     * @return string $recommendedYear The recommended year associated with this curriculum course slot model
+     */
+	public function setRecommendedYear($recommendedYear)
+	{
+		$this->recommendedYear = filter_var($recommendedYear, FILTER_SANITIZE_MAGIC_QUOTES);
+	}
+	
     /**
      * Summary of setCurriculum
      * Set the curriculum for this curriculum course slot model to be associated with
@@ -149,11 +230,11 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of setMinimumGrade
      * Set the minimum grade for this curriculum course slot model
      * 
-     * @param int $minimumGrade The minimum grade to be associated with this curriculum course slot
+     * @param string $minimumGrade The minimum grade to be associated with this curriculum course slot
      */
     public function setMinimumGrade($minimumGrade)
     {
-        $this->minimumGrade = filter_var($minimumGrade, FILTER_SANITIZE_NUMBER_INT);
+        $this->minimumGrade = filter_var($minimumGrade, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
     /**
@@ -195,7 +276,14 @@ class Curriculum_course_slot_model extends CI_Model
     {
         if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->name != null)
         {
-            $data = array('CurriculumID' => $this->curriculumID, 'Name' => $this->name);
+            $data = array(
+				'CurriculumID' => $this->curriculumID,
+				'Name' => $this->name,
+				'MinimumGrade' => $this->minimumGrade,
+				'RecommendedQuarter' => $this->recommendedQuarter,
+				'RecommendedYear' => $this->recommendedYear,
+				'Notes' => $this->notes
+			);
             
             $this->db->insert('CurriculumCourseSlots', $data);
             
@@ -229,10 +317,17 @@ class Curriculum_course_slot_model extends CI_Model
     {
         if($this->curriculumCourseSlotID != null)
         {
-            $data = array('Name' => $this->name);
+            $data = array(
+				'CurriculumID' => $this->curriculumID,
+				'Name' => $this->name,
+				'MinimumGrade' => $this->minimumGrade,
+				'RecommendedQuarter' => $this->recommendedQuarter,
+				'RecommendedYear' => $this->recommendedYear,
+				'Notes' => $this->notes
+			);
             
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
-            $this->db->update('CurriculumCourseSlots');
+            $this->db->update('CurriculumCourseSlots', $data);
             
             $sum = $this->db->affected_rows();
             

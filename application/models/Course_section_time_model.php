@@ -52,6 +52,24 @@ class Course_section_time_model extends CI_Model
         return $this->dayOfWeek;
     }
     
+	/**
+     * Summary of getDayOfWeek
+     * Get the BOSS letter for the day of the week for this particular course section time model
+     * 
+     * @return string A letter representing the day of the week for this course section time model
+     */
+    public function getDayOfWeekLetter()
+    {
+        if($this->dayOfWeek == self::DAY_THURSDAY)
+		{
+			return "R";
+		}
+		else
+		{
+			return substr($this->dayOfWeek[0], 0, 1);
+		}
+    }
+	
     /**
      * Summary of getStartTime
      * Get the starting time of this course section time model in military time 

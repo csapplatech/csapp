@@ -23,6 +23,7 @@ class User_model extends CI_Model
     const ROLE_PROGRAM_CHAIR = 2;
     const ROLE_ADVISOR = 3;
     const ROLE_STUDENT = 4;
+	const ROLE_GUEST = 5;
     
 	// Constants to represent the various user states as reflected in the CSC Web app database
 	// If the table `UserStates` or any of its rows are ever modified, reflect those changes in these constants
@@ -61,7 +62,11 @@ class User_model extends CI_Model
                     $this->emailAddress = $row['EmailAddress'];
                     $this->passwordHash = $row['PasswordHash'];
                     $this->name = $row['Name'];
+<<<<<<< HEAD
 					//$this->userStateID = $row['UserStateID'];
+=======
+					$this->userStateID = $row['UserStateID'];
+>>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -288,6 +293,20 @@ class User_model extends CI_Model
         return $this->userStateID;
     }
 	
+<<<<<<< HEAD
+=======
+	/**
+     * Summary of isGuest
+     * Check whether this user has the role of a guest
+     * 
+     * @return boolean True is the user has a guest role, false otherwise
+     */
+	public function isGuest()
+	{
+		return in_array(self::ROLE_GUEST, $this->roles);
+	}
+	
+>>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
     /**
      * Summary of isStudent
      * Check whether this user has the role of a student
@@ -449,7 +468,7 @@ class User_model extends CI_Model
      * Add a course section to be associated with this user model
      * 
      * @param mixed $courseSection The course section model to associate with this model
-     * @param mixed $grade The grade this student got for the course section (0 = F, 4 = A)
+     * @param string $grade The grade this student got for the course section (0 = F, 4 = A)
      * @return boolean True if the course section was successfully added, false otherwise
      */
     public function addCourseSection($courseSection, $grade)
@@ -512,7 +531,7 @@ class User_model extends CI_Model
 	 * Get the grade the student user model got for a particular course section
 	 *
 	 * @param Course_section_model The course section model to look up a grade for
-	 * @return mixed Returns the grade a student got for that course section or false if no grade was found
+	 * @return string Returns the grade a student got for that course section or false if no grade was found
 	 */
 	public function getGradeForCourseSection($courseSection)
 	{
@@ -686,6 +705,13 @@ class User_model extends CI_Model
         
         $finalFlag = true;
         
+		$len2 = strlen($this->passwordHash);
+		
+		if($len < 1 || $len2 != $len)
+		{
+			$finalFlag = false;
+		}
+		
         for($i=0;$i<$len;$i++)
         {
             if ($finalFlag && $hashedPasswordGuess[$i] != $this->passwordHash[$i])

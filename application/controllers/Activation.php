@@ -9,7 +9,10 @@ class Activation extends CI_Controller
 	public function index($userID = NULL, $email = NULL)
 	{
 		$this->load->model('User_model');
+<<<<<<< HEAD
 		$this->load->library('email');
+=======
+>>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 
 		$user = new User_Model();
 		$user->loadPropertiesFromPrimaryKey($userID);
@@ -36,6 +39,7 @@ class Activation extends CI_Controller
 			$pass = $pass.$charset[mt_rand(0, count($charset)-1)];
 
 		//Set user password
+<<<<<<< HEAD
 
 
 		//Email user their login information
@@ -48,5 +52,39 @@ class Activation extends CI_Controller
 			);
 		$this->email->send(FALSE);
 		$this->email->print_debugger(array('headers','subject','body'));
+=======
+		$user->setPassword($pass);
+
+		//Email user their login information	
+		$this->load->library('email');
+		$config['protocol'] = 'smtp';
+		$config['smtp_host'] = 'smtp.gmail.com';
+		$config['smtp_port'] = '465';
+		$config['smtp_user'] = 'testseniorcapstone@gmail.com';
+		$config['smtp_pass'] = 'testpass';
+		$config['mailtype'] = 'html';
+		$config['charset'] = 'utf-8';
+		$config['newline'] = "\r\n";
+		$this->email->initialize($config);
+		
+		$list = array('testseniorcapstone@gmail.com');
+		$this->email->to($list);
+		
+		$this->email->from    ('testseniorcapstone@gmail.com', 'Senior');
+		$this->email->reply_to('testseniorcapstone@gmail.com', 'Senior');
+		$this->email->subject ('Subject');
+		$this->email->message (
+			'Username: '.$user->getUserID()."\r\n".
+			'Password: '.$pass."\r\n"
+		);
+
+		if ($this->email->send())
+			echo "Success!";
+		else
+		{
+			echo "Email failed!\n";
+			echo $this->email->print_debugger();
+		}
+>>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 	}
 }
