@@ -13,8 +13,10 @@ echo '<button type="button">';
 echo "<a href=\"index.php/activation/index/10210698\">Download</a>";
 echo '</button>';
 
+echo "<font color=\"blue\">";
 include 'curriculum_choice.php';
 include 'course_slot_choice.php';
 include 'course_slot_edit.php';
+echo "</font>";
 
 ?>
