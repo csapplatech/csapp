@@ -51,11 +51,8 @@ class Course_model extends CI_Model
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
                 $this->courseNumber = $row['CourseNumber'];
-<<<<<<< HEAD
-				//$this->courseTitle = $row['CourseTitle'];
-=======
+                
 				$this->courseTitle = $row['CourseTitle'];
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                 $this->courseDescription = $row['CourseDescription'];
 				$this->courseTypeID = $row['CourseTypeID'];
                 
@@ -414,10 +411,7 @@ class Course_model extends CI_Model
         if($this->courseID != null && filter_var($this->courseID, FILTER_VALIDATE_INT) && $this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT) && $this->courseTypeID != null && filter_var($this->courseTypeID, FILTER_VALIDATE_INT))
         {
             $data = array(
-<<<<<<< HEAD
-=======
 				'CourseTypeID' => $this->courseTypeID,
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 				'CourseName' => $this->courseName, 
 				'CourseNumber' => $this->courseNumber, 
 				'CourseTitle' => $this->courseTitle,
@@ -446,10 +440,7 @@ class Course_model extends CI_Model
         if($this->courseName != null && $this->courseNumber != null && filter_var($this->courseNumber, FILTER_VALIDATE_INT) && $this->courseTypeID != null && filter_var($this->courseTypeID, FILTER_VALIDATE_INT))
         {
             $data = array(
-<<<<<<< HEAD
-=======
 				'CourseTypeID' => $this->courseTypeID,
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 				'CourseName' => $this->courseName, 
 				'CourseNumber' => $this->courseNumber, 
 				'CourseTitle' => $this->courseTitle,

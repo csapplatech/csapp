@@ -12,31 +12,38 @@ and open the template in the editor.
     background-color:#002f8b;
 }
 
+#main {
+    overflow:auto;
+    width: 1024px;
+    height: 860px;
+}
+
 #head{
     color:white;
-    margin-left:32%;
-    margin-top: 1%;
+    margin-left:330px;
+    margin-top: 0;
     position:fixed;
     display:inline-block;
 }
 
 #courses{
-    width:25%;
-    height:98%;
+    width:320px;
+    height:600px;
     background-color:#e31b23;
     position:fixed;
     color:white;
     border-radius:5px;
+    overflow-y: auto;  
 }
 
 #advise{
-    width:65%;
-    height:80%;
+    width:900px;
+    height:520px;
     background-color:white;
     display:inline-block;
     position:fixed;
-    margin-left:28%;
-    margin-top:5%;
+    margin-left:330px;
+    margin-top:50px;
     border-radius:5px;
       
 }
@@ -64,8 +71,8 @@ table {
 
 #PB  {
     position:fixed;
-    margin-left: 30%;
-    margin-top: 45%;
+    margin-left: 330px;
+    bottom: 10px;
 }
 
 .logo {
@@ -86,7 +93,7 @@ li {
 }
 ul {
     margin-top: 0;
-    margin-left: -7%;
+    margin-left: -12%;
 }
 
 h4 {

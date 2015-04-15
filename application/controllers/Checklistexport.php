@@ -40,7 +40,6 @@ class Checklistexport extends CI_Controller
 	    $checklist = $Excel->getActiveSheet();
 	    $checklist->setTitle("Checklist");
 	   
-<<<<<<< HEAD
 	    $location["cwid"]->setValue($user->getUserID());
 	    $location["name"]->setValue($user->getName());
 	    $location["email"]->setValue($user->getEmailAddress());
@@ -53,7 +52,6 @@ class Checklistexport extends CI_Controller
 	    	for ($row = 0; $row < count($cells[$col]); $row++)
 	    		if (strcmp($checksheet->getCellByColumnAndRow($col, $row)->getValue(), "COURSE") == 0)
 				$course = array($row, $col);
-=======
 	    //Set column widths across the checklist
 	    $checklist->getColumnDimension('A')->setWidth(6.5);
 	    $checklist->getColumnDimension('B')->setWidth(4.8);
@@ -126,7 +124,6 @@ class Checklistexport extends CI_Controller
 	    $checklist->mergeCells("C6:E6");
 	    $checklist->getStyle("C6")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    $checklist->getCell("C6")->setValue($advisor);
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 	    
 	    //Set Last Updated
 	    $checklist->mergeCells("G6:H6");
@@ -155,7 +152,6 @@ class Checklistexport extends CI_Controller
 
 	    //for every course in the curriculum
 	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
-<<<<<<< HEAD
 	    $takenCourses    = $user->getAllCoursesTaken();
 
 	    //$course holds the row/col of the COURSE cell, the following cells are the headers for courses
@@ -234,7 +230,6 @@ class Checklistexport extends CI_Controller
                     echo "UNSUPPORTED TYPE";
                     break;
             }
-=======
 	    $row = 10;
 	    $prevCType = NULL;
 	    foreach ($requiredCourses as $reqCourse)
@@ -315,6 +310,5 @@ class Checklistexport extends CI_Controller
 	    //Merge preresuiqite cells
 	    for ($i = 0; $i <= $row; $i++)
 	    	$checklist->mergeCells("C$i:E$i");
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 	}
 }

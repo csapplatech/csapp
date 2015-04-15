@@ -76,11 +76,7 @@ class User_model extends CI_Model
 					}
 					
                     $this->name = $row['Name'];
-<<<<<<< HEAD
-					//$this->userStateID = $row['UserStateID'];
-=======
 					$this->userStateID = $row['UserStateID'];
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
                     
@@ -324,8 +320,6 @@ class User_model extends CI_Model
         return $this->userStateID;
     }
 	
-<<<<<<< HEAD
-=======
 	/**
      * Summary of isGuest
      * Check whether this user has the role of a guest
@@ -337,7 +331,6 @@ class User_model extends CI_Model
 		return in_array(self::ROLE_GUEST, $this->roles);
 	}
 	
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
     /**
      * Summary of isStudent
      * Check whether this user has the role of a student

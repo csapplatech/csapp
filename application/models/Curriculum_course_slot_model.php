@@ -55,14 +55,9 @@ class Curriculum_course_slot_model extends CI_Model
                 $this->curriculumID = $row['CurriculumID'];
                 $this->name = $row['Name'];
                 $this->minimumGrade = $row['MinimumGrade'];
-<<<<<<< HEAD
-                
-=======
                 $this->recommendedQuarter = $row['RecommendedQuarter'];
 				$this->recommendedYear = $row['RecommendedYear'];
 				$this->notes = $row['Notes'];
-				
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
                 $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);

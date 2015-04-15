@@ -9,10 +9,7 @@ class Activation extends CI_Controller
 	public function index($userID = NULL, $email = NULL)
 	{
 		$this->load->model('User_model');
-<<<<<<< HEAD
 		$this->load->library('email');
-=======
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 
 		$user = new User_Model();
 		$user->loadPropertiesFromPrimaryKey($userID);
@@ -39,9 +36,6 @@ class Activation extends CI_Controller
 			$pass = $pass.$charset[mt_rand(0, count($charset)-1)];
 
 		//Set user password
-<<<<<<< HEAD
-
-
 		//Email user their login information
 		$this->email->from   ('williamgkeen@gmail.com', 'Admin Name');
 		$this->email->to     ('williamgkeen@gmail.com');
@@ -52,7 +46,6 @@ class Activation extends CI_Controller
 			);
 		$this->email->send(FALSE);
 		$this->email->print_debugger(array('headers','subject','body'));
-=======
 		$user->setPassword($pass);
 
 		//Email user their login information	
@@ -85,6 +78,5 @@ class Activation extends CI_Controller
 			echo "Email failed!\n";
 			echo $this->email->print_debugger();
 		}
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
 	}
 }

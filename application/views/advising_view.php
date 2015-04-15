@@ -24,7 +24,7 @@
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
+                        echo "<li class='clickMe'><span title=\"". $cor->getTitle(). "\">". $sub->getName(). "-" . $cor->getName() . " (".$cor->getHours()." Hrs)</span></li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
@@ -42,67 +42,13 @@
                     }
                 }
                 ?>
-             </ul>
-
-            <h4 class="class_headers">Classes Taken</h4>
-            <ul>
-                <?php 
-                $id=100;
-                foreach ($courses['Passed']->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>
-          
-            <h4 class="class_headers">Requirements Not Met</h4>
-            <ul>
-                
-                <?php 
-                $id=200;
-                foreach ($courses['Signature']->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>
-            <br>
-            <p id='temp'><em><u>Link to Racing form (WIP)</u></em></p>
-               
+             </ul>    
+            <?php
+            echo"hi";
+            function helloworld (){
+                echo "Hello World";
+            }
+            ?>
         </div>
         
         <div id="advise" class="print">
@@ -128,28 +74,28 @@
             </table>
             <table id='target'>
               <tr>
-                <th style="width: 21%">Subject/Course/Section</th>
-                <th style="width: 17%">Title</th>
-                <th style="width: 9%">Call #</th>               
-                <th style="width: 7%">Hours</th>
-                <th style="width: 25%">Special Signature</th> 
-                <th style="width: 21%">Class Times</th>
+                <th style="width: 16%">Subj-Cor-Sec</th>
+                <th >Title</th>
+                <th style="width: 8%">Call #</th>               
+                <th style="width: 7%">Hrs</th>
+                <th style="width: 20%">Special Signature</th> 
+                <th style="width: 18%">Class Times</th>
               </tr>
             </table>
             
             <div id='alt'>
                 <table id='altTable'>
-                  <tr>
-                      <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
-                  </tr>
-                    <tr>
-                      <th style="width: 21%">Subject/Course/Section</th>
-                      <th style="width: 17%">Title</th>
-                      <th style="width: 9%">Call #</th>               
-                      <th style="width: 7%">Hours</th>
-                      <th style="width: 25%">Special Signature</th> 
-                      <th style="width: 21%">Class Times</th>
-                    </tr>
+                <tr>
+                    <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
+                </tr>
+                <tr>
+                  <th style="width: 16%">Subj-Cor-Sec</th>
+                  <th >Title</th>
+                  <th style="width: 8%">Call #</th>               
+                  <th style="width: 7%">Hrs</th>
+                  <th style="width: 20%">Special Signature</th> 
+                  <th style="width: 18%">Class Times</th>
+                </tr>
                 </table>
             </div>
             <table ID='sig'>
@@ -168,8 +114,11 @@
             </table>
         </div>
         
-        <div id="PB"><form><input type="button" value=" Print Advising Form"
-                          onclick="window.print();return false;" /></form></div>
+        <div id="PB">
+            <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
+            <button type="button" id="reset">Reset</button>
+            <button type="button" id="save">Save</button>
+        </div>
  
     
 </body>

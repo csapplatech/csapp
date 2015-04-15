@@ -245,8 +245,4 @@ class Academic_quarter_model extends CI_Model
 			return null;
 		}
 	}
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
