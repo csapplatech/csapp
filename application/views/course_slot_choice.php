@@ -1,4 +1,4 @@
-<h1>Curriculum</h1>
+<h1>Course Choice</h1>
 
 <select multiple size='3'>
 <option>Test</option>
@@ -14,5 +14,5 @@ foreach($query->result_array() as $row)
 <br \>
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Clone</button>
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">New</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Remove</button>
+<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Delete</button>
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Edit</button>

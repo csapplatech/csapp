@@ -12,4 +12,9 @@ echo '</button>';
 echo '<button type="button">';
 echo "<a href=\"index.php/activation/index/10210698\">Download</a>";
 echo '</button>';
+
+include 'curriculum_choice.php';
+include 'course_slot_choice.php';
+include 'course_slot_edit.php';
+
 ?>

@@ -163,13 +163,17 @@ class Checklistexport extends CI_Controller
 	    $checklist->getColumnDimension('L')->setWidth(20);
 	    $checklist->getColumnDimension('M')->setWidth(6);
 	    $checklist->getColumnDimension('O')->setWidth(6);
-	    $checklist->getColumnDimension('P')->setWidth(6);
+	    $checklist->getColumnDimension('P')->setWidth(8.2);
 
 	    $this->checklistheader($checklist, $user->getName(), $user->getUserID(), 
 			  $user->getAdvisor(), "2014-15", $user->getEmailAddress());
 
 	    $coursesTaken = $user->getAllCoursesTaken();
+	    //Slot in the core curriculum courses
 	    $this->checklistcore($checklist, $coursesTaken, $curriculum);
+	
+	    //Where to put every course that wasn't slotted
+	    $this->checklistLeftOvers($checklist, $coursesTaken);
 	}
 
 	//Course Checklist Header
@@ -280,8 +284,8 @@ class Checklistexport extends CI_Controller
 		//Put in all course credit information and term/year
 	        $checklist->getStyle("F$row:J$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		foreach ($coursesTaken as $key=>$taken)
-			foreach ($reqCourse->getValidCourseIDs() as $prereqID)
-				if ($prereqID == $taken[0]->getCourse()->getCourseID())
+			foreach ($reqCourse->getValidCourseIDs() as $reqID)
+				if ($reqID == $taken[0]->getCourse()->getCourseID())
 				{
 					$checklist->getCell("H$row")->setValue($taken[0]->getAcademicQuarter()->getYear());
 					$term = NULL;
@@ -308,8 +312,6 @@ class Checklistexport extends CI_Controller
 					unset($coursesTaken[$key]);
 				}
 
-		//Put in astrik if it's a prereq of another course
-
 		$row++;
 	    }
 
@@ -325,6 +327,16 @@ class Checklistexport extends CI_Controller
 	    //Merge preresuiqite cells
 	    for ($i = 0; $i <= $row; $i++)
 	    	$checklist->mergeCells("C$i:E$i");
+	}
+
+	//Course Checklist LeftOvers
+	private function checklistLeftOvers($checklist, $coursesTaken)
+	{
+		$row = 8;
+		$checklist->getStyle("L$row:P$row")->applyFromArray($this->titlestyle);
+	        $checklist->getStyle("M$row:P$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$array = array('ADDITIONAL COURSE', 'SCH', 'TERM', 'YEAR', 'GRADE');
+		$checklist->fromArray($array, NULL, 'L8');
 	}
 }
 ?>
