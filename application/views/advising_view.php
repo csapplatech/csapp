@@ -138,7 +138,7 @@
         
         <div id="PB">
             <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
-            <button type="button" id="reset">Reset</button>
+            <button type="button" id="reset"><strike>Reset</strike></button>
             <button type="button" id="save">Save</button>
         </div>
 </div></body>

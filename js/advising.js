@@ -55,18 +55,39 @@ $(document).ready(function() {
         }
     });
     $('#reset').click(function() {
-        window.location.reload()
+        //window.location.reload()
         //test code
         //for(var i=0; i<save_id.length;i++ )
         //    console.log("ID:" +save_id[i] +" CallNum" +save_callnum[i] +" Type:"+ save_type[i]);
-   }); 
+        var SendInfo = {
+            Info: []
+        };
+        for (var i in save_type){
+            SendInfo.Info.push(
+                {
+                    "CallNumber": save_callnum[i] ,
+                    "Type": save_type[i] 
+                });
+        }
+        console.log(JSON.stringify(SendInfo));
+    }); 
    
     $('#save').click(function() {
-        
+        var SendInfo = {
+            Info: []
+        };
+        for (var i in save_type){
+            SendInfo.Info.push(
+                {
+                    "CallNumber": save_callnum[i] ,
+                    "Type": save_type[i] 
+                });
+        }
         $.ajax({
            url: 'index.php/AdvisingForm/save',
            type: 'POST',
-           data: {name: "Example Data"},
+           contentTypeType : 'application/json',
+           data: JSON.stringify(SendInfo),
            success: function(data)
                 {
                     alert('success!\n' + data);
