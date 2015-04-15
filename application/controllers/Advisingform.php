@@ -335,9 +335,16 @@ class AdvisingForm extends CI_Controller
     }
     
     public function save(){
-        echo "TEST";
         
-        
+        //this should first remove all data that is currently saved
+        //
+        //*troubleshooting tip*
+        //keep in mind when you press "save" this function will run 
+        //and what ever you print_r will show in the success window popup
+        //print_r($_POST);
+        if(isset($_POST['name'])){
+            print_r($_POST['name']);   
+        }
     }
 }
 class Subject

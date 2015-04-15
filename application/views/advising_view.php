@@ -18,7 +18,7 @@
              <ul>
                 <?php 
                 $id=0;
-                foreach ($courses['Recommended']->getSubjects() as $sub)
+                foreach ($recommended->getSubjects() as $sub)
                 {
                     foreach($sub->getCourses() as $cor)
                     {
@@ -41,6 +41,36 @@
                 }
                 ?>
              </ul>    
+            <h4 class="class_headers" style='margin-top:.5%'>Select Subject</h4>
+             <ul>
+                <?php 
+                $id=1000;
+                foreach ($all_courses->getSubjects() as $sub)
+                {
+                    echo "<li class='clickMe'>". $sub->getName(). "</li>" ;
+                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                    foreach($sub->getCourses() as $cor)
+                    {
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
+                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                            foreach($cor->getSections() as $sec)
+                            {
+                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">WIP</span>".
+                                     "</div>";
+                                $id++;
+                            }
+                        echo "</ul>";
+                    }
+                    echo "</ul>";
+                }
+                ?>
+             </ul>  
         </div>
         
         <div id="advise" class="print">
@@ -70,8 +100,8 @@
                 <th >Title</th>
                 <th style="width: 8%">Call #</th>               
                 <th style="width: 7%">Hrs</th>
-                <th style="width: 20%">Special Signature</th> 
-                <th style="width: 20%">Class Times</th>
+                <th style="width: 18%">Special Signature</th> 
+                <th style="width: 22%">Class Times</th>
               </tr>
             </table>
             
@@ -85,8 +115,8 @@
                   <th >Title</th>
                   <th style="width: 8%">Call #</th>               
                   <th style="width: 7%">Hrs</th>
-                  <th style="width: 20%">Special Signature</th> 
-                  <th style="width: 20%">Class Times</th>
+                  <th style="width: 18%">Special Signature</th> 
+                  <th style="width: 22%">Class Times</th>
                 </tr>
                 </table>
             </div>

@@ -13,14 +13,14 @@ and open the template in the editor.
 }
 
 #main {
-    
+    display:block;
 }
 
 #head{
     color:white;
     margin-left:330px;
     margin-top: 0;
-    position:fixed;
+    position:absolute;
     display:inline-block;
 }
 
@@ -28,7 +28,7 @@ and open the template in the editor.
     width:320px;
     height:600px;
     background-color:#e31b23;
-    position:fixed;
+    position:absolute;
     color:white;
     border-radius:5px;
     overflow-y: auto;  
@@ -39,7 +39,7 @@ and open the template in the editor.
     height:520px;
     background-color:white;
     display:inline-block;
-    position: fixed;
+    position:absolute;
     margin-left:330px;
     margin-top:50px;
     border-radius:5px;
@@ -68,7 +68,7 @@ table {
 }
 
 #PB  {
-    position:fixed;
+    position:absolute;
     margin-left: 330px;
     top: 585px;
 }
@@ -91,7 +91,7 @@ li {
 }
 ul {
     margin-top: 0;
-    margin-left: -12%;
+    margin-left: -11%;
 }
 
 h4 {

@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    var save_id = new Array();
+    var save_callnum = new Array();
+    var save_type = new Array(); //save type is alt or norm
    $('.clickMe').click(function() {
            ($(this).next()).toggle();
    }); 
@@ -13,15 +16,20 @@ $(document).ready(function() {
             cellBid="#b"+butID;
             cellB =$(cellBid).text();
             cellCid="#c"+butID;
-            cellC =$(cellCid).text();
+            cellC =$(cellCid).text(); //cell C is call number
+            //push both to arrays
+            save_id.push(butID);
+            save_callnum.push(cellC);
+            save_type.push("norm");
             cellDid="#d"+butID;
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
             $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
-        }
+       }
         else if($(this).text()=="Add Alt")
         {
+            save_type[save_id.indexOf(butID)]="alt";
             var removeID ="#row"+butID;
             $(removeID).remove();
             $(this).text("Remove");
@@ -37,16 +45,36 @@ $(document).ready(function() {
             cellE =$(cellEid).text();
             $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
         } else {
+            var index = save_id.indexOf(butID);
+            save_id.splice(index,1);
+            save_callnum.splice(index,1);
+            save_type.splice(index,1);
             var removeID ="#row"+butID;
             $(this).text("Add");
             $(removeID).remove();
         }
     });
     $('#reset').click(function() {
-        window.location.reload();
+        window.location.reload()
+        //test code
+        //for(var i=0; i<save_id.length;i++ )
+        //    console.log("ID:" +save_id[i] +" CallNum" +save_callnum[i] +" Type:"+ save_type[i]);
    }); 
    
     $('#save').click(function() {
-        window.location.reload();
+        
+        $.ajax({
+           url: 'index.php/AdvisingForm/save',
+           type: 'POST',
+           data: {name: "Example Data"},
+           success: function(data)
+                {
+                    alert('success!\n' + data);
+                },
+           error: function(data) 
+                {
+                    alert("failed!");
+                }
+        });
    });
 });
