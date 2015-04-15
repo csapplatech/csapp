@@ -57,7 +57,7 @@ class Course_model extends CI_Model
 				$this->courseTitle = $row['CourseTitle'];
 >>>>>>> 4cc2ab41965eacb7e11eac879d26102ea5f74330
                 $this->courseDescription = $row['CourseDescription'];
-				$this->courseTypeID = $row['CourseTitleID'];
+				$this->courseTypeID = $row['CourseTypeID'];
                 
                 return true;
             }
@@ -211,6 +211,7 @@ class Course_model extends CI_Model
 		if($this->courseID != null)
 		{
 			$this->db->select('CourseID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('RequisiteCourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
@@ -242,6 +243,7 @@ class Course_model extends CI_Model
 		if($this->courseID != null)
 		{
 			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('CourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
@@ -273,6 +275,7 @@ class Course_model extends CI_Model
 		if($this->courseID != null)
 		{
 			$this->db->select('RequisiteCourseID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
 			$this->db->where('CourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
@@ -288,6 +291,7 @@ class Course_model extends CI_Model
 			}
 			
 			$this->db->select('CourseID');
+			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
 			$this->db->where('RequisiteCourseID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
@@ -304,6 +308,68 @@ class Course_model extends CI_Model
 		}
 		
 		return $models;
+	}
+	
+	/**
+	 * Summary of addCoursePrerequisite
+	 * Add a prerequisite course to this model
+	 *
+	 * @param Course_model $course The course model that is the prerequisite to this model
+	 * @return boolean Whether or not the prerequisite relationship was created in the database
+	 */
+	public function addCoursePrerequisite($course)
+	{
+		$data = array(
+			'CourseID' => $this->courseID,
+			'RequisisteCourseID' => $course->courseID,
+			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
+		);
+		
+		$this->db->insert('CourseRequisites', $data);
+		
+		return $this->db->affected_rows() > 0;
+	}
+	
+	/**
+	 * Summary of addCourseCorequisite
+	 * Add a corequisite curriculum course slot to this model
+	 *
+	 * @param Course_model $curriculumCourseSlot The curriculum course slot model that is the corequisite to this model
+	 * @return boolean Whether or not the corequisite relationship was created in the database
+	 */
+	public function addCourseSlotCorequisite($course)
+	{
+		$data = array(
+			'CourseID' => $this->courseID,
+			'RequisisteCourseID' => $course->courseID,
+			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
+		);
+		
+		$this->db->insert('CourseRequisites', $data);
+		
+		return $this->db->affected_rows() > 0;
+	}
+	
+	/**
+	 * Summary of removeCourseRequisite
+	 * Remove all requisite relationships between this model and another course model
+	 *
+	 * @param Course_model $course The course model to remove relationships with
+	 * @return boolean True if any requisite relationships were deleted from the database, false otherwise
+	 */
+	public function removeCourseRequisite($course)
+	{
+		$this->db->where('CourseID', $this->courseID);
+		$this->db->where('RequisisteCurriculumCourseSlotID', $course->courseID);
+		$this->db->delete('CourseRequisites');
+		
+		$num = $this->db->affected_rows();
+		
+		$this->db->where('CourseID', $course->courseID);
+		$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+		$this->db->delete('CourseRequisites');
+		
+		return ($num + $this->db->affected_rows()) > 0;
 	}
 	
 	/**

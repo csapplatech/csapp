@@ -7,11 +7,9 @@
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="icon" href="../../favicon.ico">
+        <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-        <link href="navbar-fixed-top.css" rel="stylesheet">
+        <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
     <body style="padding-top: 60px">
@@ -48,6 +46,43 @@
         </nav>
 
         <p> Welcome to the Program Chair Main Page, <?php echo $user->getName(); ?>!</p>
+        
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Bug Reports</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Change Password</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Manage Advisor & Advisee</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Manage Transfer Credits</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Manage Course Requirements</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Manage Classes</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Manage Curriculum</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>View Curriculum</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Schedule</a></li>";?>
+        </button>
+        
+        <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:500px;height:425px">
+        
+        <footer>
+            <font color ="white"</font>
+            <p>Ruston, LA 2015</p> 
+            <p>Louisiana Tech University</p>
+            <p>Created by: Caleb Baze, Azriel Richardson, Ryan Gardiner and Zachary Behnke</p>
+        </footer>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
