@@ -11,8 +11,7 @@
     
         <title>Advising Page</title>
     </head>
-    <body id="background">
-
+    <body id="background" >
         <h1 id="head">Advising Page</h1>
         
         <div id="courses">
@@ -24,7 +23,7 @@
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'><span title=\"". $cor->getTitle(). "\">". $sub->getName(). "-" . $cor->getName() . " (".$cor->getHours()." Hrs)</span></li>" ;
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
@@ -34,7 +33,7 @@
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
                                 $id++;
                             }
@@ -43,12 +42,6 @@
                 }
                 ?>
              </ul>    
-            <?php
-            echo"hi";
-            function helloworld (){
-                echo "Hello World";
-            }
-            ?>
         </div>
         
         <div id="advise" class="print">
@@ -119,7 +112,5 @@
             <button type="button" id="reset">Reset</button>
             <button type="button" id="save">Save</button>
         </div>
- 
-    
 </body>
 </html>
