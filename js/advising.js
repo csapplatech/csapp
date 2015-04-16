@@ -65,8 +65,8 @@ $(document).ready(function() {
         for (var i in save_type){
             SendInfo.Info.push(
                 {
-                    "CallNumber": save_callnum[i] ,
-                    "Type": save_type[i] 
+                    'CallNumber': save_callnum[i] ,
+                    'Type': save_type[i] 
                 });
         }
         console.log(JSON.stringify(SendInfo));
@@ -79,12 +79,13 @@ $(document).ready(function() {
         for (var i in save_type){
             SendInfo.Info.push(
                 {
-                    "CallNumber": save_callnum[i] ,
-                    "Type": save_type[i] 
+                    'CallNumber': save_callnum[i] ,
+                    'Type': save_type[i] 
                 });
         }
         $.ajax({
-           url: 'index.php/AdvisingForm/save',
+           //url: 'index.php/AdvisingForm/save',
+           url: 'save',
            type: 'POST',
            contentTypeType : 'application/json',
            data: JSON.stringify(SendInfo),

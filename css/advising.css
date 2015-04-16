@@ -10,18 +10,24 @@ and open the template in the editor.
 
 #background {
     background-color:#002f8b;
+    padding:auto;
 }
 
-#main {
+
+
+#main{
     display:block;
+    margin: 0 auto;
+    height: 600px;
+    width: 1250px;
+   // border: 4px black solid;
 }
-
 #head{
     color:white;
     margin-left:330px;
-    margin-top: 0;
+    margin-top: 5px;
     position:absolute;
-    display:inline-block;
+    display:block;
 }
 
 #courses{

@@ -1,13 +1,15 @@
 <!DOCTYPE>
 <html>
     <head>
-        <link href = "../../css/advising.css" rel ="stylesheet">
+        
+        <link href = "../../css/advising.css" rel ="stylesheet" >
         <link rel="stylesheet" href="../../css/print.css" type="text/css" media="print" />
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
     
         <title>Advising Page</title>
+        
     </head>
     <body id="background" ><div id="main">
         <h1 id="head">Advising Page</h1>
@@ -25,7 +27,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
@@ -54,7 +56,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
@@ -139,6 +141,7 @@
             <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
             <button type="button" id="reset"><strike>Reset</strike></button>
             <button type="button" id="save">Save</button>
+            <button><a style="text-decoration: none; color: black"  href="<?php echo site_url('Mainpage/index'); ?>">Home</a></button>
         </div>
 </div></body>
 </html>
