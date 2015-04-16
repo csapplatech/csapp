@@ -10,6 +10,7 @@ class Course_section_model extends CI_Model
     // Member variables, use getter / setter functions for access
     private $courseSectionID = null;
     private $courseSectionName = null;
+	private $instructorName = null;
     private $course = null;
 	private $hours = null;
 	private $callNumber = null;
@@ -134,8 +135,9 @@ class Course_section_model extends CI_Model
             
             $this->courseSectionID = $row['CourseSectionID'];
             $this->sectionName = $row['SectionName'];
-			//  $this->callNumber = $row['CallNumber'];
-			//$this->hours = $row['Hours'];
+			$this->instructorName = $row['InstructorName'];
+			$this->callNumber = $row['CallNumber'];
+			$this->hours = $row['Hours'];
 			
             $this->course = new Course_model;
             
@@ -195,6 +197,16 @@ class Course_section_model extends CI_Model
     }
     
 	/**
+     * Summary of getInstructorName
+     * 
+     * @return string The instructor name of this course section model
+     */
+    public function getInstructorName()
+    {
+        return $this->instructorName;
+    }
+	
+	/**
      * Summary of getHours
      * 
      * @return integer The course credit hours of this course section model
@@ -245,6 +257,17 @@ class Course_section_model extends CI_Model
     public function setSectionName($sectionName)
     {
         $this->sectionName = filter_var($sectionName, FILTER_SANITIZE_MAGIC_QUOTES);
+    }
+	
+	/**
+     * Summary of setInstructorName
+     * Set the instructor name for this course section
+     * 
+     * @param string $instructorName The instructor name to be associated with this course model
+     */
+    public function setInstructorName($instructorName)
+    {
+        $this->instructorName = filter_var($instructorName, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
 	/**
@@ -357,11 +380,12 @@ class Course_section_model extends CI_Model
      */
     public function create()
     {   
-        if($this->academicQuarter != null && $this->sectionName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
+        if($this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CourseID' => $this->course->getCourseID(), 
 				'SectionName' => $this->sectionName, 
+				'InstructorName' => $this->instructorName,
 				'Hours' => $this->hours,
 				'CallNumber' => $this->callNumber,
 				'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID()
@@ -395,11 +419,12 @@ class Course_section_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
+        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CourseID' => $this->course->getCourseID(), 
 				'SectionName' => $this->sectionName, 
+				'InstructorName' => $this->instructorName,
 				'Hours' => $this->hours,
 				'CallNumber' => $this->callNumber,
 				'AcademicQuarterID' => $this->academicQuarter->getAcademicQuarterID()
