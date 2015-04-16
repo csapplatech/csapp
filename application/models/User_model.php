@@ -14,6 +14,7 @@ class User_model extends CI_Model
 	private $passwordSalt = null;
     private $name = null;
 	private $userStateID = null;
+	private $lastLogin = null;
     private $roles = array();
     private $coursesTaken = array();
 	private $curriculums = array();
@@ -76,6 +77,7 @@ class User_model extends CI_Model
 					}
 					
                     $this->name = $row['Name'];
+					$this->lastLogin = $row['LastLogin'];
 					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
@@ -131,11 +133,21 @@ class User_model extends CI_Model
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
                     
-					$passwordComponents = explode("$", $row['PasswordHash']);
+					if(strpos($row['PasswordHash'], "$"))
+					{
+						$passwordComponents = explode("$", $row['PasswordHash']);
+						
+						$this->passwordHash = $passwordComponents[1];
+						$this->passwordSalt = $passwordComponents[0];
+					}
+					else
+					{
+						$this->passwordHash = $row['PasswordHash'];
+						$this->passwordSalt = "";
+					}
 					
-                    $this->passwordHash = $passwordComponents[1];
-					$this->passwordSalt = $passwordComponents[0];
                     $this->name = $row['Name'];
+					$this->lastLogin = $row['LastLogin'];
 					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $this->userID));
@@ -246,6 +258,17 @@ class User_model extends CI_Model
     }
     
 	/**
+     * Summary of setLastLogin
+     * Set the last login time of the user
+     * 
+     * @param integer $lastLogin The last login time associated with this user model
+     */
+	public function setLastLogin($lastLogin)
+	{
+		$this->lastLogin = filter_var($lastLogin, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
+	/**
      * Summary of setState
      * Set the user account state of the user
      * 
@@ -319,6 +342,17 @@ class User_model extends CI_Model
     {
         return $this->userStateID;
     }
+	
+	/**
+     * Summary of getLastLogin
+     * Get the last login time of the user
+     * 
+     * @return integer The last login time associated with this user model or null if model not saved in database
+     */
+	public function getLastLogin()
+	{
+		return $this->lastLogin;
+	}
 	
 	/**
      * Summary of isGuest
@@ -581,7 +615,13 @@ class User_model extends CI_Model
     {
         if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
+            $data = array(
+				'EmailAddress' => $this->emailAddress, 
+				'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+				'Name' => $this->name, 
+				'LastLogin' => $this->lastLogin,
+				'UserStateID' => $this->userStateID
+			);
             
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
@@ -643,7 +683,13 @@ class User_model extends CI_Model
     {   
         if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 'Name' => $this->name, 'UserStateID' => $this->userStateID);
+            $data = array(
+				'EmailAddress' => $this->emailAddress, 
+				'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+				'Name' => $this->name, 
+				'LastLogin' => $this->lastLogin,
+				'UserStateID' => $this->userStateID
+			);
             
             $this->db->insert('Users', $data);
             
