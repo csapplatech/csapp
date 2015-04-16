@@ -1,9 +1,8 @@
 <!DOCTYPE>
 <html>
     <head>
-        <link href = "css/advising.css" rel ="stylesheet">
-        <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
-        <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
+        <link href = "../../css/advising.css" rel ="stylesheet">
+        <link rel="stylesheet" href="../../css/print.css" type="text/css" media="print" />
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
@@ -76,7 +75,7 @@
         <div id="advise" class="print">
             <table>
                 <tr>
-                    <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="../../image/latech.gif" alt="Tech Logo" class="logo"></th>
                     <th><table class='noborder'>
                         <tr><th class="noborder">Louisiana Tech University</th></tr>
                         <tr><th class="noborder">ADVISING FORM</th></tr>
@@ -85,7 +84,7 @@
                         $quarter->loadPropertiesFromPrimaryKey($quarter_id);
                         echo $quarter->getName() . " " . $quarter->getYear();?></u></th></tr>
                 </table> </th>
-                    <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="../../image/latech.gif" alt="Tech Logo" class="logo"></th>
                 </tr>
             </table>
             <table>
