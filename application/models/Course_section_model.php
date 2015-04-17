@@ -13,6 +13,7 @@ class Course_section_model extends CI_Model
     private $course = null;
 	private $hours = null;
 	private $callNumber = null;
+        private $instructor = null;
     private $academicQuarter = null;
     private $courseSectionTimes = array();
     
@@ -136,6 +137,7 @@ class Course_section_model extends CI_Model
             $this->sectionName = $row['SectionName'];
 			$this->callNumber = $row['CallNumber'];
 			$this->hours = $row['Hours'];
+                        $this->instructor = $row['InstructorName'];
 			
             $this->course = new Course_model;
             
@@ -213,6 +215,16 @@ class Course_section_model extends CI_Model
 	{
 		return $this->callNumber;
 	}
+        
+        /**
+     * Summary of getInstructorName
+     * 
+     * @return string The name of the instructor for this course section model
+     */
+        public function getInstructorName()
+        {
+                return $this->instructor;
+        }
 	
     /**
      * Summary of getAcademicQuarter

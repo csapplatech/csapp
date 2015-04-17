@@ -27,13 +27,13 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
+                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
                                 $id++;
                             }
@@ -56,13 +56,12 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
-                                echo "<div id='hidden'>".
+                               echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
                                 $id++;
                             }

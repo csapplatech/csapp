@@ -12,6 +12,7 @@ class Course_model extends CI_Model
     private $courseName = null;
     private $courseNumber = null;
 	private $courseTitle = null;
+        private $subjectName = null;
     private $courseDescription = null;
 	private $courseTypeID = null;
     
@@ -57,6 +58,15 @@ class Course_model extends CI_Model
 				$this->courseTypeID = $row['CourseTypeID'];
                 
                 return true;
+            }
+            
+            $results = $this->db->get_where('CourseCategories', array('CourseName' => $this->courseName), 1);
+            
+            if ($results->num_rows() > 0)
+            {
+                $row = $results->row_array();
+                
+                $this->subjectName = $row['CategoryName'];
             }
         }
         
@@ -106,6 +116,17 @@ class Course_model extends CI_Model
 	{
 		return $this->courseTitle;
 	}
+        
+        /**
+     * Summary of getSubjectName
+     * Get the name of the subject of this model
+     * 
+     * @return string The name of the subject associated with this course model
+     */
+        public function getSubjectName()
+        {
+                return $this->subjectName;
+        }
 	
     /**
      * Summary of getCourseDescription
