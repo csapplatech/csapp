@@ -33,7 +33,7 @@ class Student_transfer_course_model extends CI_Model
 	{
 		if($studentTransferCourseID != null && filter_var($studentTransferCourseID, FILTER_VALIDATE_INT))
 		{
-			$result = $this->db-<get_where('StudentTransferCourses', array('StudentTransferCourseID' => $studentTransferCourseID), 1);
+			$result = $this->db->get_where('StudentTransferCourses', array('StudentTransferCourseID' => $studentTransferCourseID), 1);
 			
 			if($result->num_rows() > 0)
 			{
