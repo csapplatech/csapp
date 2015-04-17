@@ -25,17 +25,6 @@ class Course_section_model extends CI_Model
         parent::__construct();
     }
     
-    /**
-     * Summary of toString
-     * Get a string representation of this course section model
-     * 
-     * @return string A string representation of this course section model
-     */
-    public function toString()
-    {
-        return $this->course->getCourseName() . $this->course->getCourseNumber() . $this->courseSectionName . $this->hours . $this->callNumber . $this->academicQuarter->getName() . $this->academicQuarter->getYear();
-    }
-    
 	/**
 	 * Summary of getCourseSectionTimesAsString
 	 * Get the course sections times for this course section as a string similar to how they are represented on BOSS
@@ -115,7 +104,7 @@ class Course_section_model extends CI_Model
 		
 		$minute = intval($time % 100);
 		
-		return $hour . ":" . $minute;
+		return $hour . ":" . ($minute < 10) ? "0" . $minute : $minute;
 	}
 	
     /**
@@ -419,7 +408,7 @@ class Course_section_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
+        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CourseID' => $this->course->getCourseID(), 

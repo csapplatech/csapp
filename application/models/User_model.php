@@ -531,9 +531,9 @@ class User_model extends CI_Model
      */
     public function addCourseSection($courseSection, $grade)
     {
-        $searchstr = $courseSection->toString();
+        $searchstr = $courseSection->getCourseSectionID();
         
-        if(!isset($this->coursesTaken[$searchstr]))
+        if($searchstr != null && !isset($this->coursesTaken[$searchstr]))
         {
             $this->coursesTaken[$searchstr] = array();
             $this->coursesTaken[$searchstr][0] = $courseSection;
@@ -554,9 +554,9 @@ class User_model extends CI_Model
      */
     public function removeCourseSection($courseSection)
     {
-        $searchstr = $courseSection->toString();
+        $searchstr = $courseSection->getCourseSectionID();
         
-        if(isset($this->coursesTaken[$searchstr]))
+        if($searchstr != null && isset($this->coursesTaken[$searchstr]))
         {
             unset($this->coursesTaken[$searchstr]);
             
@@ -666,7 +666,7 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
             
-            if(count($this->coursesTaken) > 0)
+            if(count($this->roles) > 0)
             {
                 foreach($this->roles as $role)
                 {
@@ -687,8 +687,7 @@ class User_model extends CI_Model
 			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
-            
-            
+		
             if(count($this->coursesTaken) > 0)
             {
                 $data_arr = array();
@@ -827,4 +826,39 @@ class User_model extends CI_Model
         
         return $finalFlag;
     }
+	
+	/**
+	 * Summary of getAllAdvisors
+	 * Get all of the users in the database with an advising role
+	 *
+	 * @return Array An array containing all users who have an advisor role
+	 */
+	public static function getAllAdvisors()
+	{
+		$db = get_instance()->db;
+		
+		$models = array();
+		
+		$db->select('Users.UserID');
+		$db->from('Users');
+		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
+		$db->where('UserRoles.RoleID', self::ROLE_ADVISOR);
+		
+		$results = $db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
 }
