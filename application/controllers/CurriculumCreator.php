@@ -25,11 +25,8 @@ class CurriculumCreator extends CI_Controller {
 	global $courseSlot = new Curriculum_course_slot_model(); //will hold the current course slot 
 	
 	public function index()
-	{
-		//load models
-		
+	{		
 		//call and pass data to initial curriculum view
-		$curriculum = new Curriculum_Model();
 		$curriculums = $curriculum->getAllCurriculums();
 		$data = array();
 		
@@ -101,7 +98,7 @@ class CurriculumCreator extends CI_Controller {
 	//creating a new curriculum
 	public function newCurriculum($name, $type)
 	{
-		$curriculum = new Curriculum_model(); //will we need this for only new or all?
+		$curriculum = new Curriculum_model(); //will this create a local variable or change the global?
 		$curriculum->setName($name);
 		$curriculum->setCurriculumType($type);
 		data = array[
@@ -117,11 +114,10 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$curriculum->delete();
 	}
-	
-	public function saveCurriculum($curriculumID, $type = NULL)
+
+	//saving a curriculum edits
+	public function saveCurriculum($type = NULL)
 	{
-		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		
 		if ($type == "edit")
 			$curriculum->update();
 		else
@@ -131,7 +127,6 @@ class CurriculumCreator extends CI_Controller {
 	//clone and edit a curriculum course slot
     public function cloneCurriculumCourseSlot($curriculumCourseSlotID, $name) 
     {
-		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$data = array[
@@ -157,7 +152,6 @@ class CurriculumCreator extends CI_Controller {
 	//clone and edit a curriculum course slot
     public function editCurriculumCourseSlot($curriculumCourseSlotID) 
     {
-		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$data = array[
@@ -183,7 +177,7 @@ class CurriculumCreator extends CI_Controller {
 	//create a new curriculum course slot
 	public function newCurriculumCourseSlot($name, $minimumGrade)
 	{
-		$courseSlot = new Curriculum_course_slot_model(); //make this public
+		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->setCurriculum($curriculum);
 		$courseSlot->setMinimumGrade($minimumGrade);
 		$courseSlot->setName($name);
