@@ -27,7 +27,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
+                                echo "<li><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
@@ -48,7 +48,7 @@
                 $id=1000;
                 foreach ($all_courses->getSubjects() as $sub)
                 {
-                    echo "<li class='clickMe'>". $sub->getName(). "</li>" ;
+                    echo "<li class='clickMe'>". $sub->getName()." </li>" ;
                     echo "<ul class=\"toggleMe\" style=\"display:none\">";
                     foreach($sub->getCourses() as $cor)
                     {
@@ -56,7 +56,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                               echo "<li><span title=\"Professor: WIP\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                               echo "<li><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
