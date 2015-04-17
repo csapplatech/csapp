@@ -44,7 +44,31 @@
            </div>
         </nav>
 
+<<<<<<< HEAD
         <h3> Welcome to the Student Main Page, <?php echo $user->getName(); ?>!</h3>
+=======
+        <p> Welcome to the Student Main Page, <?php echo $user->getName(); ?>!</p>
+        
+        <!-- change the site url to your specific url part -->
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>View Advisor Info</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Change Password</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Bug Reports</a></li>";?>
+        </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Schedule</a></li>";?>
+        </button>
+        <button type="button">
+           <?php echo "<li><a href='" .site_url('Login/logout'). "'>Advising Appointments</a></li>";?>
+        </button>
+        
+            <?php echo "<li><a href='" .site_url('appointment_controller'). "'>Advising Appointments</a></li>";?>
+        
+>>>>>>> updates
         
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             View Advisor Info
