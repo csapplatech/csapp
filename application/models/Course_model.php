@@ -14,6 +14,7 @@ class Course_model extends CI_Model
 	private $courseTitle = null;
         private $subjectName = null;
     private $courseDescription = null;
+	private $courseCategoryName = null;
 	private $courseTypeID = null;
     
 	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
@@ -51,6 +52,7 @@ class Course_model extends CI_Model
                 
                 $this->courseID = $row['CourseID'];
                 $this->courseName = $row['CourseName'];
+				$this->courseCategoryName = self::getCategoryName($this->courseName);
                 $this->courseNumber = $row['CourseNumber'];
                 
 				$this->courseTitle = $row['CourseTitle'];
@@ -72,7 +74,7 @@ class Course_model extends CI_Model
         
         return false;
     }
-    
+	
     /**
      * Summary of getCourseID
      * Get the course id primary key of this model
@@ -140,6 +142,17 @@ class Course_model extends CI_Model
     }
     
 	/**
+     * Summary of getCourseCategoryName
+     * Get the course category name of this model
+     * 
+     * @return string The course category name of this course model or null if no category is set
+     */
+	public function getCourseCategoryName()
+	{
+		return $this->courseCategoryName;
+	}
+	
+	/**
 	 * Summary of isUndergraduateCourse
 	 * Check whether or not this course model type id is that of an undergraduate course (see COURSE_TYPE constants)
 	 *
@@ -170,6 +183,8 @@ class Course_model extends CI_Model
     public function setCourseName($courseName)
     {
         $this->courseName = filter_var($courseName, FILTER_SANITIZE_MAGIC_QUOTES);
+		
+		$this->courseCategoryName = self::getCategoryName($this->courseName);
     }
 	
     /**
@@ -511,6 +526,33 @@ class Course_model extends CI_Model
         }
     }
     
+	/**
+	 * Summary of getCategoryName
+	 * Get the category name of the course
+	 * 
+	 * @param string $courseName The name of the course to find a category for
+	 * @return string The category name for the course or the course name if no category is found
+	 */
+	private static function getCategoryName($courseName)
+	{
+		$db = get_instance()->db;
+		
+		$db->select('CategoryName');
+		$db->where('CourseName', $courseName);
+		$results = $db->get('CourseCategories');
+		
+		if($results->num_rows() > 0)
+		{
+			$row = $results->row_array();
+			
+			return $row['CategoryName'];
+		}
+		else
+		{
+			return $courseName;
+		}
+	}
+	
     /**
      * Summary of getAllCourses
      * Get all of the courses saved in the database

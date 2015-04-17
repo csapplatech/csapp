@@ -141,6 +141,15 @@ class ModelTest extends CI_Controller
         }
     }
 
+	public function courseSectionTwo()
+	{
+		$model = new Course_section_model;
+		
+		$model->loadPropertiesFromPrimaryKey(1);
+		
+		echo $model->getCourseSectionTimesAsString();
+	}
+	
     public function course_section()
     {
         if($this->uri->segment(3, 0))
