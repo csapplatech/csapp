@@ -39,8 +39,8 @@ class Course_section_model extends CI_Model
 		
 		foreach($this->courseSectionTimes as $courseSectionTime)
 		{
-			$startTime = militaryToStandardTime($courseSectionTime->getStartTime());
-			$endTime = militaryToStandardTime($courseSectionTime->getEndTime());
+			$startTime = self::militaryToStandardTime($courseSectionTime->getStartTime());
+			$endTime = self::militaryToStandardTime($courseSectionTime->getEndTime());
 			
 			$index = $startTime . " - " . $endTime;
 			
@@ -53,7 +53,7 @@ class Course_section_model extends CI_Model
 		}
 		
 		foreach($temp as $t)
-		{
+		{	
 			$tStr = "";
 			
 			if(isset($t[Course_section_time_model::DAY_MONDAY]))
@@ -76,14 +76,15 @@ class Course_section_model extends CI_Model
 				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY];
 			}
 			
-			if(isset($t[Course_section_time_model::DAY_FRIDAY]));
+			if(isset($t[Course_section_time_model::DAY_FRIDAY]))
 			{
 				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
 			}
-			$outputString = $outputString . $tStr . " " . key($temp) . ";";
+			
+			$outputString = $outputString . $tStr . " " . key($temp) . "; ";
 		}
 		
-		return $outputString;
+		return substr($outputString, 0, strlen($outputString) - 2);
 	}
 	
 	/**
@@ -104,7 +105,7 @@ class Course_section_model extends CI_Model
 		
 		$minute = intval($time % 100);
 		
-		return $hour . ":" . ($minute < 10) ? "0" . $minute : $minute;
+		return $hour . ":" . (($minute < 10) ? "0" . $minute : $minute);
 	}
 	
     /**

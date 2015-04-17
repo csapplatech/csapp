@@ -143,28 +143,11 @@ class ModelTest extends CI_Controller
 
 	public function courseSectionTwo()
 	{
-		$user = new User_model;
+		$model = new Course_section_model;
 		
-		if($user->loadPropertiesFromPrimaryKey(1))
-		{
-			$csOne = new Course_section_model;
-			$csTwo = new Course_section_model;
-			
-			echo "Load CS One: " . $csOne->loadPropertiesFromPrimaryKey(1) . "<br />";
-			echo "Load CS Two: " . $csTwo->loadPropertiesFromPrimaryKey(78) . "<br />";
-			
-			echo "Add CS One: " . $user->addCourseSection($csOne, 0) . "<br />";
-			echo "Add CS Two: " . $user->addCourseSection($csTwo, 0) . "<br />";
-			
-			echo "Update: " . $user->update() . "<br />";
-			
-			print_r($user);
-		}
-		else
-		{
-			echo "User load failed";
-		}
+		$model->loadPropertiesFromPrimaryKey(1);
 		
+		echo $model->getCourseSectionTimesAsString();
 	}
 	
     public function course_section()
