@@ -346,8 +346,29 @@ class AdvisingForm extends CI_Controller
         //next this will  gather the data from javascript
         //if(isset($_POST['name'])){
         //    print_r($_POST['name']);   
-        $jsonReceiveData = json_encode($_POST, JSON_PRETTY_PRINT);
-        print_r($jsonReceiveData);
+        
+        //$jsonReceiveData = json_encode($_POST['{"Info":'], JSON_PRETTY_PRINT);
+        $data = json_decode($_POST['data']);
+        
+        foreach($data->Info as $course)
+        {
+            print_r($course->Type);
+        }
+        //print_r($_POST['{"Info":']);
+        /*$blarg = json_decode($jsonReceiveData, true);
+        foreach($blarg as $item)
+        {
+            foreach($item as $key => $value)
+            {
+                $info = $json_decode($key, true);
+                foreach($info as $inf)
+                {
+                    echo "\n\n" . $inf;
+                }
+            }
+        }*/
+        /*$blarg = json_decode($jsonReceiveData);
+        var_dump($blarg);*/
         //}
         
         //then it will store the new information in the database

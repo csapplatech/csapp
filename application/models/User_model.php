@@ -837,9 +837,6 @@ class User_model extends CI_Model
         
         return $finalFlag;
     }
-<<<<<<< HEAD
-}
-=======
 	
 	/**
 	 * Summary of getAllAdvisors
@@ -876,4 +873,3 @@ class User_model extends CI_Model
 		return $models;
 	}
 }
->>>>>>> origin/dev

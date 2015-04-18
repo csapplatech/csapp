@@ -40,13 +40,8 @@ class Course_section_model extends CI_Model
 		
 		foreach($this->courseSectionTimes as $courseSectionTime)
 		{
-<<<<<<< HEAD
 			$startTime = course_section_model::militaryToStandardTime($courseSectionTime->getStartTime());
 			$endTime = course_section_model::militaryToStandardTime($courseSectionTime->getEndTime());
-=======
-			$startTime = self::militaryToStandardTime($courseSectionTime->getStartTime());
-			$endTime = self::militaryToStandardTime($courseSectionTime->getEndTime());
->>>>>>> origin/dev
 			
 			$index = $startTime . " - " . $endTime;
 			
@@ -131,15 +126,9 @@ class Course_section_model extends CI_Model
             
             $this->courseSectionID = $row['CourseSectionID'];
             $this->sectionName = $row['SectionName'];
-<<<<<<< HEAD
-			$this->callNumber = $row['CallNumber'];
-			$this->hours = $row['Hours'];
-                        $this->instructor = $row['InstructorName'];
-=======
 			$this->instructorName = $row['InstructorName'];
 			$this->callNumber = $row['CallNumber'];
 			$this->hours = $row['Hours'];
->>>>>>> origin/dev
 			
             $this->course = new Course_model;
             
@@ -227,16 +216,6 @@ class Course_section_model extends CI_Model
 	{
 		return $this->callNumber;
 	}
-        
-        /**
-     * Summary of getInstructorName
-     * 
-     * @return string The name of the instructor for this course section model
-     */
-        public function getInstructorName()
-        {
-                return $this->instructor;
-        }
 	
     /**
      * Summary of getAcademicQuarter
