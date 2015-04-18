@@ -66,6 +66,9 @@
         <button type="button">
             <?php echo "<li><a href='" .site_url('Login/logout'). "'>View Curriculum</a></li>";?>
         </button>
+        <button type="button">
+            <?php echo "<li><a href='" .site_url('Advisingform/index'). "'>Fill Advising Form</a></li>";?>
+        </button>
         
         <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:500px;height:425px">
         

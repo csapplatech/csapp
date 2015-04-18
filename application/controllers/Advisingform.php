@@ -7,13 +7,12 @@ class AdvisingForm extends CI_Controller
     {
         error_reporting(E_ALL & ~E_WARNING & ~E_STRICT);
         $this->load->helper('url');
-        //$uid = $_SESSION['UserID'];
-        /*if (!isset($_SESSION['UserID']))
+        if (!isset($_SESSION['UserID']))
         {
             redirect('login');
-        }*/
-        $uid = 10210078;
-        //$uid = $_SESSION['UserID'];
+        }
+        $uid = $_SESSION['UserID'];
+       // $uid = 10210078;
         //$year = 2015;
         if (isset($_SESSION['StudentFormUID']))
         {
@@ -358,7 +357,7 @@ class AdvisingForm extends CI_Controller
         //$jsonReceiveData = json_encode($_POST['{"Info":'], JSON_PRETTY_PRINT);
         //$uid = $_SESSION['UserID'];
         $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
-        $uid = '10210078';
+        //$uid = '10210078';
         $previous_form = $this->loadAdvisingForm($uid);
         $previous_form->delete();
         $data = json_decode($_POST['data']);
@@ -408,13 +407,20 @@ class AdvisingForm extends CI_Controller
     public function loadAdvisingForm($uid)
     {
         $qid = academic_quarter_model::getLatestAcademicQuarter()->getAcademicQuarterID();
-        $forms = advising_form_model::getAllAdvisingFormsByStudentID($uid);
+        $forms = Advising_form_model::getAllAdvisingFormsByStudentID($uid);
         foreach($forms as $form)
         {
             if ($form->getAcademicQuarterID() === $qid)
                 return $form;
         }
         return false;
+    }
+    
+    public function loadAllStudents()
+    {
+        //
+        
+        $this->load->view('all_students_view');
     }
 }
 class Subject
