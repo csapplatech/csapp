@@ -15,6 +15,14 @@ class AdvisingForm extends CI_Controller
         $uid = 10210078;
         //$uid = $_SESSION['UserID'];
         //$year = 2015;
+        if (isset($_SESSION['StudentFormUID']))
+        {
+            $prev_form = $this->loadAdvisingForm($_SESSION['StudentFormUID']);
+        }
+        else
+        {
+            $prev_form = $this->loadAdvisingForm($_SESSION['UserID']);
+        }
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
@@ -206,12 +214,12 @@ class AdvisingForm extends CI_Controller
             }
         }*/
         
-        
         $data = array('recommended' => $working_list,
                     'all_courses' => $full_list,
                     'quarter_id' => $qid,
                     'cwid' => $usermod->getUserID(),
-                    'student_name' => $usermod->getName());
+                    'student_name' => $usermod->getName(),
+                    'form' => $prev_form);
         $this->load->view('advising_view', $data);
     }
     
@@ -348,12 +356,35 @@ class AdvisingForm extends CI_Controller
         //    print_r($_POST['name']);   
         
         //$jsonReceiveData = json_encode($_POST['{"Info":'], JSON_PRETTY_PRINT);
+        //$uid = $_SESSION['UserID'];
+        $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
+        $uid = '10210078';
+        $previous_form = $this->loadAdvisingForm($uid);
+        $previous_form->delete();
         $data = json_decode($_POST['data']);
         
-        foreach($data->Info as $course)
+        $mod = new advising_form_model();
+        foreach($data->Info as $section)
         {
-            print_r($course->Type);
+            //print_r($course->Type);
+            $callNum = $section->CallNumber;
+            
+            
+            $sections = $currentquarter->getAllCourseSections();
+            $target = new course_section_model();
+            foreach($sections as $sec)
+            {
+                if ($sec->getCallNumber() === $callNum)
+                {
+                    $target->loadPropertiesFromPrimaryKey($sec->getCourseSectionID());
+                    break;
+                }
+            }
+           $state = ($section->Type == "norm") ? advising_form_model::COURSE_SECTION_STATE_PREFERRED
+                   : advising_form_model::COURSE_SECTION_STATE_ALTERNATE;
+           $mod->addCourseSection($target, $state);
         }
+        $mod->create();
         //print_r($_POST['{"Info":']);
         /*$blarg = json_decode($jsonReceiveData, true);
         foreach($blarg as $item)
@@ -372,6 +403,18 @@ class AdvisingForm extends CI_Controller
         //}
         
         //then it will store the new information in the database
+    }
+    
+    public function loadAdvisingForm($uid)
+    {
+        $qid = academic_quarter_model::getLatestAcademicQuarter()->getAcademicQuarterID();
+        $forms = advising_form_model::getAllAdvisingFormsByStudentID($uid);
+        foreach($forms as $form)
+        {
+            if ($form->getAcademicQuarterID() === $qid)
+                return $form;
+        }
+        return false;
     }
 }
 class Subject
