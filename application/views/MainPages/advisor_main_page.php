@@ -8,7 +8,6 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
@@ -45,31 +44,31 @@
            </div>
         </nav>
 
-        <p> Welcome to the Advisor Main Page, <?php echo $user->getName(); ?>!</p>
+        <h3> Welcome to the Advisor Main Page, <?php echo $user->getName(); ?>!</h3>
         
-        <button type="button">
-            <?php echo "<li><a href='" .site_url('Activation'). "'>Activate New Advisee</a></li>";?>
-        </button>
-        <button type="button">
-            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Change Password</a></li>";?>
-        </button>
-        <button type="button">
-            <?php echo "<li><a href='" .site_url('Login/logout'). "'>View Classes</a></li>";?>
-        </button>
-        <button type="button">
-            <?php echo "<li><a href='" .site_url('Login/logout'). "'>View Advisees</a></li>";?>
-        </button>
-        <button type="button">
-            <?php echo "<li><a href='" .site_url('Login/logout'). "'>Advising Appointment Schedule</a></li>";?>
-        </button>
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+            Activate New Advisee
+        </a>
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+            Change Password
+        </a>
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+            View Classes
+        </a>
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+            View Advisees
+        </a>
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+            Advising Appointment Schedule
+        </a>
         
-        <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:500px;height:425px">
+        <p><img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:300px;height:225px"</p>
         
         <footer>
             <font color ="white"</font>
             <p>Ruston, LA 2015</p> 
             <p>Louisiana Tech University</p>
-            <p>Created by: Caleb Baze, Azriel Richardson, Ryan Gardiner and Zachary Behnke</p>
+            <p>Created by: Louisiana Tech's CSC 404 Class</p>
         </footer>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

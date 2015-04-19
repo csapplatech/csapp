@@ -409,7 +409,7 @@ class Course_section_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->hours, FILTER_VALIDATE_INT))
+        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CourseID' => $this->course->getCourseID(), 
