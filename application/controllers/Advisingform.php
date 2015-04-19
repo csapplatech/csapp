@@ -325,6 +325,7 @@ class AdvisingForm extends CI_Controller
         {
             $subject = new Subject();
             $subject->setName(reset(reset($subj))->getCourse()->getCourseName());
+            $subject->setTitle(reset(reset($subj))->getCourse()->getSubjectName());
             $courses = array();
             foreach($subj as $crs)
             {
@@ -426,11 +427,17 @@ class AdvisingForm extends CI_Controller
 class Subject
 {
     private $name;
+    private $title;
     private $courses;
     
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getTitle()
+    {
+        return $this->title;
     }
     
     public function getCourses()
@@ -441,6 +448,11 @@ class Subject
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
     
     public function setCourses($courses)
