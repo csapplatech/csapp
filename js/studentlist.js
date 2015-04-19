@@ -9,7 +9,9 @@ $(document).ready(function() {
            data: { StudID: StudID},
            success: function(data)
                 {
-                    alert('success!\n' + data);
+                    //alert('success!\n' + data);
+                    //console.log(data);
+                    window.location.href = "../Advisingform";
                 },
            error: function(data) 
                 {
