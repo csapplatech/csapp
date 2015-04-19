@@ -1,5 +1,9 @@
 <html>
     <head>
+        
+        <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
+        <script type="text/javascript" src="<?php echo base_url('js/studentlist.js'); ?>"></script>
         <title>CSAPP</title>
 
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
@@ -11,7 +15,18 @@
             
             <div style="height:400px; width:400px; margin-left: 100px; position:absolute; display:inline-block; margin-top: 10px ">
                 <p> Please Select the student you wish to view</p>
-                //list of student's here
+                <ul>
+                <?php
+                
+                foreach ($students as $stud)
+                {
+                    echo  "<li class='clickme' id='".$stud->getUserID()."'>" . $stud->getName() . "</li>";
+                }
+                
+                ?>
+                   
+                
+                </ul>
             </div>
         </div>
         <footer>
