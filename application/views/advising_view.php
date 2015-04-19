@@ -2,8 +2,8 @@
 <html>
     <head>
         
-        <link href = "../../css/advising.css" rel ="stylesheet" >
-        <link rel="stylesheet" href="../../css/print.css" type="text/css" media="print" />
+        <link href = "<?php echo base_url('css/advising.css'); ?>" rel ="stylesheet" >
+        <link rel="stylesheet" href="<?php echo base_url('css/print.css'); ?>" type="text/css" media="print" />
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
@@ -48,7 +48,7 @@
                 $id=1000;
                 foreach ($all_courses->getSubjects() as $sub)
                 {
-                    echo "<li class='clickMe'>". $sub->getName()." </li>" ;
+                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
                     echo "<ul class=\"toggleMe\" style=\"display:none\">";
                     foreach($sub->getCourses() as $cor)
                     {
@@ -76,7 +76,7 @@
         <div id="advise" class="print">
             <table>
                 <tr>
-                    <th><img src="../../image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="<?php echo base_url('image/latech.gif'); ?>" alt="Tech Logo" class="logo"></th>
                     <th><table class='noborder'>
                         <tr><th class="noborder">Louisiana Tech University</th></tr>
                         <tr><th class="noborder">ADVISING FORM</th></tr>
@@ -85,7 +85,7 @@
                         $quarter->loadPropertiesFromPrimaryKey($quarter_id);
                         echo $quarter->getName() . " " . $quarter->getYear();?></u></th></tr>
                 </table> </th>
-                    <th><img src="../../image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="<?php echo base_url('image/latech.gif'); ?>" alt="Tech Logo" class="logo"></th>
                 </tr>
             </table>
             <table>
@@ -141,6 +141,7 @@
             <button type="button" id="reset"><strike>Reset</strike></button>
             <button type="button" id="save">Save</button>
             <button><a style="text-decoration: none; color: black"  href="<?php echo site_url('Mainpage/index'); ?>">Home</a></button>
+            <button><a style="text-decoration: none; color: black" href="<?php echo site_url('Login/logout'); ?>">Logout</a></button>
         </div>
 </div></body>
 </html>
