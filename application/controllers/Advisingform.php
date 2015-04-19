@@ -7,12 +7,13 @@ class AdvisingForm extends CI_Controller
     {
         error_reporting(E_ALL & ~E_WARNING & ~E_STRICT);
         $this->load->helper('url');
-        if (!isset($_SESSION['UserID']))
+        //$uid = $_SESSION['UserID'];
+        /*if (!isset($_SESSION['UserID']))
         {
             redirect('login');
-        }
-        $uid = $_SESSION['UserID'];
-       // $uid = 10210078;
+        }*/
+        $uid = 10210078;
+        //$uid = $_SESSION['UserID'];
         //$year = 2015;
         if (isset($_SESSION['StudentFormUID']))
         {
@@ -325,7 +326,6 @@ class AdvisingForm extends CI_Controller
         {
             $subject = new Subject();
             $subject->setName(reset(reset($subj))->getCourse()->getCourseName());
-            $subject->setTitle(reset(reset($subj))->getCourse()->getSubjectName());
             $courses = array();
             foreach($subj as $crs)
             {
@@ -358,7 +358,7 @@ class AdvisingForm extends CI_Controller
         //$jsonReceiveData = json_encode($_POST['{"Info":'], JSON_PRETTY_PRINT);
         //$uid = $_SESSION['UserID'];
         $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
-        //$uid = '10210078';
+        $uid = '10210078';
         $previous_form = $this->loadAdvisingForm($uid);
         $previous_form->delete();
         $data = json_decode($_POST['data']);
@@ -408,7 +408,7 @@ class AdvisingForm extends CI_Controller
     public function loadAdvisingForm($uid)
     {
         $qid = academic_quarter_model::getLatestAcademicQuarter()->getAcademicQuarterID();
-        $forms = Advising_form_model::getAllAdvisingFormsByStudentID($uid);
+        $forms = advising_form_model::getAllAdvisingFormsByStudentID($uid);
         foreach($forms as $form)
         {
             if ($form->getAcademicQuarterID() === $qid)
@@ -416,28 +416,15 @@ class AdvisingForm extends CI_Controller
         }
         return false;
     }
-    
-    public function loadAllStudents()
-    {
-        //
-        
-        $this->load->view('all_students_view');
-    }
 }
 class Subject
 {
     private $name;
-    private $title;
     private $courses;
     
     public function getName()
     {
         return $this->name;
-    }
-    
-    public function getTitle()
-    {
-        return $this->title;
     }
     
     public function getCourses()
@@ -448,11 +435,6 @@ class Subject
     public function setName($name)
     {
         $this->name = $name;
-    }
-    
-    public function setTitle($title)
-    {
-        $this->title = $title;
     }
     
     public function setCourses($courses)
