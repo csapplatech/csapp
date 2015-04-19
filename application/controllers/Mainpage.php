@@ -11,7 +11,6 @@ class Mainpage extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
             redirect('Login/logout');
-        $user->create();
         
         //Load the appropriate mainpage
         if ($user->isStudent())
@@ -34,7 +33,6 @@ class Mainpage extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
             redirect('Login/logout');
-        $user->create();
         if ($user->isStudent())
             $this->load->view('MainPages/student_main_page', array('user'=>$user));
         else
@@ -49,7 +47,6 @@ class Mainpage extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
             redirect('Login/logout');
-        $user->create();
         if ($user->isAdvisor())
             $this->load->view('MainPages/advisor_main_page', array('user'=>$user));
         else
@@ -64,7 +61,6 @@ class Mainpage extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
             redirect('Login/logout');
-        $user->create();
         if ($user->isProgramChair())
             $this->load->view('MainPages/pc_main_page', array('user'=>$user));
         else
@@ -79,7 +75,6 @@ class Mainpage extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
             redirect('Login/logout');
-        $user->create();
         if ($user->isAdmin())
             $this->load->view('MainPages/admin_main_page', array('user'=>$user));
         else
