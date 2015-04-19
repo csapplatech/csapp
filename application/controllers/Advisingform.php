@@ -7,11 +7,18 @@ class AdvisingForm extends CI_Controller
     {
         error_reporting(E_ALL & ~E_WARNING & ~E_STRICT);
         $this->load->helper('url');
-        if (!isset($_SESSION['UserID']))
-        {
-            redirect('login');
-        }
-        $uid = $_SESSION['UserID'];
+         if (isset($_SESSION['StudCWID']))
+         {
+             $uid = $_SESSION['StudCWID'];
+         }
+         else {
+            if (!isset($_SESSION['UserID']))
+            {
+                redirect('login');
+            }
+            $uid = $_SESSION['UserID'];
+         }
+        
        // $uid = 10210078;
         //$year = 2015;
         if (isset($_SESSION['StudentFormUID']))
@@ -419,8 +426,28 @@ class AdvisingForm extends CI_Controller
     public function loadAllStudents()
     {
         //
+        $puid = $_SESSION['UserID'];
         
-        $this->load->view('all_students_view');
+        $profmod = new user_model();
+        $profmod->loadPropertiesFromPrimaryKey($puid);
+        
+        $student_list = $profmod->getAdvisees();
+        
+        $pdata = array('students' => $student_list);
+        
+        $this->load->view('all_students_view', $pdata);
+        
+    }
+    public function loadStudentID()
+    {
+        //if(isset($_POST['StudID']))
+       // {
+            //print_r($_POST['StudID']);
+            $StudID = $_POST['StudID'];
+            $_SESSION['StudCWID'] = $StudID;
+            print_r($StudID);
+            //index();
+       // }
     }
 }
 class Subject

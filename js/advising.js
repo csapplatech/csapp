@@ -25,7 +25,7 @@ $(document).ready(function() {
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
-            $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
+            $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
        }
         else if($(this).text()=="Add Alt")
         {
@@ -43,7 +43,7 @@ $(document).ready(function() {
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
-            $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td>"+cellE+"</td></tr>");
+            $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
         } else {
             var index = save_id.indexOf(butID);
             save_id.splice(index,1);
@@ -84,11 +84,10 @@ $(document).ready(function() {
                 });
         }
         $.ajax({
-           url: 'index.php/AdvisingForm/save',
-           //url: 'save',
+           url: 'save',
            type: 'POST',
            //contentType : 'application/json',
-           data: {data: JSON.stringify(SendInfo)},
+           data: SendInfo,
            success: function(data)
                 {
                     alert('success!\n' + data);

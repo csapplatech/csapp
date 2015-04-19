@@ -27,7 +27,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
+                                echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). " ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
@@ -56,7 +56,7 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                               echo "<li><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  Times: ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
@@ -96,12 +96,12 @@
             </table>
             <table id='target'>
               <tr>
-                <th style="width: 15%">Subj-Cor-Sec</th>
+                <th style="width: 14%">Subj-Cor-Sec</th>
                 <th >Title</th>
-                <th style="width: 8%">Call #</th>               
-                <th style="width: 7%">Hrs</th>
+                <th style="width: 7%">Call #</th>               
+                <th style="width: 6%">Hrs</th>
                 <th style="width: 18%">Special Signature</th> 
-                <th style="width: 22%">Class Times</th>
+                <th style="width: 25%">Class Times</th>
               </tr>
             </table>
             
@@ -111,12 +111,12 @@
                     <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
                 </tr>
                 <tr>
-                  <th style="width: 15%">Subj-Cor-Sec</th>
+                  <th style="width: 14%">Subj-Cor-Sec</th>
                   <th >Title</th>
-                  <th style="width: 8%">Call #</th>               
-                  <th style="width: 7%">Hrs</th>
+                  <th style="width: 7%">Call #</th>               
+                  <th style="width: 6%">Hrs</th>
                   <th style="width: 18%">Special Signature</th> 
-                  <th style="width: 22%">Class Times</th>
+                  <th style="width: 25%">Class Times</th>
                 </tr>
                 </table>
             </div>

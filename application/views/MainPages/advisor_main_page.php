@@ -61,6 +61,7 @@
         </button>
         <button type="button">
             <?php echo "<li><a href='" .site_url('Login/logout'). "'>Advising Appointment Schedule</a></li>";?>
+        </button>
         <button type="button">
             <?php echo "<li><a href='" .site_url('Advisingform/loadAllStudents'). "'>View Students Advising Form</a></li>";?>
         </button>
