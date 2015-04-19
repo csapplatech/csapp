@@ -52,7 +52,7 @@ class Course_section_model extends CI_Model
 			$temp[$index][$courseSectionTime->getDayOfWeek()] = $courseSectionTime->getDayOfWeekLetter();
 		}
 		
-		foreach($temp as $t)
+		foreach($temp as $key => $t)
 		{	
 			$tStr = "";
 			
@@ -81,7 +81,7 @@ class Course_section_model extends CI_Model
 				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
 			}
 			
-			$outputString = $outputString . $tStr . " " . key($temp) . "; ";
+			$outputString = $outputString . $tStr . " " . $key . "; ";
 		}
 		
 		return substr($outputString, 0, strlen($outputString) - 2);
