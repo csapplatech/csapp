@@ -2,11 +2,20 @@
 
 class Advising_appointment_model extends CI_Model
 {
-    private $advisingAppointmentID;
-    private $advisingScheduleID;
-    private $startTime;
-    private $endTime;
-    
+    private $advisingAppointmentID = null;
+    private $advisingScheduleID = null;
+    private $startTime = null;
+    private $endTime = null;
+	private $advisingAppointmentStateID = null;
+	private $studentUserID = null;
+	
+	// Constants to represent the various advising appointment states as reflected in the CSC Web App database
+    // If the table `AdvisingAppointmentStates` or any of its rows are ever modified, reflect those changes in these constants
+	const APPOINTMENT_STATE_SCHEDULED = 1;
+	const APPOINTMENT_STATE_COMPLETED = 2;
+	const APPOINTMENT_STATE_CANCELED_BY_STUDENT = 3;
+	const APPOINTMENT_STATE_CANCELED_BY_ADVISOR = 4;
+	
     function __construct()
     {
         parent::__construct();
@@ -31,6 +40,16 @@ class Advising_appointment_model extends CI_Model
                 $this->startTime = $row['StartTime'];
                 $this->endTime = $row['EndTime'];
                 
+				$results = $this->db->get_where('ScheduledAdvisingAppointments', array('AdvisingAppointmentID' => $advisingAppointmentID), 1);
+				
+				if($results->num_rows() > 0)
+				{
+					$row = $results->row_array();
+					
+					$this->advisingAppointmentStateID = $row['AdvisingAppointmentStateID'];
+					$this->studentUserID = $row['StudentUserID'];
+				}
+				
                 return true;
             }
         }
@@ -58,6 +77,11 @@ class Advising_appointment_model extends CI_Model
         return $this->endTime;
     }
     
+    public function setAdvisingAppointmentID($desiredAdvisingAppointmentID)
+    {
+        $this->advisingAppointmentID = filter_var($desiredAdvisingAppointmentID, FILTER_SANITIZE_NUMBER_INT);
+    }
+    
     public function setAdvisingScheduleID($desiredAdvisingScheduleID)
     {
         $this->advisingScheduleID = filter_var($desiredAdvisingScheduleID, FILTER_SANITIZE_NUMBER_INT);
@@ -73,6 +97,41 @@ class Advising_appointment_model extends CI_Model
         $this->endTime = preg_replace("([^0-9])", "", $desiredEndTime);
     }
     
+	public function getScheduledStudentUserID()
+	{
+		return $this->studentUserID;
+	}
+	
+	public function setAdvisingAppointmentState($advisingAppointmentStateID)
+	{
+		$this->advisingAppointmentStateID = $advisingAppointmentStateID;
+	}
+	
+	public function isOpen()
+	{
+		return is_null($this->advisingAppointmentStateID);
+	}
+	
+	public function isScheduled()
+	{
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+	}
+	
+	public function isCompleted()
+	{
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+	}
+	
+	public function isCanceledByAdvisor()
+	{
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+	}
+	
+	public function isCanceledByStudent()
+	{
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+	}
+	
     public function update()
     {
         if($this->advisingScheduleID != null && filter_var($this->advisingScheduleID, FILTER_VALIDATE_INT) && $this->startTime != null && filter_var($this->startTime, FILTER_VALIDATE_INT) && $this->endTime != null && filter_var($this->endTime, FILTER_VALIDATE_INT))
@@ -82,9 +141,23 @@ class Advising_appointment_model extends CI_Model
             $this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
             $this->db->update('AdvisingAppointments', $data);
             
-            if($this->db->affected_rows() > 0)
+            if($this->db->affected_rows() > 0 && !$this->isOpen())
             {
-                return true;
+				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AdvisingAppointmentStateID' => $this->advisingAppointmentStateID);
+				
+				$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
+				$this->db->update('ScheduledAdvisingAppointments', $data);
+				
+				if($this->db->affected_rows() > 0)
+				{
+					return true;
+				}
+                else
+				{
+					$this->db->insert('ScheduledAdvisingAppointments', $data);
+					
+					return $this->db->affected_rows() > 0;
+				}
             }
         }
       
@@ -103,6 +176,24 @@ class Advising_appointment_model extends CI_Model
             {
                 $this->advisingAppointmentID = $this->db->insert_id();
                 
+				if(!$this->isOpen())
+				{
+					$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AdvisingAppointmentStateID' => $this->advisingAppointmentStateID);
+				
+					$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
+					$this->db->update('ScheduledAdvisingAppointments', $data);
+					
+					if($this->db->affected_rows() > 0)
+					{
+						return true;
+					}
+					else
+					{
+						$this->db->insert('ScheduledAdvisingAppointments', $data);
+						
+						return $this->db->affected_rows() > 0;
+					}
+				}
                 return true;
             }
         }
@@ -145,7 +236,7 @@ class Advising_appointment_model extends CI_Model
             $appt->startTime = $row['StartTime'];
             $appt->endTime = $row['EndTime'];
             
-            array_push($data_arr, $course);
+            array_push($data_arr, $appt);
         }
         
         return $data_arr;

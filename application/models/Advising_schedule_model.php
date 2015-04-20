@@ -33,9 +33,41 @@ class Advising_schedule_model extends CI_Model
         return false;
     }
     
+	/**
+	 * Searches the 'AdvisingSchedules' table for an advising schedule model with a specified 
+	 * advisor user id and academic quarter id
+	 *
+	 * @param integer $advisorUserID The advisor user id to search by
+	 * @param integer $academicQuarterID The academic quarter id to search by
+	 *
+	 * @returns boolean True if a model was found and successfully loaded, false otherwise
+	 */
+	public function loadPropertiesFromAdvisorIDAndAcademicQuarterID($advisorUserID, $academicQuarterID)
+	{
+		if($advisorUserID != null && filter_var($advisorUserID, FILTER_VALIDATE_INT) && $academicQuarterID != null && filter_var($academicQuarterID, FILTER_VALIDATE_INT))
+		{
+			$this->db->where('AdvisorUserID', $advisorUserID);
+			$this->db->where('AcademicQuarterID', $academicQuarterID);
+			
+			$results = $this->db->get('AdvisingSchedules');
+			
+			if($results->num_rows() > 0)
+			{
+				$row = $results->row_array();
+				
+				$this->advisingScheduleID = $row['AdvisingScheduleID'];
+				$this->advisorUserID = $row['AdvisorUserID'];
+				$this->academicQuarterID = $row['AcademicQuarterID'];
+				
+				return true;
+			}
+		}
+		return false;
+	}
+	
     public function getAdvisingScheduleID()
     {
-        return $this->$advisingScheduleID;
+        return $this->advisingScheduleID;
     }
     
     public function getAdvisorUserID()
@@ -124,20 +156,21 @@ class Advising_schedule_model extends CI_Model
 
     public function getAllAdvisingAppointments()
     {
-        $results = $this->db->get_where('AdvisingAppointments', $this->advisingScheduleID);
-      
+        $results = $this->db->get_where('AdvisingAppointments', array('AdvisingScheduleID' => $this->advisingScheduleID));
+        
         $data_arr = array();
-      
+        
         foreach($results->result_array() as $row)
         {
-            $appt = new Advising_appointment_model;
             
-            $appt->advisingAppointmentID = $row['AdvisingAppointmentID'];
-            $appt->advisingScheduleID = $row['AdvisingScheduleID'];
-            $appt->startTime = $row['StartTime'];
-            $appt->endTime = $row['EndTime'];
+            $appt = new Advising_appointment_model();
             
-            array_push($data_arr, $course);
+            $appt->setAdvisingAppointmentID($row['AdvisingAppointmentID']);
+            $appt->setAdvisingScheduleID($row['AdvisingScheduleID']);
+            $appt->setStartTime($row['StartTime']);
+            $appt->setEndTime($row['EndTime']);
+            
+            array_push($data_arr, $appt);
         }
         
         return $data_arr;      
@@ -159,7 +192,7 @@ class Advising_schedule_model extends CI_Model
             $schedule->advisorUserID = $row['AdvisingUserID'];
             $schedule->academicQuarterID = $row['AcademicQuarterID'];
         
-            array_push($data_arr, $course);
+            array_push($data_arr, $schedule);
         }
       
         return $data_arr;
