@@ -53,9 +53,9 @@ class User_model extends CI_Model
         if($userID != null)
         {
             if(filter_var($userID, FILTER_VALIDATE_INT))
-            {
+            {				
                 $results = $this->db->get_where('Users', array('UserID' => $userID), 1);
-                
+				
                 if($results->num_rows() > 0)
                 {
                     $row = $results->row_array();
@@ -81,7 +81,7 @@ class User_model extends CI_Model
 					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
-                    
+					
                     if($role_results->num_rows() > 0)
                     {
                         foreach($role_results->result_array() as $row)
@@ -89,7 +89,7 @@ class User_model extends CI_Model
                             array_push($this->roles, $row['RoleID']);
                         }
                     }
-                    
+					
                     $results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
                     
                     foreach($results->result_array() as $row)
@@ -149,9 +149,9 @@ class User_model extends CI_Model
                     $this->name = $row['Name'];
 					$this->lastLogin = $row['LastLogin'];
 					$this->userStateID = $row['UserStateID'];
-                    
+					
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $this->userID));
-                    
+					
                     if($role_results->num_rows() > 0)
                     {
                         foreach($role_results->result_array() as $row)
@@ -160,6 +160,18 @@ class User_model extends CI_Model
                         }
                     }
                     
+					$results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
+                    
+                    foreach($results->result_array() as $row)
+                    {
+                        $courseSection = new Course_section_model;
+                        
+                        if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
+                        {
+                            $this->addCourseSection($courseSection, $row['Grade']);
+                        }
+                    }
+					
                     return true;
                 }
             }
@@ -475,13 +487,13 @@ class User_model extends CI_Model
      * @return User_model The user model for the advisor of this student user model, or null if no advisor exists or this model doesn't have a student role
      */
     public function getAdvisor()
-    {
+    {		
         if($this->isStudent())
         {
             $this->db->select('AdvisorUserID');
             $this->db->from('StudentAdvisors');
             $this->db->where('StudentUserID', $this->userID);
-            
+            			
             $results = $this->db->get();
             
             $advisor = new User_model;

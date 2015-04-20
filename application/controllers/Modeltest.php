@@ -66,6 +66,17 @@ class ModelTest extends CI_Controller
         }
     }
     
+	public function userTwo()
+	{
+		$user = new User_model;
+		
+		$user->loadPropertiesFromPrimaryKey(10209039);
+		
+		$advisor = $user->getAdvisor();
+		
+		var_dump($advisor);
+	}
+	
     public function course()
     {   
         $courses = Course_model::getAllCourses();
