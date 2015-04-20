@@ -64,11 +64,5 @@
     
     <?php include 'Keen-Hjorth-Test.php';?>
     
-    <footer>
-            <font color ="white"</font>
-            <p>Ruston, LA 2015</p> 
-            <p>Louisiana Tech University</p>
-            <p>Created by: Caleb Baze, Azriel Richardson, Ryan Gardiner and Zachary Behnke</p>
-    </footer>
   </body>
 </html>
