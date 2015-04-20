@@ -604,7 +604,7 @@ class User_model extends CI_Model
 	 */
 	public function getGradeForCourseSection($courseSection)
 	{
-		$searchstr = $courseSection->toString();
+		$searchstr = $courseSection->getCourseSectionID();
 		
 		if(isset($this->coursesTaken[$searchstr]))
 		{

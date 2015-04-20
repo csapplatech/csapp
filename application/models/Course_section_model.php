@@ -53,7 +53,7 @@ class Course_section_model extends CI_Model
 			$temp[$index][$courseSectionTime->getDayOfWeek()] = $courseSectionTime->getDayOfWeekLetter();
 		}
 		
-		foreach($temp as $t)
+		foreach($temp as $key => $t)
 		{	
 			$tStr = "";
 			
@@ -82,7 +82,7 @@ class Course_section_model extends CI_Model
 				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
 			}
 			
-			$outputString = $outputString . $tStr . " " . key($temp) . "; ";
+			$outputString = $outputString . $tStr . " " . $key . "; ";
 		}
 		
 		return substr($outputString, 0, strlen($outputString) - 2);
@@ -410,7 +410,7 @@ class Course_section_model extends CI_Model
      */
     public function update()
     {
-        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->hours, FILTER_VALIDATE_INT))
+        if($this->courseSectionID != null && filter_var($this->courseSectionID, FILTER_VALIDATE_INT) && $this->academicQuarter != null && $this->sectionName != null && $this->instructorName != null && $this->course != null && filter_var($this->callNumber, FILTER_VALIDATE_INT) && filter_var($this->hours, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CourseID' => $this->course->getCourseID(), 

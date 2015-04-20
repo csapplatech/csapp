@@ -12,13 +12,14 @@ class AdvisingForm extends CI_Controller
         {
             redirect('login');
         }*/
-        $uid = 10210078;
+        //$uid = 10210078;
         //$uid = $_SESSION['UserID'];
          if (isset($_SESSION['StudCWID']))
          {
              $uid = $_SESSION['StudCWID'];
          }
-         else {
+         else 
+         {
             if (!isset($_SESSION['UserID']))
             {
                 redirect('login');
@@ -28,14 +29,15 @@ class AdvisingForm extends CI_Controller
         
        // $uid = 10210078;
         //$year = 2015;
-        if (isset($_SESSION['StudentFormUID']))
+         $prev_form = $this->loadAdvisingForm($uid);
+        /*if (isset($_SESSION['StudentFormUID']))
         {
             $prev_form = $this->loadAdvisingForm($_SESSION['StudentFormUID']);
         }
         else
         {
             $prev_form = $this->loadAdvisingForm($_SESSION['UserID']);
-        }
+        }*/
         
         //Get course list for student
         //First, get all courses for current quarter, set now to 'NAME_SPRING'
@@ -113,14 +115,23 @@ class AdvisingForm extends CI_Controller
         $courses_taken = $usermod->getAllCoursesTaken();
         
         $courseIDs_passed = array();
-        
-        //Populate an array of course IDs for which the course was passed by the student
-        foreach($courses_taken as $key => $value)
+        if (!empty($courses_taken))
         {
-            $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
-            if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
+            //Populate an array of course IDs for which the course was passed by the student
+            foreach($courses_taken as $key => $value)
             {
-                array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
+                if (!empty($value))
+                {
+                    if (!empty($value[0]->getCourse()->getAllCurriculumCourseSlots()))
+                    {
+                        $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
+                        if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
+                        {
+                            array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
+                        }
+                    }
+                }
+                
             }
         }
         
@@ -339,6 +350,7 @@ class AdvisingForm extends CI_Controller
         {
             $subject = new Subject();
             $subject->setName(reset(reset($subj))->getCourse()->getCourseName());
+            $subject->setTitle(reset(reset($subj))->getCourse()->getSubjectName());
             $courses = array();
             foreach($subj as $crs)
             {
@@ -460,11 +472,17 @@ class AdvisingForm extends CI_Controller
 class Subject
 {
     private $name;
+    private $title;
     private $courses;
     
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getTitle()
+    {
+        return $this->title;
     }
     
     public function getCourses()
@@ -475,6 +493,11 @@ class Subject
     public function setName($name)
     {
         $this->name = $name;
+    }
+    
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
     
     public function setCourses($courses)
