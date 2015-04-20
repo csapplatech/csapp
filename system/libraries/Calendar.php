@@ -614,7 +614,7 @@ class CI_Calendar {
                                     if($key==$timestamp1){
                                         //echo $key;
                                         array_splice($this->app_Times,$X,1);//for efficiency
-                                        $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'></label></div></td> "; //creates a row of $l columns $k times
+                                        $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-' style='background-color:yellow;'></label></div></td> "; //creates a row of $l columns $k times
                                         $existing_Appointment=true;
                                         break;
                                     }
