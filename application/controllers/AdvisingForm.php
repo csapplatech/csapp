@@ -350,7 +350,7 @@ class AdvisingForm extends CI_Controller
         {
             $subject = new Subject();
             $subject->setName(reset(reset($subj))->getCourse()->getCourseName());
-            $subject->setTitle(reset(reset($subj))->getCourse()->getSubjectName());
+            $subject->setTitle(reset(reset($subj))->getCourse()->getCourseCategoryName());
             $courses = array();
             foreach($subj as $crs)
             {
