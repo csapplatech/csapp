@@ -46,7 +46,7 @@
 
         <h3> Welcome to the Student Main Page, <?php echo $user->getName(); ?>!</h3>
         
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('ViewAdvisorInfo') ;?>">
             View Advisor Info
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
