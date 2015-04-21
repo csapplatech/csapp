@@ -3,7 +3,7 @@
 
 <form method="POST">
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-  <select size='3' id="CurriculumSelect" name='curriculumID'>
+  <select size='10' id="CurriculumSelect" name='curriculumID' required>
     <?php
       foreach($data as $row)
 	echo "<option>$row</option>"; 

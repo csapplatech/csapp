@@ -10,7 +10,16 @@
     ?>
   </select>
 <br /><br />
-<br />
+<p>Name: <input id='name' /></p>
+<p>Minimum Grade:</p>
+<select size=5>
+  <option>A</option>
+  <option>B</option>
+  <option>C</option>
+  <option>D</option>
+  <option>F</option>
+</select>
+<br /><br />
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlotEdit'); ?>">Save</button>
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlotEdit'); ?>">Cancel</button>
 </form>
