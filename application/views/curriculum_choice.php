@@ -1,12 +1,16 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+</head>
 <h1>Curriculum</h1>
 
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
 <div class="scrollable" id="CurriculumSelectDiv">
   <select size='3' class="scrollableinside" id="CurriculumSelect">
+    <option>test</option>
     <?php
-      foreach($data as $row)
+/*      foreach($data as $row)
 	echo "<option>$row</option>"; 
-    ?>
+  */  ?>
   </select>
 </div>
 

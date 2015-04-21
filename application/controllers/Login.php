@@ -6,7 +6,7 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
-            if (isset($_SESSION['UserID']))
+	    if (isset($_SESSION['UserID']))
                 redirect('Mainpage');
             else
                 $this->load->view('login');
