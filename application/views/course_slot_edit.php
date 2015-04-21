@@ -3,7 +3,7 @@
 
 <form method="POST">
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
-  <select multiple size='3' id="AvailCourseSelect" name='AvailCourses'>
+  <select multiple size='3' id="AvailCourseSelect" name='validCourseIDs'>
     <?php
       foreach($data as $row)
 	echo "<option>$row</option>"; 
