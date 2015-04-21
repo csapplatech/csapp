@@ -2,26 +2,15 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class CurriculumCreator extends CI_Controller {
-
-	/*
-	private $curriculum = NULL; //will hold the current curriculum
-	private $courseSlot = NULL; //will hold the current course slot 
-	private $curriculumType = NULL; //(string): clone, edit, new
-	private $courseSlotType = NULL; //(string): clone, edit, new
-	*/
 	
 	public function index()
 	{
-		//grab global
-		//global $curriculum, $courseSlot;
-		
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model');
-		$_SESSION['curriculum'] = new Curriculum_Model(); 
-		$_SESSION['courseSlot'] = new Curriculum_course_slot_model();
+		$curriculum = new Curriculum_Model(); 
 		
 		//call and pass data to initial curriculum view
-		$curriculums = $_SESSION['curriculum']->getAllCurriculums();
+		$curriculums = $curriculum->getAllCurriculums();
 		$data = array();
 		
 		//creating easy to use array for table
@@ -42,18 +31,15 @@ class CurriculumCreator extends CI_Controller {
     //clone and edit a curriculum
     public function cloneCurriculum($curriculumID = NULL) //post: curriculum
     {
-		//grab global
-		//global $curriculum, $curriculumType;
-		
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
 		
 		//load curriculum
-		//$curriculum = new Curriculum_Model();
+		$_SESSION['curriculum'] = new Curriculum_Model();
 	    $_SESSION['curriculum']->loadPropertiesFromPrimaryKey($curriculumID);
 		$_SESSION['courseSlot'] = $_SESSION['curriculum']->getAllCurriculumCourseSlots();
-		$curriculumType = "clone";
+		$_SESSION['curriculumCreationMethod'] = "clone";
 		$data = array(
 			"name" => $_SESSION['curriculum']->getName(),
 		);
@@ -75,20 +61,17 @@ class CurriculumCreator extends CI_Controller {
 	//edit a current curriculum
 	public function editCurriculum($curriculumID = NULL) //post: curriculum
 	{
-		//grab global
-		global $curriculum, $curriculumType;
-		
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
 			
 		//load curriculum
-		$curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
-		$curriculumType = "edit";
+		$_SESSION['curriculum'] = new Curriculum_Model();
+	    $_SESSION['curriculum']->loadPropertiesFromPrimaryKey($curriculumID);
+		$courseSlots = $_SESSION['curriculum']->getAllCurriculumCourseSlots();
+		$_SESSION['curriculumCreationMethod'] = "edit";
 		$data = array(
-			"name" => $curriculum->getName(),
+			"name" => $_SESSION['curriculum']->getName(),
 		);
 		
 		//create easy to use array for table
@@ -108,11 +91,8 @@ class CurriculumCreator extends CI_Controller {
 	//creating a new curriculum
 	public function newCurriculum()
 	{
-		//grab global
-		global $curriculum, $curriculumType;
-		
-		$curriculum = new Curriculum_model(); 
-		$curriculumType = "new";
+		$_SESSION['curriculum'] = new Curriculum_model(); 
+		$_SESSION['curriculumCreationMethod'] = "new";
 		$data = array(
 			"name" => "New Curriculum",
 		);
@@ -122,23 +102,17 @@ class CurriculumCreator extends CI_Controller {
 	//deletes a selected curriculum
 	public function deleteCurriculum($curriculumID = NULL) //post: curriculum
 	{
-		//grab global
-		global $curriculum;
-		
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
 		
-		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$curriculum->delete();
+		$_SESSION['curriculum']->loadPropertiesFromPrimaryKey($curriculumID);
+		$_SESSION['curriculum']->delete();
 	}
 	
 	//saves a curriculum to the database
 	public function setCurriculum($name = NULL, $type = NULL) //post: name, type; type being whether the curriculum is a degree, minor, or concentration
 	{
-		//grab global
-		global $curriculum, $curriculumType;
-		
 		//get arguments
 		if ($name == NULL)
 			$name = $this->input->post('name');
@@ -147,36 +121,40 @@ class CurriculumCreator extends CI_Controller {
 			$type = $this->input->post('type');
 		
 		//set curriculum name
-		$curriculum->setName($name);
+		$_SESSION['curriculum']->setName($name);
 		
 		//set curriculum type
 		if ($type == "Degree")
-			$curriculum->setCurriculumType(1);
+			$_SESSION['curriculum']->setCurriculumType(1);
 		else if ($type == "Minor")
-			$curriculum->setCurriculumType(2);
+			$_SESSION['curriculum']->setCurriculumType(2);
 		else if ($type == "Concentration")
-			$curriculum->setCurriculumType(3);
+			$_SESSION['curriculum']->setCurriculumType(3);
 		
 		//save
-		if ($curriculumType == "edit")
-			$curriculum->update(); //update current curriculum for edit
+		if ($_SESSION['curriculumCreationMethod'] == "edit")
+			$_SESSION['curriculum']->update(); //update current curriculum for edit
 		else
-			$curriculum->create(); //create a new entry for clone/new	
+			$_SESSION['curriculum']->create(); //create a new entry for clone/new	
+			
+		unset($_SESSION['curriculum']);
+		unset($_SESSION['courseSlot']);
+		unset($_SESSION['curriculumCreationMethod']);
+		unset($_SESSION['curriculumCourseSlotMethod']);
+		
+		$this->index();
 	}
 	
 	//cancelling an edit to a curriculum
 	public function cancelCurriculumEdit()
 	{
-		//grab global
-		global $curriculum, $curriculumType, $courseSlot, $courseSlotType;
-		
-		$curriculum = new Curriculum_Model(); 
-		$courseSlot = new Curriculum_course_slot_model();
-		$curriculumType = NULL;
-		$courseSlotType = NULL;
+		$_SESSION['curriculum'] = new Curriculum_Model(); 
+		$_SESSION['courseSlot'] = new Curriculum_course_slot_model();
+		$_SESSION['curriculumCreationMethod'] = NULL;
+		$_SESSION['curriculumCourseSlotMethod'] = NULL;
 		
 		//call and pass data to initial curriculum view
-		$curriculums = $curriculum->getAllCurriculums();
+		$curriculums = $_SESSION['curriculum']->getAllCurriculums();
 		$data = array();
 		
 		//creating easy to use array for table
@@ -197,19 +175,16 @@ class CurriculumCreator extends CI_Controller {
 	//clone and edit a curriculum course slot
     public function cloneCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
     {
-		//grab global
-		global $courseSlot, $courseSlotType;
-		
 		//get arguments
 		if ($curriculumCourseSlotID == NULL)
 			$curriculumCourseSlotID = $this->input->post('courseSlot');
 			
-		$courseSlot = new Curriculum_course_slot_model();
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		$validCourses = $courseSlot->getValidCourseIDs();
-		$courseSlotType = "clone";
+		$_SESSION['courseSlot'] = new Curriculum_course_slot_model();
+		$_SESSION['courseSlot']->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
+		$validCourses = $_SESSION['courseSlot']->getValidCourseIDs();
+		$_SESSION['curriculumCourseSlotMethod'] = "clone";
 		$data = array(
-			"name" => $courseSlot->getName(),
+			"name" => $_SESSION['courseSlot']->getName(),
 		);
 		
 		//create easy to use array for table
@@ -230,19 +205,16 @@ class CurriculumCreator extends CI_Controller {
 	//clone and edit a curriculum course slot
     public function editCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
     {
-		//grab global
-		global $courseSlot, $courseSlotType;
-		
 		//get arguments
 		if ($curriculumCourseSlotID == NULL)
 			$curriculumCourseSlotID = $this->input->post('courseSlot');
 		
-		$courseSlot = new Curriculum_course_slot_model();
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		$validCourses = $courseSlot->getValidCourseIDs();
-		$courseSlotType = "edit";
+		$_SESSION['courseSlot'] = new Curriculum_course_slot_model();
+		$_SESSION['courseSlot']->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
+		$validCourses = $_SESSION['courseSlot']->getValidCourseIDs();
+		$_SESSION['curriculumCourseSlotMethod'] = "edit";
 		$data = array(
-			"name" => $courseSlot->getName(),
+			"name" => $_SESSION['courseSlot']->getName(),
 		);
 		
 		//create easy to use array for table
@@ -263,12 +235,9 @@ class CurriculumCreator extends CI_Controller {
 	//create a new curriculum course slot
 	public function newCurriculumCourseSlot()
 	{
-		//grab global
-		global $curriculum, $courseSlot, $courseSlotType;
-		
-		$courseSlot = new Curriculum_course_slot_model(); //make this public
-		$courseSlot->setCurriculum($curriculum);
-		$courseSlotType = "new";
+		$_SESSION['courseSlot'] = new Curriculum_course_slot_model(); 
+		$_SESSION['courseSlot']->setCurriculum($_SESSION['curriculum']);
+		$_SESSION['curriculumCourseSlotMethod'] = "new";
 		$data = array(
 			"name" => 'New Curriculum Course Slot',
 		);
@@ -279,27 +248,21 @@ class CurriculumCreator extends CI_Controller {
 	//delete a curriculum course slot
 	public function deleteCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
 	{
-		//grab global
-		global $curriculum, $courseSlot;
-		
 		//get arguments
 		if ($curriculumCourseSlotID == NULL)
 			$curriculumCourseSlotID = $this->input->post('courseSlot');
 			
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		$curriculum->removeCurriculumCourseSlot($courseSlot);
-		$courseSlot->delete(); 
+		$_SESSION['courseSlot']->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
+		$_SESSION['curriculum']->removeCurriculumCourseSlot($_SESSION['courseSlot']);
+		$_SESSION['courseSlot']->delete(); 
 	}
 	
 	//cancel a curriculum course slot editing
 	public function cancelCurriculumCourseSlotEdit()
 	{
-		//grab global
-		global $curriculum;
-		
-		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
+		$courseSlots = $_SESSION['curriculum']->getAllCurriculumCourseSlots();
 		$data = array(
-			"name" => $curriculum->getName(),
+			"name" => $_SESSION['curriculum']->getName(),
 		);
 		
 		//create easy to use array for table
@@ -319,23 +282,20 @@ class CurriculumCreator extends CI_Controller {
 	//save a curriculum course slot
 	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL) //post: courseSlot; validCourseIDs(int array); name(string); minimumGrade(string)
 	{
-		//grab global
-		global $curriculum, $courseSlot;
-		
 		//get arguments
 		if ($validCourseIDs == NULL)
 			$arr = $this->input->post('courseSlot');
 			
 		//add logic to grab arguments	
 			
-		$courseSlot->setMinimumGrade($minimumGrade);
-		$courseSlot->setName($name);
+		$_SESSION['courseSlot']->setMinimumGrade($minimumGrade);
+		$_SESSION['courseSlot']->setName($name);
 		
 		//populate course slot with the valid course ids
 		foreach ($validCourseIDs as $validCourse)
-			$courseSlot->addValidCourseID($validCourse);
+			$_SESSION['courseSlot']->addValidCourseID($validCourse);
 			
-		$curriculum->addCurriculumCourseSlot($courseSlot);
+		$_SESSION['curriculum']->addCurriculumCourseSlot($_SESSION['courseSlot']);
 		$this->load->view('curriculum_edit', array('data'=>$data));  
 	}
 }
