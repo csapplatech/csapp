@@ -1,29 +1,25 @@
-<head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-</head>
-<h1>Course Slot Edit</h1>
+<h1>Curriculum Edit</h1>
 
-<p>Filter: <input id="CoureAvailFilter" /></p>
-<div class="scrollable" id="CourseAvailDiv">
-  <select size='3' class="scrollableinside" id="CourseAvailSelect">
-    <option>test</option>
+<form method="POST">
+<p>Filter: <input id="CourseSlotEditFilter" /></p>
+  <select multiple size='3' id="AvailCourseSelect" name='AvailCourses'>
     <?php
-/*      foreach($data as $row)
+      foreach($data as $row)
 	echo "<option>$row</option>"; 
-  */  ?>
+    ?>
   </select>
-</div>
-
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Clone</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">New</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Remove</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Edit</button>
+<br /><br />
+<br />
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlotEdit'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlotEdit'); ?>">Cancel</button>
+</form>
 
 <script type="text/javascript"> //Uses jQuery
 // ID of <input> filter
-var Filter = $("#CourseAvailFilter");
+var Filter = $("#CourseSlotEditFilter");
 // ID of <select> to filter
-var Select = $("#CourseAvailSelect");
+var Select = $("#AvailCourseSelect");
 
 /**
 * Only shows options that contain a given text.
