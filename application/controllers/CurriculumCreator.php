@@ -132,11 +132,30 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//saves a curriculum to the database
-	public function setCurriculum() //type being whether the curriculum is new, cloned, or edited
+	public function setCurriculum($name = NULL, $type = NULL) //post: name, type; type being whether the curriculum is a degree, minor, or concentration
 	{
 		//grab global
 		global $curriculum, $curriculumType;
 		
+		//get arguments
+		if ($name == NULL)
+			$name = $this->input->post('name');
+			
+		if ($type == NULL)
+			$type = $this->input->post('type');
+		
+		//set curriculum name
+		$curriculum->setName($name);
+		
+		//set curriculum type
+		if ($type == "Degree")
+			$curriculum->setCurriculumType(1);
+		else if ($type == "Minor")
+			$curriculum->setCurriculumType(2);
+		else if ($type == "Concentration")
+			$curriculum->setCurriculumType(3);
+		
+		//save
 		if ($curriculumType == "edit")
 			$curriculum->update(); //update current curriculum for edit
 		else
@@ -171,32 +190,6 @@ class CurriculumCreator extends CI_Controller {
 		}
 		array_push($data, 'test');
 		$this->load->view('curriculum_choice', array('data'=>$data));
-	}
-	
-	//set the name for a curriculum
-	public function setCurriculumName($name = NULL) //post: name
-	{
-		//grab global
-		global $curriculum;
-		
-		//get arguments
-		if ($name == NULL)
-			$name = $this->input->post('name');
-			
-		$curriculum->setName($name);
-	}
-	
-	//set the curriculum type
-	public function setCurriculumType($type = NULL) //post: type; type(string): 1 - Degree, 2 - Minor, 3 - Concentration
-	{
-		//grab global
-		global $curriculum;
-		
-		//get arguments
-		if ($type == NULL)
-			$type = $this->input->post('type');
-			
-		$curriculum->setCurriculumType($type);
 	}
 		
 	//clone and edit a curriculum course slot
