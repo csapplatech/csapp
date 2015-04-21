@@ -1,11 +1,9 @@
-<head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-</head>
 <h1>Course Slot Choice</h1>
 
-<p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-<div class="scrollable" id="CurriculumSelectDiv">
-  <select size='3' class="scrollableinside" id="CurriculumSelect">
+<p>Filter: <input id="CourseSlotFilter" /></p>
+<div class="scrollable" id="CoureSlotDiv">
+  <select size='3' class="scrollableinside" id="CourseSlotSelect">
     <option>test</option>
     <?php
 /*      foreach($data as $row)
@@ -21,9 +19,9 @@
 
 <script type="text/javascript"> //Uses jQuery
 // ID of <input> filter
-var Filter = $("#CurrFilter");
+var Filter = $("#CourseSlotFilter");
 // ID of <select> to filter
-var Select = $("#CurriculumSelect");
+var Select = $("#CourseSlotSelect");
 
 /**
 * Only shows options that contain a given text.

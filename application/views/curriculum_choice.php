@@ -1,23 +1,21 @@
-<head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-</head>
 <h1>Curriculum</h1>
 
+<form method="POST">
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-<div class="scrollable" id="CurriculumSelectDiv">
-  <select size='3' class="scrollableinside" id="CurriculumSelect">
+  <select size='3' id="CurriculumSelect" name='curriculum'>
     <option>test</option>
     <?php
 /*      foreach($data as $row)
 	echo "<option>$row</option>"; 
   */  ?>
   </select>
-</div>
-
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Clone</button>
-<button onclick="location.href='<?php echo site_url('CurriculumCreator/newCurriculum'); ?>'">New</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Remove</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Edit</button>
+<br /><br />
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculum'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculum'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculum'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculum'); ?>">Delete</button>
+</form>
 
 <script type="text/javascript"> //Uses jQuery
 // ID of <input> filter

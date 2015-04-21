@@ -75,10 +75,13 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//edit a current curriculum
-	public function editCurriculum($curriculumID)
+	public function editCurriculum($curriculumID = NULL)
 	{
+		if ($curriculumID == NULL)
+			$curriculumID = $this->input->post('curriculum');
+		var_dump($curriculumID);
 		//load curriculum
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
 		$data = array(
 			"name" => $curriculum->getName(),

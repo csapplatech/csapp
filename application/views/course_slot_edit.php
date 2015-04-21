@@ -3,9 +3,9 @@
 </head>
 <h1>Course Slot Edit</h1>
 
-<p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-<div class="scrollable" id="CurriculumSelectDiv">
-  <select size='3' class="scrollableinside" id="CurriculumSelect">
+<p>Filter: <input id="CoureAvailFilter" /></p>
+<div class="scrollable" id="CourseAvailDiv">
+  <select size='3' class="scrollableinside" id="CourseAvailSelect">
     <option>test</option>
     <?php
 /*      foreach($data as $row)
@@ -21,9 +21,9 @@
 
 <script type="text/javascript"> //Uses jQuery
 // ID of <input> filter
-var Filter = $("#CurrFilter");
+var Filter = $("#CourseAvailFilter");
 // ID of <select> to filter
-var Select = $("#CurriculumSelect");
+var Select = $("#CourseAvailSelect");
 
 /**
 * Only shows options that contain a given text.
