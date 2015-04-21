@@ -9,7 +9,12 @@
 	echo "<option>$row</option>"; 
     ?>
   </select>
-<br /><br />
+<br />
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculumCourseSlot'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculumCourseSlot'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
+<br />
 <p>Name: <input name='name'></p>
 <p>Type:</p>
 <select size='3' name='type'>
@@ -18,10 +23,6 @@
   <option>Concentration</option>
 </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculumCourseSlot'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculumCourseSlot'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculum'); ?>">Save</button>
 </form>
