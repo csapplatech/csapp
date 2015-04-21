@@ -233,7 +233,7 @@ class Advising_form_model extends CI_Model
 			);
 			
 			$this->db->where('AdvisingFormID', $this->advisingFormID);
-			$this->db->update('AdvisingForms', $data);
+			$this->db->insert('AdvisingForms', $data);
 			
 			if($this->db->affected_rows() > 0)
 			{
