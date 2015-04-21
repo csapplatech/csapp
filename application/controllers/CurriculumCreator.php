@@ -3,23 +3,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class CurriculumCreator extends CI_Controller {
 
+	/*
 	private $curriculum = NULL; //will hold the current curriculum
 	private $courseSlot = NULL; //will hold the current course slot 
 	private $curriculumType = NULL; //(string): clone, edit, new
 	private $courseSlotType = NULL; //(string): clone, edit, new
+	*/
 	
 	public function index()
 	{
 		//grab global
-		global $curriculum, $courseSlot;
+		//global $curriculum, $courseSlot;
 		
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model');
-		$curriculum = new Curriculum_Model(); 
-		$courseSlot = new Curriculum_course_slot_model();
+		$_SESSION['curriculum'] = new Curriculum_Model(); 
+		$_SESSION['courseSlot'] = new Curriculum_course_slot_model();
 		
 		//call and pass data to initial curriculum view
-		$curriculums = $curriculum->getAllCurriculums();
+		$curriculums = $_SESSION['curriculum']->getAllCurriculums();
 		$data = array();
 		
 		//creating easy to use array for table
@@ -41,33 +43,33 @@ class CurriculumCreator extends CI_Controller {
     public function cloneCurriculum($curriculumID = NULL) //post: curriculum
     {
 		//grab global
-		global $curriculum, $curriculumType;
+		//global $curriculum, $curriculumType;
 		
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
 		
 		//load curriculum
-		$curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
+		//$curriculum = new Curriculum_Model();
+	    $_SESSION['curriculum']->loadPropertiesFromPrimaryKey($curriculumID);
+		$_SESSION['courseSlot'] = $_SESSION['curriculum']->getAllCurriculumCourseSlots();
 		$curriculumType = "clone";
 		$data = array(
-			"name" => $curriculum->getName(),
+			"name" => $_SESSION['curriculum']->getName(),
 		);
 		
 		//create easy to use array for table
 		foreach ($courseSlots as $slot)
 		{
 			$arr = [
-				0 => $curr->getName(),
-				1 => $curr->getCurriculumCourseSlotID()
+				0 => $slot->getName(),
+				1 => $slot->getCurriculumCourseSlotID()
 			];
 			
 			array_push($data, $arr);
 		}
 		
-		$this->load->view('curriculum_edit', $data);
+		$this->load->view('curriculum_edit', array('data'=>$data));
 	}
 	
 	//edit a current curriculum
@@ -93,14 +95,14 @@ class CurriculumCreator extends CI_Controller {
 		foreach ($courseSlots as $slot)
 		{
 			$arr = [
-				0 => $curr->getName(),
-				1 => $curr->getCurriculumCourseSlotID()
+				0 => $slot->getName(),
+				1 => $slot->getCurriculumCourseSlotID()
 			];
 			
 			array_push($data, $arr);
 		}
 		
-		$this->load->view('curriculum_edit', $data);    
+		$this->load->view('curriculum_edit', array('data'=>$data));    
 	}
 	
 	//creating a new curriculum
@@ -222,7 +224,7 @@ class CurriculumCreator extends CI_Controller {
 			array_push($data, $arr);
 		}
 		
-		$this->load->view('course_slot_edit', $data);
+		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
 	
 	//clone and edit a curriculum course slot
@@ -255,7 +257,7 @@ class CurriculumCreator extends CI_Controller {
 			array_push($data, $arr);
 		}
 		
-		$this->load->view('course_slot_edit', $data);
+		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
 
 	//create a new curriculum course slot
@@ -271,7 +273,7 @@ class CurriculumCreator extends CI_Controller {
 			"name" => 'New Curriculum Course Slot',
 		);
 		
-		$this->load->view('course_slot_edit', $data);
+		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
 	
 	//delete a curriculum course slot
@@ -286,7 +288,7 @@ class CurriculumCreator extends CI_Controller {
 			
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$curriculum->removeCurriculumCourseSlot($courseSlot);
-		$courseSlot->delete(); //should we delete from db or will it be used by other curriculums?
+		$courseSlot->delete(); 
 	}
 	
 	//cancel a curriculum course slot editing
@@ -304,14 +306,14 @@ class CurriculumCreator extends CI_Controller {
 		foreach ($courseSlots as $slot)
 		{
 			$arr = [
-				0 => $curr->getName(),
-				1 => $curr->getCurriculumCourseSlotID()
+				0 => $slot->getName(),
+				1 => $slot->getCurriculumCourseSlotID()
 			];
 			
 			array_push($data, $arr);
 		}
 		
-		$this->load->view('curriculum_edit', $data);   
+		$this->load->view('curriculum_edit', array('data'=>$data));   
 	}
 	
 	//save a curriculum course slot
@@ -334,6 +336,6 @@ class CurriculumCreator extends CI_Controller {
 			$courseSlot->addValidCourseID($validCourse);
 			
 		$curriculum->addCurriculumCourseSlot($courseSlot);
-		$this->load->view('curriculum_edit', $data);  
+		$this->load->view('curriculum_edit', array('data'=>$data));  
 	}
 }
