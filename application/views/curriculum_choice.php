@@ -3,12 +3,11 @@
 
 <form method="POST">
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-  <select size='3' id="CurriculumSelect" name='curriculum'>
-    <option>test</option>
+  <select size='3' id="CurriculumSelect" name='curriculumID'>
     <?php
-/*      foreach($data as $row)
+      foreach($data as $row)
 	echo "<option>$row</option>"; 
-  */  ?>
+    ?>
   </select>
 <br /><br />
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculum'); ?>">Edit</button>
