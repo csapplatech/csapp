@@ -57,7 +57,7 @@ Class appointment_controller extends CI_Controller{
 	);
          
             
-            $Appointment_array=array('app_Times'=>($app_Times),'isAdvisor'=>($User_model->isAdvisor()),'isStudent'=>($User_model->isStudent()));
+             $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
             
             $this->load->library('calendar',$prefs);
             
@@ -101,7 +101,7 @@ Class appointment_controller extends CI_Controller{
 	);
          
              //$app_Times=null;
-            $Appointment_array=array('app_Times'=>($app_Times),'isAdvisor'=>($User_model->isAdvisor()),'isStudent'=>($User_model->isStudent()));
+            $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
             
             $this->load->library('calendar',$prefs);
             
@@ -159,17 +159,10 @@ public function fill(){
         }
     }
            
-   //Take the new start/end times that the view has posted and use them to create new corresponding advising appointments
-   /* $Advising_appointments= new Advising_appointment_model();
+   
     
-    //read the array find a start and end time and use them to creat the appointment schedule
-    $Advising_appointments->setStartTime($_POST["StartTime"]);
-    $Advising_appointments->setEndTime($_POST["EndTime"]);
-    $Advising_appointments->create();*/
-    
-    
-    
-  $this->index();
+    redirect('appointment_controller');
+ 
 }
 }
 

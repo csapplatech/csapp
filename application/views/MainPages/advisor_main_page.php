@@ -58,7 +58,7 @@
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             View Advisees
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('appointment_controller') ;?>">
             Advising Appointment Schedule
         </a>
         

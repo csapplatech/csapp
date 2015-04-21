@@ -4,16 +4,52 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
+        
     </head>
     <body onload = "hideTables()">
+         <nav class="navbar navbar-default navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="<?php echo site_url('Mainpage/index'); ?>">CSAPP</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <?php
+                
+                  if ($user->isAdvisor())
+                      echo "<li><a href='" .site_url('Mainpage/advisor'). "'>Advisor Home</a></li>";
+                  if ($user->isStudent())
+                      echo "<li class='active'><a href='" .site_url('Mainpage/student'). "'>Student Home</a></li>";
+                  if ($user->isAdmin())
+                      echo "<li><a href='" .site_url('Mainpage/admin'). "'>Admin Home</a></li>";
+                  if ($user->isProgramChair())
+                      echo "<li><a href='" .site_url('Mainpage/programChair'). "'>Program Chair Home</a></li>";
+                ?>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="<?php echo site_url('Login/logout'); ?>">Logout</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+           </div>
+        </nav>
+        <br>
+        <br>
+        </br>
+        </br>
 <?php
 $new_Start=array();
 $new_End=array();
-if($isAdvisor){
+if($user->isAdvisor()){
     echo "THIS IS AN ADVISOR". "<br>";
 }
-else if($isStudent){
-     echo "THIS IS A STUDENT". "<br>";
+else if($user->isStudent()){
+     echo "Hello ".$user->getName(). "<br>";
 }
 else{
      echo "IDK WHO THIS IS.....". "<br>";
@@ -34,7 +70,7 @@ if(isset($_POST['submit']))
 {//to run PHP script on submit
     if(!empty($_POST['appointments']))
     {
-    $this->load->helper('url');
+   
     redirect('appointment_controller/fill');
     }
 }
@@ -6289,5 +6325,12 @@ footer{
                 else{}
             }
         </script>
+        
+        <footer>
+            <font color ="white"</font>
+            <p>Ruston, LA 2015</p> 
+            <p>Louisiana Tech University</p>
+            <p>Created by: Louisiana Tech's CSC 404 Class</p>
+        </footer>
     </body>
 </html>
