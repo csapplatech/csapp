@@ -10,6 +10,14 @@
     ?>
   </select>
 <br /><br />
+<p>Name: <input name='name'></p>
+<p>Type:</p>
+<select size='3' name='type'>
+  <option>Degree</option>
+  <option>Minor</option>
+  <option>Concentration</option>
+</select>
+<br /><br />
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculumCourseSlot'); ?>">Edit</button>
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculumCourseSlot'); ?>">New</button>
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
