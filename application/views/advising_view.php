@@ -9,7 +9,9 @@
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
     
         <title>Advising Page</title>
-        
+        <script>
+            var rootURL = '<?php echo URL; ?>';
+            </script>
     </head>
     <body id="background" ><div id="main">
         <h1 id="head">Advising Page</h1>

@@ -84,10 +84,11 @@ $(document).ready(function() {
                 });
         }
         $.ajax({
-           url: 'save',
+           url: rootURL + 'index.php/Advisingform/save',
            type: 'POST',
            //contentType : 'application/json',
-           data: SendInfo,
+           data: {data: JSON.stringify(SendInfo)},
+           //data: {data: JSON.stringify(SendInfo)},
            success: function(data)
                 {
                     alert('success!\n' + data);
