@@ -45,8 +45,8 @@ class CurriculumCreator extends CI_Controller {
 			
 			array_push($data, $arr);
 		}
-		
-		$this->load->view('curriculum_choice', $data);
+		array_push($data, 'test');
+		$this->load->view('curriculum_choice', array('data'=>$data));
 	}
         
     //clone and edit a curriculum

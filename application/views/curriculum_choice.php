@@ -3,20 +3,15 @@
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
 <div class="scrollable" id="CurriculumSelectDiv">
   <select size='3' class="scrollableinside" id="CurriculumSelect">
-    <option>Test</option>
-    <option>Test1</option>
-    <option>Test2</option>
-    <option>Test3</option>
-    <option>Test4</option>
-    <?php /*
-      foreach($query->result_array() as $row)
-	echo "<option> $row </option>"; */
+    <?php
+      foreach($data as $row)
+	echo "<option>$row</option>"; 
     ?>
   </select>
 </div>
 
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Clone</button>
-<button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">New</button>
+<button onclick="location.href='<?php echo site_url('CurriculumCreator/newCurriculum'); ?>'">New</button>
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Remove</button>
 <button onclick="location.href='<?php echo site_url('Mainpage/index'); ?>'">Edit</button>
 
