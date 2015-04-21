@@ -18,7 +18,12 @@ class CurriculumCreator extends CI_Controller {
 	 * 
 	 * Course_model: getAllCourses()
 	 * 
+	 * 	const CURRICULUM_TYPE_DEGREE = 1;
+		const CURRICULUM_TYPE_MINOR = 2;
+		const CURRICULUM_TYPE_CONCENTRATION = 3;
 	*/
+	
+	//need setters for curriculum/courseslot names and curriculum type (major, minor, concentration)
 
 	private $curriculum = NULL; //will hold the current curriculum
 	private $courseSlot = NULL; //will hold the current course slot 
@@ -50,13 +55,14 @@ class CurriculumCreator extends CI_Controller {
 	}
         
     //clone and edit a curriculum
-    public function cloneCurriculum($curriculumID, $name) 
+    public function cloneCurriculum($curriculumID) 
     {
 		//load curriculum
+		$curriculum = new Curriculum_Model();
 	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
 		$data = array(
-			"name" => $name,
+			"name" => $curriculum->getName(),
 			"type" => "clone"
 		);
 		
@@ -75,13 +81,11 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//edit a current curriculum
-	public function editCurriculum($curriculumID = NULL)
+	public function editCurriculum($curriculumID)
 	{
-		if ($curriculumID == NULL)
-			$curriculumID = $this->input->post('curriculum');
-		var_dump($curriculumID);
 		//load curriculum
-	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+		$curriculum = new Curriculum_Model();
+	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
 		$data = array(
 			"name" => $curriculum->getName(),
@@ -103,16 +107,14 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//creating a new curriculum
-	public function newCurriculum($name, $type)
+	public function newCurriculum()
 	{
 		$curriculum = new Curriculum_model(); //will we need this for only new or all?
-		$curriculum->setName($name);
-		$curriculum->setCurriculumType($type);
 		$data = array(
-			"name" => $name,
+			"name" => "New Curriculum",
 			"type" => "new"
 		);
-		$this->load->view('curriculum_edit', $name);	
+		$this->load->view('curriculum_edit');	
 	}
 	
 	//deletes a selected curriculum
@@ -122,22 +124,60 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum->delete();
 	}
 	
-	public function saveCurriculum($type = NULL)
+	//saves a curriculum to the database
+	public function setCurriculum($type = NULL) //type being whether the curriculum is new, cloned, or edited
 	{
 		if ($type == "edit")
-			$curriculum->update();
+			$curriculum->update(); //update current curriculum for edit
 		else
-			$curriculum->create();			
+			$curriculum->create(); //create a new entry for clone/new	
 	}
 	
+	//cancelling an edit to a curriculum
+	public function cancelCurriculumEdit()
+	{
+		$curriculum = new Curriculum_Model(); 
+		$courseSlot = new Curriculum_course_slot_model();
+		
+		//call and pass data to initial curriculum view
+		$curriculums = $curriculum->getAllCurriculums();
+		$data = array();
+		
+		//creating easy to use array for table
+		foreach ($curriculums as $curr) 
+		{
+			$arr = [
+				0 => $curr->getName(),
+				1 => $curr->getCurriculumID(),
+				2 => $curr->getDateCreated(),
+			];
+			
+			array_push($data, $arr);
+		}
+		array_push($data, 'test');
+		$this->load->view('curriculum_choice', array('data'=>$data));
+	}
+	
+	//set the name for a curriculum
+	public function setCurriculumName($name)
+	{
+		$curriculum->setName($name);
+	}
+	
+	//set the curriculum type
+	public function setCurriculumType($type)  //type(int): 1 - Degree, 2 - Minor, 3 - Concentration
+	{
+		$curriculum->setCurriculumType($type);
+	}
+		
 	//clone and edit a curriculum course slot
-    public function cloneCurriculumCourseSlot($curriculumCourseSlotID, $name) 
+    public function cloneCurriculumCourseSlot($curriculumCourseSlotID) 
     {
 		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$data = array(
-			"name" => $name,
+			"name" => $courseSlot->getName(),
 			"type" => "clone"
 		);
 		
@@ -163,7 +203,7 @@ class CurriculumCreator extends CI_Controller {
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$data = array(
-			"name" => $name,
+			"name" => $courseSlot->getName(),
 			"type" => "edit"
 		);
 		
@@ -183,15 +223,13 @@ class CurriculumCreator extends CI_Controller {
 	}
 
 	//create a new curriculum course slot
-	public function newCurriculumCourseSlot($name, $minimumGrade)
+	public function newCurriculumCourseSlot()
 	{
 		$courseSlot = new Curriculum_course_slot_model(); //make this public
 		$courseSlot->setCurriculum($curriculum);
-		$courseSlot->setMinimumGrade($minimumGrade);
-		$courseSlot->setName($name);
 		
 		$data = array(
-			"name" => $name,
+			"name" => 'New Curriculum Course Slot',
 			"type" => "new"
 		);
 		
@@ -230,18 +268,16 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//save a curriculum course slot
-	public function setCurriculumCourseSlot($validCourseIDs, $type) 
+	public function setCurriculumCourseSlot($validCourseIDs, $name, $minimumGrade) //validCourseIDs(int array); name(string); minimumGrade(string)
 	{
-		//populate course slot with course ids
+		$courseSlot->setMinimumGrade($minimumGrade);
+		$courseSlot->setName($name);
+		
+		//populate course slot with the valid course ids
 		foreach ($validCourseIDs as $validCourse)
 			$courseSlot->addValidCourseID($validCourse);
-		
-		//do we want to update the database only when the whole curriculum is saved?
-		/*
-		if ($type == "edit")
-			$courseSlot->update();
-		else
-			$courseSlot->create();
-		*/
+			
+		$curriculum->addCurriculumCourseSlot($courseSlot);
+		$this->load->view('curriculum_edit', $data);  
 	}
 }
