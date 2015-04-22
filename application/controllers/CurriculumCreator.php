@@ -428,13 +428,26 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		
+		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
+		{
+			$tempCourseSlot->fromSerializedString($_SESSION['courseSlot']);
+			foreach ($courseSlots as $slot)
+			{
+				if (strcmp($testCourseSlot->getName(), $slot->getName()) == 0)
+				{
+					$curriculum->removeCurriculumCourseSlot($tempCourseSlot);
+					break;
+				}
+			}
+		}
+
 		$curriculum->addCurriculumCourseSlot($courseSlot);
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
-
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
-				
+			
 		$type = $curriculum->getCurriculumType();
 		if ($type == 1)
 			$curriculumType = 'Degree';
