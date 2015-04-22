@@ -19,9 +19,7 @@ Class appointment_controller extends CI_Controller{
 
     $User_model= new User_model;
     
-    $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
-    $getAdvisor=$User_model->getAdvisor();
-    $getAdvisor=$getAdvisor->getUserID();
+    $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
     
     $Advising_schedule= new Advising_schedule_model();
     
@@ -75,6 +73,10 @@ Class appointment_controller extends CI_Controller{
         }
     }
     else if($User_model->isStudent()){      //if it is a student 
+		
+		$getAdvisor=$User_model->getAdvisor();
+		$getAdvisor=$getAdvisor->getUserID();
+	
          if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1)){  
              
              $Appointment_array= ($Advising_schedule->getAllAdvisingAppointments());
