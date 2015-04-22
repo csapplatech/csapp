@@ -58,6 +58,6 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     
-    <?php include_once('/application/views/Templates/footer.php'); ?>
+    <?php include_once('application/views/Templates/footer.php'); ?>
   </body>
 </html>
