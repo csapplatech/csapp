@@ -37,7 +37,7 @@ class CurriculumCreator extends CI_Controller {
 		
 		//load curriculum
 		$curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$curriculum = $curriculum->getAllCurriculumCourseSlots();
 		$_SESSION['curriculumCreationMethod'] = "clone";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
@@ -68,12 +68,14 @@ class CurriculumCreator extends CI_Controller {
 			
 		//load curriculum
 		$curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$curriculum = $curriculum->getAllCurriculumCourseSlots();
+	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$_SESSION['curriculumCreationMethod'] = "edit";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		$data = array(
-			"name" => $_SESSION['curriculum']->getName()
+			"name"   => $curriculum->getName(),
+		        "course" => array(),
+		        "type"   => $curriculum->getCurriculumType()
 		);
 		
 		//create easy to use array for table
@@ -84,7 +86,7 @@ class CurriculumCreator extends CI_Controller {
 				1 => $slot->getCurriculumCourseSlotID()
 			];
 			
-			array_push($data, $arr);
+			array_push($data['course'], $arr);
 		}
 		
 		$this->load->view('curriculum_edit', array('data'=>$data));    

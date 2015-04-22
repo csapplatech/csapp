@@ -5,8 +5,8 @@
 <p>Filter: <input id="CurrEditFilter" /></p>
   <select size='3' id="CourseSlotSelect" name='curriculumCourseSlotID'>
     <?php
-      foreach($data as $row)
-	echo "<option>$row</option>"; 
+      foreach($data[course] as $row)
+	echo "<option value=\"$row[1]\">$row[0]</option>"; 
     ?>
   </select>
 <br />
@@ -15,9 +15,9 @@
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
-<p>Name: <input name='name'></p>
+<p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
 <p>Type:</p>
-<select size='3' name='type'>
+<select size='3' name='type' selected="<?php echo $data['type']; ?>">
   <option>Degree</option>
   <option>Minor</option>
   <option>Concentration</option>
