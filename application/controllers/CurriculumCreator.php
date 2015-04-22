@@ -37,12 +37,23 @@ class CurriculumCreator extends CI_Controller {
 		
 		//load curriculum
 		$curriculum = new Curriculum_Model();
-	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$curriculum = $curriculum->getAllCurriculumCourseSlots();
+		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$_SESSION['curriculumCreationMethod'] = "clone";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
+		
+		$type = $curriculum->getCurriculumType();
+		if ($type == 1)
+			$curriculumType = 'Degree';
+		else if ($type == 2)
+			$curriculumType = 'Minor';
+		else if ($type == 3) 
+			$curriculumType = 'Concentration';
+		
 		$data = array(
-			"name" => $curriculum->getName()
+			"name"   => $curriculum->getName(),
+			"course" => array(),
+			"type"   => $curriculumType;
 		);
 		
 		//create easy to use array for table
@@ -53,10 +64,10 @@ class CurriculumCreator extends CI_Controller {
 				1 => $slot->getCurriculumCourseSlotID()
 			];
 			
-			array_push($data, $arr);
+			array_push($data['course'], $arr);
 		}
 		
-		$this->load->view('curriculum_edit', array('data'=>$data));
+		$this->load->view('curriculum_edit', array('data'=>$data)); 
 	}
 	
 	//edit a current curriculum
@@ -68,14 +79,23 @@ class CurriculumCreator extends CI_Controller {
 			
 		//load curriculum
 		$curriculum = new Curriculum_Model();
-	        $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
+		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$_SESSION['curriculumCreationMethod'] = "edit";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
+		
+		$type = $curriculum->getCurriculumType();
+		if ($type == 1)
+			$curriculumType = 'Degree';
+		else if ($type == 2)
+			$curriculumType = 'Minor';
+		else if ($type == 3) 
+			$curriculumType = 'Concentration';
+		
 		$data = array(
 			"name"   => $curriculum->getName(),
-		        "course" => array(),
-		        "type"   => $curriculum->getCurriculumType()
+			"course" => array(),
+			"type"   => $curriculumType;
 		);
 		
 		//create easy to use array for table
