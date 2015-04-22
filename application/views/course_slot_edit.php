@@ -10,7 +10,7 @@
     ?>
   </select>
 <br /><br />
-<p>Name: <input id='name' value="<?php echo $data['name']; ?>" /></p>
+<p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
 <p>Minimum Grade:</p>
 <select size=5>
   <option>A</option>
