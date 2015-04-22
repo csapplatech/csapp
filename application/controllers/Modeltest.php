@@ -17,6 +17,47 @@ class ModelTest extends CI_Controller
         echo "THIS IS A TEST";
     }
     
+	public function serialize()
+	{
+		$c = new Curriculum_model;
+		
+		$c->loadPropertiesFromPrimaryKey(1);
+		
+		$str = $c->toSerializedString();
+		
+		$c2 = new Curriculum_model;
+		
+		$c2->fromSerializedString($str);
+		
+		echo $c2->toSerializedString();
+	}
+	
+	public function session()
+	{
+		if(isset($_SESSION['user_model']))
+		{
+			$user = $_SESSION['user_model'];
+			
+			var_dump($user);
+			
+			unset($_SESSION['user_model']);
+		}
+		else
+		{
+			$user = new User_model;
+			
+			if($user->loadPropertiesFromPrimaryKey(1))
+			{
+				$_SESSION['user_model'] = $user;
+				echo "SESSION user saved!";
+			}
+			else
+			{
+				echo "404 user not found!";
+			}
+		}
+	}
+	
     public function user()
     {
         // Check to see if a user id segment in the URI was specified
@@ -66,6 +107,17 @@ class ModelTest extends CI_Controller
         }
     }
     
+	public function userTwo()
+	{
+		$user = new User_model;
+		
+		$user->loadPropertiesFromPrimaryKey(10209039);
+		
+		$advisor = $user->getAdvisor();
+		
+		var_dump($advisor);
+	}
+	
     public function course()
     {   
         $courses = Course_model::getAllCourses();
@@ -141,6 +193,15 @@ class ModelTest extends CI_Controller
         }
     }
 
+	public function courseSectionTwo()
+	{
+		$model = new Course_section_model;
+		
+		$model->loadPropertiesFromPrimaryKey(1);
+		
+		echo $model->getCourseSectionTimesAsString();
+	}
+	
     public function course_section()
     {
         if($this->uri->segment(3, 0))

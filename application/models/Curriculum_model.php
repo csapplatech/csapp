@@ -28,6 +28,82 @@ class Curriculum_model extends CI_Model
         parent::__construct();
     }
     
+	/**
+	 * Summary of toSerializedString
+	 * Serialization function for this model
+	 */
+	public function toSerializedString()
+	{
+		$arr = array();
+		
+		if($this->curriculumID != null)
+		{
+			$arr['curriculumID'] = $this->curriculumID;
+		}
+		
+		if($this->name != null)
+		{
+			$arr['name'] = $this->name;
+		}
+		
+		if($this->curriculumType != null)
+		{
+			$arr['curriculumType'] = $this->curriculumType;
+		}
+		
+		if($this->dateCreated != null)
+		{
+			$arr['dateCreated'] = $this->dateCreated;
+		}
+		
+		$arr['curriculumCourseSlots'] = array();
+		
+		foreach($this->curriculumCourseSlots as $courseSlot)
+		{
+			array_push($arr['curriculumCourseSlots'], $courseSlot->toSerializedString());
+		}
+		
+		return json_encode($arr);
+	}
+	
+	/**
+	 * Summary of fromSerializedString
+	 * Deserialization function for this model
+	 */
+	public function fromSerializedString($serializedString)
+	{
+		$arr = json_decode($serializedString);
+		
+		if(isset($arr->curriculumID))
+		{
+			$this->curriculumID = $arr->curriculumID;
+		}
+		
+		if(isset($arr->name))
+		{
+			$this->name = $arr->name;
+		}
+		
+		if(isset($arr->curriculumType))
+		{
+			$this->curriculumType = $arr->curriculumType;
+		}
+		
+		if(isset($arr->dateCreated))
+		{
+			$this->dateCreated = $arr->dateCreated;
+		}
+		
+		foreach($arr->curriculumCourseSlots as $courseSlot)
+		{
+			$courseSlotModel = new Curriculum_course_slot_model;
+			
+			$courseSlotModel->fromSerializedString($courseSlot);
+			
+			array_push($this->curriculumCourseSlots, $courseSlotModel);
+		}
+	}
+	
     /**
      * Summary of loadPropertiesFromPrimaryKey
      * Loads a curriculum model's data and its associated models from the database into this object using a CurriculumID as a primary key lookup

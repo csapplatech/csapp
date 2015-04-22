@@ -8,7 +8,6 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
@@ -36,15 +35,15 @@
            </div>
         </nav>
 
-        <p> Welcome to the Guest Main Page, <?php echo $user->getName(); ?>!</p>
+        <h3> Welcome to the Guest Main Page, <?php echo $user->getName(); ?>!</h3>
         
-        <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:500px;height:425px">
+        <p><img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:500px;height:425px"></p>
         
         <footer>
             <font color ="white"</font>
-            <p>Ruston, LA 2015</p> 
+            <p>Ruston, LA 2015</p>
             <p>Louisiana Tech University</p>
-            <p>Created by: Caleb Baze, Azriel Richardson, Ryan Gardiner and Zachary Behnke</p>
+            <p>Created by: Louisiana Tech's CSC 404 Class</p>
         </footer>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

@@ -6,7 +6,7 @@ class Login extends CI_Controller {
 	
 	public function index()
 	{
-	    if (isset($_SESSION['UserID']))
+            if (isset($_SESSION['UserID']))
                 redirect('Mainpage');
             else
                 $this->load->view('login');
@@ -22,7 +22,6 @@ class Login extends CI_Controller {
             //If username exists load userdata
             if ($user->loadPropertiesFromPrimaryKey($username) || $user->loadPropertiesFromEmailAddress($username))
             {
-                $user->create();
                 //If password is correct
                 if ($user->authenticate($password))
                 {
@@ -42,7 +41,6 @@ class Login extends CI_Controller {
             $user = new User_model;
             //Load userdata
             $user->loadPropertiesFromPrimaryKey('123');
-            $user->create();
             //Setup session
             $_SESSION['UserID'] = $user->getUserID();
             //Redirect to the mainpage controller

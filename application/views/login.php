@@ -8,9 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-
     <title>CSAPP Login</title>
-    
     <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
     <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
   </head>
@@ -45,7 +43,8 @@
                   echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
               }
             ?>
-            <form class="form-signin" action="<?php echo site_url('Login/auth'); ?>" method="POST">
+
+            <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">
               <h2 class="form-signin-heading" style="margin-bottom:15px">Please sign in</h2>
               <label for="inputUsername" class="sr-only">Username</label>
               <input type="text" id="username" name="username" class="form-control" placeholder="Username" style="margin-bottom:5px" required autofocus>
@@ -53,7 +52,7 @@
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" style="margin-bottom:25px" required>
               <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-bottom:5px">Sign in</button>
             </form>
-            <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('Login/guestLogin'); ?>">Proceed as Guest</a>
+            <a class="btn btn-lg btn-primary btn-block" href="<?php echo site_url('login/guestLogin'); ?>">Proceed as Guest</a>
         </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
@@ -62,7 +61,10 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
     
-    <?php include 'Keen-Hjorth-Test.php';?>
-    
+    <footer>
+            <font color ="white"</font>
+            <p>Created by: Louisiana Tech's CSC 404 Class</p>
+            <p>2015 Louisiana Tech University Ruston, LA</p>
+    </footer>
   </body>
 </html>
