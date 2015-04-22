@@ -403,7 +403,8 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//save a curriculum course slot
-	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL) //post: validCourseIDs, name, minimumGrade; validCourseIDs(int array); name(string); minimumGrade(string)
+	//validCourseIDs(int array); name(string); minimumGrade(string); 
+	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL) 
 	{
 		//get arguments
 		if ($validCourseIDs == NULL)
@@ -415,11 +416,27 @@ class CurriculumCreator extends CI_Controller {
 		if ($minimumGrade == NULL)
 			$minimumGrade = $this->input->post('minimumGrade');
 			
+		//~ const NAME_FALL = "Fall";
+		//~ const NAME_WINTER = "Winter";
+		//~ const NAME_SPRING = "Spring";
+		//~ const NAME_SUMMER = "Summer";
+		if ($recommendedQuarter == NULL)
+			$recommendedQuarter = $this->input->post('recommendedQuarter');
+			
+		//~ const YEAR_FRESHMAN = "Freshman";
+		//~ const YEAR_SOPHOMORE = "Sophomore";
+		//~ const YEAR_JUNIOR = "Junior";
+		//~ const YEAR_SENIOR = "Senior";
+		if ($recommendedYear == NULL)
+			$recommendedYear = $this->input->post('recommendedYear');
+			
 		//add logic to grab arguments	
 		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->fromSerializedString($_SESSION['courseSlot']);
 		$courseSlot->setMinimumGrade($minimumGrade);
 		$courseSlot->setName($name);
+		$courseSlot->setRecommendedQuarter($recommendedQuarter);
+		$courseSlot->setRecommendedYear($recommendedYear);
 		
 		//populate course slot with the valid course ids
 		foreach ($validCourseIDs as $validCourse)
@@ -447,7 +464,8 @@ class CurriculumCreator extends CI_Controller {
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
-			
+		
+		$curriculumType = NULL;	
 		$type = $curriculum->getCurriculumType();
 		if ($type == 1)
 			$curriculumType = 'Degree';
