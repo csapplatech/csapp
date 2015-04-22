@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
     </head>
     <body style="padding-top: 60px">
-        <?php include_once($_SERVER['DOCUMENT_ROOT'].'/application/views/Templates/navbar.php'); ?>
+        <?php 'application/views/Templates/navbar.php'); ?>
         
         <?php 
         if (isset($advisor))
