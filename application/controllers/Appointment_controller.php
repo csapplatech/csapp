@@ -66,7 +66,7 @@ Class appointment_controller extends CI_Controller{
         
         else{                                                          //if there were no appointments found
             $app_Times=null;                                        //null app_Times array
-            $Appointment_array=array('app_Times'=>($app_Times));
+			$Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
             $Advising_schedule->setAdvisorUserID($User_model->getUserID());   //use this to create a new advising shedule
             $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
