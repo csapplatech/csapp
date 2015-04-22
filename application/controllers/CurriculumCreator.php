@@ -197,13 +197,16 @@ class CurriculumCreator extends CI_Controller {
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$_SESSION['curriculumCourseSlotMethod'] = "clone";
+		$courses = new Course_model();
+		
 		$data = array(
-			"name"         => $courseSlot->getName(),
-			"validCourses" => array()
+			"name"    => 'New Curriculum Course Slot',
+			"courses" =>  array()
 		);
 		
-		//create easy to use array for table
-		foreach ($validCourses as $course)
+		$availableCourses = $courses->getAllCourses();
+		
+		foreach ($availableCourses as $course)
 		{
 			$arr = [
 				0 => $course->getCourseName(),
@@ -211,7 +214,7 @@ class CurriculumCreator extends CI_Controller {
 				2 => $course->getPrerequisiteCourses()
 			];
 			
-			array_push($data["validCourses"], $arr);
+			array_push($data["courses"], $arr);
 		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
@@ -229,13 +232,16 @@ class CurriculumCreator extends CI_Controller {
 		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
 		$validCourses = $courseSlot->getValidCourseIDs();
 		$_SESSION['curriculumCourseSlotMethod'] = "edit";
+		$courses = new Course_model();
+		
 		$data = array(
-			"name"         => $courseSlot->getName(),
-			"validCourses" => array()
+			"name"    => 'New Curriculum Course Slot',
+			"courses" =>  array()
 		);
 		
-		//create easy to use array for table
-		foreach ($validCourses as $course)
+		$availableCourses = $courses->getAllCourses();
+		
+		foreach ($availableCourses as $course)
 		{
 			$arr = [
 				0 => $course->getCourseName(),
@@ -243,7 +249,7 @@ class CurriculumCreator extends CI_Controller {
 				2 => $course->getPrerequisiteCourses()
 			];
 			
-			array_push($data["validCourses"], $arr);
+			array_push($data["courses"], $arr);
 		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
@@ -258,9 +264,25 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		$courseSlot->setCurriculum($curriculum);
 		$_SESSION['curriculumCourseSlotMethod'] = "new";
+		$courses = new Course_model();
+		
 		$data = array(
-			"name" => 'New Curriculum Course Slot',
+			"name"    => 'New Curriculum Course Slot',
+			"courses" =>  array()
 		);
+		
+		$availableCourses = $courses->getAllCourses();
+		
+		foreach ($availableCourses as $course)
+		{
+			$arr = [
+				0 => $course->getCourseName(),
+				1 => $course->getCourseID(),
+				2 => $course->getPrerequisiteCourses()
+			];
+			
+			array_push($data["courses"], $arr);
+		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$this->load->view('course_slot_edit', array('data'=>$data));
