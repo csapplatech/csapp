@@ -780,7 +780,7 @@ class CI_Calendar {
 	public function default_template()
 	{
 		return array(
-			'table_open'				=> '<script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
+			'table_open'				=> '<script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
 			'heading_row_start'			=> '<table id="top" class="animated fadeInUp"><tr><td><input id= "startT" type="text" value=""></td><td colspan="2"></td><td colspan="3"> <select id="intervals" name="intervals" onchange="setGetParameter(\'interval\',document.getElementById(\'intervals\').options[document.getElementById(\'intervals\').selectedIndex].value)"><option>Intervals</option><option value="10">10 min.</option><option value="15">15 min.</option><option value="20">20 min.</option><option value="30">30 min.</option></select> </td><td></td><td id ="submitwrap" rowspan="2"><input id="submit" name="submit" type="submit" value="Add"></td></tr><tr>',//<th>
 			'heading_previous_cell'		=> '<td id="pad"><input id="endT" type="text" value=""></td><td><a id="prevweek" href ="javascript:void(0);" onclick="nextOrPrev(this)"><div>&lt;</div></a></td><td><a id="previousnext" href="{previous_url}"><div>&lt;&lt;</div></a></td>',
 			'heading_title_cell'		=> '<td>{heading}</td>',
@@ -803,7 +803,7 @@ class CI_Calendar {
 			'cal_cell_end_today'		=> '</th>',
 			'cal_cell_end_other'		=> '</th>',
 			'cal_row_end'				=> '</tbody></table>',
-			'table_close'				=> '</div></form>'
+			'table_close'				=> '</div></form></div>'
 		);
 	}
 

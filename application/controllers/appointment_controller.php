@@ -10,7 +10,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_view/index'
 	);
          
         
@@ -53,7 +53,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
 	);
          
             
@@ -70,7 +70,7 @@ Class appointment_controller extends CI_Controller{
             $Advising_schedule->setAdvisorUserID($User_model->getUserID());   //use this to create a new advising shedule
             $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
-            $this->load->view("appointment", $Appointment_array);             
+            $this->load->view("appointment_view", $Appointment_array);             
             
         }
     }
@@ -97,7 +97,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
 	);
          
              //$app_Times=null;
