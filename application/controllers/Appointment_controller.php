@@ -10,7 +10,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
 	);
          
         
@@ -51,7 +51,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
 	);
          
             
@@ -99,7 +99,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment/index'
+        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
 	);
          
              //$app_Times=null;
