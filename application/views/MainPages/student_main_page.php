@@ -43,7 +43,7 @@
            </div>
         </nav>
 
-        <h3> Welcome to the Student Main Page, <?php echo $user->getName(); ?>!</h3>
+        <h3> Welcome to the Student Main Page, <?php echo $user->getName(); echo $_SESSION['UserID'] ?>!</h3>
         
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('ViewAdvisorInfo') ;?>">
             View Advisor Info
@@ -57,7 +57,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Schedule
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('appointment_controller') ;?>">
             Schedule Advising Appointment
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
