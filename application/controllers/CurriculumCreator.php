@@ -254,7 +254,8 @@ class CurriculumCreator extends CI_Controller {
 	public function newCurriculumCourseSlot()
 	{
 		$courseSlot = new Curriculum_course_slot_model();
-		$curriculum = new Curriculum_model()->fromSerializedString($_SESSION['curriculum']);
+		$curriculum = new Curriculum_model();
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		$courseSlot->setCurriculum($curriculum);
 		$_SESSION['curriculumCourseSlotMethod'] = "new";
 		$data = array(
