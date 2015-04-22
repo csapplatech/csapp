@@ -637,6 +637,10 @@ class Curriculum_course_slot_model extends CI_Model
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
             $this->db->delete('CurriculumSlotValidCourses');
             
+			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
+			$this->db->or_where('RequisisteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+			$this->db->delete('CurriculumCourseSlotRequisites');
+			
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
             $this->db->delete('CurriculumCourseSlots');
             
