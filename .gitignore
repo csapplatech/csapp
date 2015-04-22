@@ -2,4 +2,5 @@
 *.sln
 *.suo
 *.project
+/nbproject/
 /nbproject/private/
