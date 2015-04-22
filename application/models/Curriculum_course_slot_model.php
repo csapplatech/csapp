@@ -380,7 +380,7 @@ class Curriculum_course_slot_model extends CI_Model
 		{
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
-			$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
@@ -410,7 +410,7 @@ class Curriculum_course_slot_model extends CI_Model
 		
 		if($this->courseID != null)
 		{
-			$this->db->select('RequisisteCurriculumCourseSlotID');
+			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('CurriculumCourseSlotID', $this->courseID);
 			
@@ -442,7 +442,7 @@ class Curriculum_course_slot_model extends CI_Model
 		
 		if($this->courseID != null)
 		{
-			$this->db->select('RequisisteCurriculumCourseSlotID');
+			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
 			$this->db->where('CurriculumCourseSlotID', $this->courseID);
 			
@@ -452,7 +452,7 @@ class Curriculum_course_slot_model extends CI_Model
 			{
 				$model = new Course_model;
 				
-				if($model->loadPropertiesFromPrimaryKey($row['RequisisteCurriculumCourseSlotID']))
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
 					array_push($models, $model);
 				}
@@ -460,7 +460,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
-			$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
 			
 			$results = $this->db->get('CourseRequisites');
 			
@@ -489,7 +489,7 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
-			'RequisisteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
 		);
 		
@@ -509,7 +509,7 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
-			'RequisisteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
 		);
 		
@@ -528,13 +528,13 @@ class Curriculum_course_slot_model extends CI_Model
 	public function removeCourseSlotRequisite($curriculumCourseSlot)
 	{
 		$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
-		$this->db->where('RequisisteCurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+		$this->db->where('RequisiteCurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		$num = $this->db->affected_rows();
 		
 		$this->db->where('CurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
-		$this->db->where('RequisisteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+		$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		return ($num + $this->db->affected_rows()) > 0;
@@ -638,7 +638,7 @@ class Curriculum_course_slot_model extends CI_Model
             $this->db->delete('CurriculumSlotValidCourses');
             
 			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
-			$this->db->or_where('RequisisteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+			$this->db->or_where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			$this->db->delete('CurriculumCourseSlotRequisites');
 			
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
