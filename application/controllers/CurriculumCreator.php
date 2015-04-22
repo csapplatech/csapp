@@ -340,11 +340,11 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//cancel a curriculum course slot editing
-	public function cancelCurriculumCourseSlotEdit()
+	public function cancelCurriculumCourseSlot()
 	{
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
-		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 				
 		$type = $curriculum->getCurriculumType();
 		if ($type == 1)
@@ -389,7 +389,7 @@ class CurriculumCreator extends CI_Controller {
 			
 		//add logic to grab arguments	
 		$courseSlot = new Curriculum_course_slot_model();
-		$courseSlot = fromSerializedString($_SESSION['courseSlot']);
+		$courseSlot->fromSerializedString($_SESSION['courseSlot']);
 		$courseSlot->setMinimumGrade($minimumGrade);
 		$courseSlot->setName($name);
 		
@@ -398,14 +398,14 @@ class CurriculumCreator extends CI_Controller {
 			$courseSlot->addValidCourseID($validCourse);
 					
 		$curriculum = new Curriculum_model();
-		$curriculum = fromSerializedString($_SESSION['curriculum']);
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		
-		$curriculum->addCurriculumCourseSlot($ourseSlot);
+		$curriculum->addCurriculumCourseSlot($courseSlot);
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 
-		$courseSlots = $curriculum->getAllCurriculumCourseSlots();
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 				
 		$type = $curriculum->getCurriculumType();
 		if ($type == 1)

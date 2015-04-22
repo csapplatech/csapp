@@ -3,14 +3,14 @@
 
 <form method="POST">
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
-  <select multiple size='3' id="AvailCourseSelect" name='validCourseIDs'>
+  <select multiple size='3' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
-      foreach($data as $row)
-	echo "<option>$row</option>"; 
+      foreach($data['courses'] as $row)
+	echo "<option value=\"$row[id]\">$row[name] $row[number]</option>"; 
     ?>
   </select>
 <br /><br />
-<p>Name: <input id='name' /></p>
+<p>Name: <input id='name' value="<?php echo $data['name']; ?>" /></p>
 <p>Minimum Grade:</p>
 <select size=5>
   <option>A</option>
@@ -20,8 +20,8 @@
   <option>F</option>
 </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlotEdit'); ?>">Save</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlotEdit'); ?>">Cancel</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlot'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
