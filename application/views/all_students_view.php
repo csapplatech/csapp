@@ -20,7 +20,7 @@
                 
                 foreach ($students as $stud)
                 {
-                    echo  "<li class='clickme' id='".$stud->getUserID()."'>" . $stud->getName() . "</li>";
+                    echo  "<li style='color: #000;' class='clickme' id='".$stud->getUserID()."'>" . $stud->getName() . "</li>";
                 }
                 
                 ?>
