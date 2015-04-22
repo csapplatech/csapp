@@ -12,8 +12,19 @@
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
 <p>Recommended Quarter: </p>
-<input name='recommendedQuarter' />
-<p>Recommended Year: <input name='recommendedYear' /></p>
+<select size=4 name='recommendedQuarter'>
+  <option>Fall</option>
+  <option>Winter</option>
+  <option>Spring</option>
+  <option>Summer</option>
+</select>
+<p>Recommended Year:</p> 
+<select size=4 name='recommendedYear'>
+  <option>Freshman</option>
+  <option>Sophomore</option>
+  <option>Junior</option>
+  <option>Senior</option>
+</select>
 <p>Minimum Grade:</p>
 <select size=5 name='minimumGrade'>
   <option>A</option>
