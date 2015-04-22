@@ -10,7 +10,6 @@
     <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
     <title>CSAPP Login</title>
     <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
   </head>
   
   <body style="padding-top:60px">
@@ -58,13 +57,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
     
-    <footer>
-            <font color ="white"</font>
-            <p>Created by: Louisiana Tech's CSC 404 Class</p>
-            <p>2015 Louisiana Tech University Ruston, LA</p>
-    </footer>
+    <?php include_once($_SERVER['DOCUMENT_ROOT'].'/application/views/Templates/footer.php'); ?>
   </body>
 </html>

@@ -25,6 +25,14 @@ class Login extends CI_Controller {
                 //If password is correct
                 if ($user->authenticate($password))
                 {
+                    if (null !== $user->getLastLogin())
+                    {
+                        if ($user->getLastLogin()+10368000<time())
+                        {}
+                    }
+                    //Set the logged in timestamp
+                    $user->setLastLogin(time());
+                    $user->update();
                     //Activate the session
                     $_SESSION['UserID'] = $user->getUserID();
                     //Redirect to the mainpage controller

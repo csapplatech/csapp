@@ -29,14 +29,8 @@
         <p><img src= "<?php echo IMG."/tech_official_logo.jpg" ?>" alt="Tech Logo" style="width:300px;height:225px"></p>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <!-- Latest compiled and minified JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
         
-        <footer>
-            <font color ="white"</font>
-            <p>Created by: Louisiana Tech's CSC 404 Class</p>
-            <p>2015 Louisiana Tech University Ruston, LA</p>
-        </footer>
+        <?php include_once($_SERVER['DOCUMENT_ROOT'].'/application/views/Templates/footer.php'); ?>
         
     </body>
 </html>
