@@ -187,15 +187,29 @@ class CurriculumCreator extends CI_Controller {
 	}
 		
 	//clone and edit a curriculum course slot
-    public function cloneCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
+    public function cloneCurriculumCourseSlot($courseSlotName = NULL) //post: courseSlot
     {
 		//get arguments
-		if ($curriculumCourseSlotID == NULL)
-			$curriculumCourseSlotID = $this->input->post('courseSlot');
-			
+		if ($courseSlotName == NULL)
+			$courseSlotName = $this->input->post('courseSlot');
+		
+		$curriculum = new Curriculum_model();
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		$validCourses = $courseSlot->getValidCourseIDs();
+		
+		//match names
+		foreach ($courseSlots as $slot)
+		{
+			$name = $slot->getName();
+			
+			if (strcmp($name,$courseSlotName) == 0)
+			{	
+				$courseSlot = $slot;
+				break;
+			}
+		}
+			
 		$_SESSION['curriculumCourseSlotMethod'] = "clone";
 		$courses = new Course_model();
 		
@@ -225,13 +239,27 @@ class CurriculumCreator extends CI_Controller {
 	//clone and edit a curriculum course slot
     public function editCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
     {
-		//get arguments
-		if ($curriculumCourseSlotID == NULL)
-			$curriculumCourseSlotID = $this->input->post('courseSlot');
+		///get arguments
+		if ($courseSlotName == NULL)
+			$courseSlotName = $this->input->post('courseSlot');
 		
+		$curriculum = new Curriculum_model();
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		$validCourses = $courseSlot->getValidCourseIDs();
+		
+		//match names
+		foreach ($courseSlots as $slot)
+		{
+			$name = $slot->getName();
+			
+			if (strcmp($name,$courseSlotName) == 0)
+			{	
+				$courseSlot = $slot;
+				break;
+			}
+		}
+		
 		$_SESSION['curriculumCourseSlotMethod'] = "edit";
 		$courses = new Course_model();
 		
