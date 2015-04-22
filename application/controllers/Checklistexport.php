@@ -3,6 +3,7 @@ require_once('application/libraries/phpexcel/PHPExcel/IOFactory.php');
 
 class Checklistexport extends CI_Controller
 {
+	//Class Variables
 	private $titlestyle = array(
 	 'fill' => array(
 		  'type'  => PHPExcel_Style_Fill::FILL_SOLID, 
@@ -10,7 +11,8 @@ class Checklistexport extends CI_Controller
 	 'font' => array('bold' => true),
 	 'borders' => array('allborders' => array('style' => PHPExcel_Style_Border::BORDER_THIN))
 	);
-		    
+
+	//Main Function
 	public function index($userID = NULL, $curriculumID = 1, $type = "xls")
 	{
 
@@ -31,12 +33,11 @@ class Checklistexport extends CI_Controller
 				   ->setSubject("Advising Checklist")
 				   ->setDescription("Auto Generated Checklist")
 				   ->setCategory("Advisee checklist file");
-	    
 
 	    //Set global defaults
 	    $Excel->getDefaultStyle()->getFont()->setSize(10)->setName('Arial');
 	    
-	    //Handle checklist sheet stuff
+	    //Generate course checklist sheet
 	    $checklist = $Excel->getActiveSheet();
 	    $checklist->setTitle("Checklist");
 	   
@@ -51,7 +52,117 @@ class Checklistexport extends CI_Controller
 	    for ($col = 0; $col < count($cells); $col++)
 	    	for ($row = 0; $row < count($cells[$col]); $row++)
 	    		if (strcmp($checksheet->getCellByColumnAndRow($col, $row)->getValue(), "COURSE") == 0)
-				$course = array($row, $col);
+					$course = array($row, $col);
+			
+	    $this->generatechecklist($checklist, $user, $curriculum);
+
+	    //Generate advisor checklist sheet
+	    $advcheck = $Excel->createSheet(NULL, 1);
+	    $advcheck->setTitle("Advisor Checklist");
+	    $this->generateadvchecklist($advcheck);
+
+	    //Download file object (PDF or XLS)
+	    $objWriter = PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
+	    header("Content-type: application/vnd.ms-exel");
+	    header("Content-Disposition: attachment; filename=test.xls");
+	    $objWriter->save('php://output');
+	}
+
+	//Generate Advisor Checklist
+	private function generateadvchecklist($advlist)
+	{
+	    //Set column dimensions
+	    $advlist->getColumnDimension('A')->setWidth(65);
+	    for ($i = 'B'; $i < 'Q'; $i++)
+	    	$advlist->getColumnDimension("$i")->setWidth(6.5);
+	    
+	    //Set Styles for cells
+	    $advlist->getStyle("A1:P14")->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $advlist->getStyle("A1:P14")->getFont()->setBold(true);
+	    $advlist->getStyle("A1:P2")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	    $advlist->getStyle("A1:P2")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+	    $advlist->getStyle("A1:A14")->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+	 
+	    //Set background for header cells
+	    $advlist->getStyle("B1:P2")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+	    					  ->getStartColor()->setRGB('EEEEEE');
+	    $advlist->getStyle("A3:A14")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
+	    					   ->getStartColor()->setRGB('EEEEEE');
+
+	    //Set up top row (header) cells
+	    $advlist->mergeCells("A1:A2");
+	    for ($y = 0, $fc = 'B', $lc = 'D'; $y < 5; $y++)
+	    {
+		$advlist->mergeCells("$fc".'1:'."$lc".'1');
+		$advlist->getCell("$fc".'2')->setValue("F");  $fc++; $lc++;
+		$advlist->getCell("$fc".'2')->setValue("W");  $fc++; $lc++;
+		$advlist->getCell("$fc".'2')->setValue("Sp"); $fc++; $lc++;
+	    }
+	
+	    //Set text for row titles (Should be hard coded)
+	    $advlist->getStyle("A1:A14")->getAlignment()->setWrapText(true);
+	    $advlist->getCell("A14")->SetValue("The student has been released on BOSS or CICS screen 7R3.");
+	    $advlist->getCell("A1")->setValue("Put your initials in the appropriate cell when completed");
+	    $advlist->getCell("A3")->SetValue("The term, year, and grade of courses already taken have been updated on the check sheet.");
+	    //Style needed for EVERY (9) following rich text run
+	    $fontstyle = new PHPExcel_Style_Font();
+	    $fontstyle->setName("Arial")->setSize(10)->setBold(true);
+	    //Cell A4 -- A lot of code to make a single word green
+	    $text = new PHPExcel_RichText();
+	    $run1 = $text->createTextRun("The term and year of current (ongoing) courses have been highlighted in ");
+	    $run1->setFont($fontstyle);
+	    $run2 = $text->createTextRun("green");
+	    $run2->getFont()->setColor(new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_GREEN))->setName("Arial")->setSize(10)->setBold(true);
+	    $run3 = $text->createTextRun(" on the check sheet.");
+	    $run3->setFont($fontstyle);
+	    $advlist->getCell("A4")->SetValue($text);
+	    //Cell A5 -- A lot of code to make a single word yellow
+	    $text = new PHPExcel_RichText();
+	    $run1 = $text->createTextRun("The term and year of courses scheduled for the next term are highlighted in ");
+	    $run1->setFont($fontstyle);
+	    $run2 = $text->createTextRun("yellow");
+	    $run2->getFont()->setColor(new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_YELLOW))->setName('Arial')->setSize(10)->setBold(true);
+	    $run3 = $text->createTextRun(" on the check sheet.");
+	    $run3->setFont($fontstyle);
+	    $advlist->getCell("A5")->SetValue($text);
+	    //Cell A6 -- A lot of code to make a single word red
+	    $text = new PHPExcel_RichText();
+	    $run1 = $text->createTextRun("Problems have been highlighted in ");
+	    $run1->setFont($fontstyle);
+	    $run2 = $text->createTextRun("red");
+	    $run2->getFont()->setColor(new PHPExcel_Style_Color(PHPExcel_Style_Color::COLOR_RED))->setName('Arial')->setSize(10)->setBold(true);
+	    $run3 = $text->createTextRun(" on the check sheet and have been discussed with the student.");
+	    $run3->setFont($fontstyle);
+	    $advlist->getCell("A6")->SetValue($text);
+	    $advlist->getCell("A7")->SetValue("All course substitutions have been approved either in the system (BOSS/CICS) or by the Program Chair.");
+	    $advlist->getCell("A8")->SetValue("The student has taken all COES prerequisites (and earned a 'C' or better) for all COES courses on the advisement sheet.");
+	    $advlist->getCell("A9")->SetValue("The student was informed of the requirement for a minimum 2.0 GPA on all CSC courses, including all attempts.");
+	    $advlist->getCell("A10")->SetValue("The student was informed of the requirement for a minimum 2.0 GPA on the MATH 240 series, including all attempts.");
+	    $advlist->getCell("A11")->SetValue("A sanity check was done to ensure that the student doesn't get into trouble with once-a-year classes and is subsequently unduly delayed.");
+	    $advlist->getCell("A12")->SetValue("All deviances have been documented on a completed petition (one copy has been put in the Program Chair's box, and one copy has been sent to the Associate Dean of Undergraduate Studies).");
+	    $advlist->getCell("A13")->SetValue("The check sheet has been uploaded/copied to the cloud space.");
+	    $advlist->getCell("A14")->SetValue("The student has been released on BOSS or CICS screen 7R3.");
+	    
+	    //Set row heights
+	    //  There's an issue with excel
+	    //	  A row can't have autosized height, so it must be hard coded
+	    $advlist->getRowDimension(3)->setRowHeight(14*2);
+	    $advlist->getRowDimension(4)->setRowHeight(14*2);
+	    $advlist->getRowDimension(5)->setRowHeight(14*2);
+	    $advlist->getRowDimension(6)->setRowHeight(14*2);
+	    $advlist->getRowDimension(7)->setRowHeight(14*2);
+	    $advlist->getRowDimension(8)->setRowHeight(14*2);
+	    $advlist->getRowDimension(9)->setRowHeight(14*2);
+	    $advlist->getRowDimension(10)->setRowHeight(14*2);
+	    $advlist->getRowDimension(11)->setRowHeight(14*2);
+	    $advlist->getRowDimension(12)->setRowHeight(14*3);
+	    $advlist->getRowDimension(13)->setRowHeight(14*1);
+	    $advlist->getRowDimension(14)->setRowHeight(14*1);
+	}
+
+	//Generate Course Checklist
+	private function generatechecklist($checklist, $user, $curriculum)
+	{
 	    //Set column widths across the checklist
 	    $checklist->getColumnDimension('A')->setWidth(6.5);
 	    $checklist->getColumnDimension('B')->setWidth(4.8);
@@ -66,23 +177,21 @@ class Checklistexport extends CI_Controller
 	    $checklist->getColumnDimension('L')->setWidth(20);
 	    $checklist->getColumnDimension('M')->setWidth(6);
 	    $checklist->getColumnDimension('O')->setWidth(6);
-	    $checklist->getColumnDimension('P')->setWidth(6);
+	    $checklist->getColumnDimension('P')->setWidth(8.2);
 
-	    //Set first six rows with the below information
-	    $this->header($checklist, $user->getName(), $user->getUserID(), 
+	    $this->checklistheader($checklist, $user->getName(), $user->getUserID(), 
 			  $user->getAdvisor(), "2014-15", $user->getEmailAddress());
 
 	    $coursesTaken = $user->getAllCoursesTaken();
-	    $this->primary($checklist, $coursesTaken, $curriculum);
-
-	    //Download file object (PDF or XLS)
-	    $objWriter = PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
-	    header("Content-type: application/vnd.ms-exel");
-	    header("Content-Disposition: attachment; filename=test.xls");
-	    $objWriter->save('php://output');
+	    //Slot in the core curriculum courses
+	    $this->checklistcore($checklist, $coursesTaken, $curriculum);
+	
+	    //Where to put every course that wasn't slotted
+	    $this->checklistLeftOvers($checklist, $coursesTaken);
 	}
 
-	private function header($checklist, $name, $studID, $advisor, $year, $email)
+	//Course Checklist Header
+	private function checklistheader($checklist, $name, $studID, $advisor, $year, $email)
 	{
 	    //Set advisee name fields
 	    $checklist->mergeCells("A2:B2");
@@ -134,7 +243,8 @@ class Checklistexport extends CI_Controller
 	    $checklist->getCell("I6")->setValue(date("m/d/y"));	
 	}
 
-	private function primary($checklist, $coursesTaken, $curriculum)
+	//Course Checklist Core
+	private function checklistcore($checklist, $coursesTaken, $curriculum)
 	{
 	    //Set an array for section headers
 	    //Get starting/title row for courses
@@ -266,8 +376,8 @@ class Checklistexport extends CI_Controller
 		//Put in all course credit information and term/year
 	        $checklist->getStyle("F$row:J$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		foreach ($coursesTaken as $key=>$taken)
-			foreach ($reqCourse->getValidCourseIDs() as $prereqID)
-				if ($prereqID == $taken[0]->getCourse()->getCourseID())
+			foreach ($reqCourse->getValidCourseIDs() as $reqID)
+				if ($reqID == $taken[0]->getCourse()->getCourseID())
 				{
 					$checklist->getCell("H$row")->setValue($taken[0]->getAcademicQuarter()->getYear());
 					$term = NULL;
@@ -294,8 +404,6 @@ class Checklistexport extends CI_Controller
 					unset($coursesTaken[$key]);
 				}
 
-		//Put in astrik if it's a prereq of another course
-
 		$row++;
 	    }
 
@@ -307,8 +415,20 @@ class Checklistexport extends CI_Controller
 	    $checklist->getStyle("H9:H$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    $checklist->getStyle("I9:I$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    $checklist->getStyle("J9:J$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    
 	    //Merge preresuiqite cells
 	    for ($i = 0; $i <= $row; $i++)
 	    	$checklist->mergeCells("C$i:E$i");
 	}
+
+	//Course Checklist LeftOvers
+	private function checklistLeftOvers($checklist, $coursesTaken)
+	{
+		$row = 8;
+		$checklist->getStyle("L$row:P$row")->applyFromArray($this->titlestyle);
+	        $checklist->getStyle("M$row:P$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$array = array('ADDITIONAL COURSE', 'SCH', 'TERM', 'YEAR', 'GRADE');
+		$checklist->fromArray($array, NULL, 'L8');
+	}
 }
+?>

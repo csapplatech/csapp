@@ -30,7 +30,7 @@
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         
-        <?php include_once($_SERVER['DOCUMENT_ROOT'].'/application/views/Templates/footer.php'); ?>
+        <?php include_once('application/views/Templates/footer.php'); ?>
         
     </body>
 </html>
