@@ -134,6 +134,8 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum = new Curriculum_model();
 		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 		$curriculum->delete();
+		
+		$this->index();
 	}
 	
 	//saves a curriculum to the database
@@ -251,8 +253,10 @@ class CurriculumCreator extends CI_Controller {
 	//create a new curriculum course slot
 	public function newCurriculumCourseSlot()
 	{
-		$courseSlot = new Curriculum_course_slot_model(); 
-		$courseSlot->setCurriculum(fromSerializedString($_SESSION['curriculum']));
+		$courseSlot = new Curriculum_course_slot_model();
+		$curriculum = new Curriculum_model();
+		$curriculum = fromSerializedString($_SESSION['curriculum']);
+		$courseSlot->setCurriculum($curriculum);
 		$_SESSION['curriculumCourseSlotMethod'] = "new";
 		$data = array(
 			"name" => 'New Curriculum Course Slot',
