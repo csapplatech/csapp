@@ -218,7 +218,7 @@ class Checklistexport extends CI_Controller
 	    $checklist->getStyle("A6")->getFont()->setBold(True);
 	    $checklist->mergeCells("C6:E6");
 	    $checklist->getStyle("C6")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getCell("C6")->setValue($advisor);
+	    $checklist->getCell("C6")->setValue($advisor->getName());
 	    
 	    //Set Last Updated
 	    $checklist->mergeCells("G6:H6");

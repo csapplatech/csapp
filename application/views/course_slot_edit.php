@@ -12,7 +12,7 @@
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
 <p>Minimum Grade:</p>
-<select size=5>
+<select size=5 name='minimumGrade'>
   <option>A</option>
   <option>B</option>
   <option>C</option>
