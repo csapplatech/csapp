@@ -200,7 +200,7 @@ class CurriculumCreator extends CI_Controller {
 		$courses = new Course_model();
 		
 		$data = array(
-			"name"    => 'New Curriculum Course Slot',
+			"name"    => $courseSlot->getName(),
 			"courses" =>  array()
 		);
 		
@@ -236,7 +236,7 @@ class CurriculumCreator extends CI_Controller {
 		$courses = new Course_model();
 		
 		$data = array(
-			"name"    => 'New Curriculum Course Slot',
+			"name"    => $courseSlot->getName(),
 			"courses" =>  array()
 		);
 		
