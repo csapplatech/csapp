@@ -53,7 +53,7 @@ class CurriculumCreator extends CI_Controller {
 		$data = array(
 			"name"   => $curriculum->getName(),
 			"course" => array(),
-			"type"   => $curriculumType;
+			"type"   => $curriculumType
 		);
 		
 		//create easy to use array for table
@@ -95,7 +95,7 @@ class CurriculumCreator extends CI_Controller {
 		$data = array(
 			"name"   => $curriculum->getName(),
 			"course" => array(),
-			"type"   => $curriculumType;
+			"type"   => $curriculumType
 		);
 		
 		//create easy to use array for table
