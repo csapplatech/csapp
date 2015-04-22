@@ -212,7 +212,7 @@ class CurriculumCreator extends CI_Controller {
 				'name'    => $course->getCourseName(),
 				'id'      => $course->getCourseID(),
 				'prereqs' => $course->getPrerequisiteCourses(),
-				'title'   => $course->getCourseTitle()
+				'number'  => $course->getCourseNumber()
 			];
 			
 			array_push($data["courses"], $arr);
@@ -248,7 +248,7 @@ class CurriculumCreator extends CI_Controller {
 				'name'    => $course->getCourseName(),
 				'id'      => $course->getCourseID(),
 				'prereqs' => $course->getPrerequisiteCourses(),
-				'title'   => $course->getCourseTitle()
+				'number'  => $course->getCourseNumber()
 			];
 			
 			array_push($data["courses"], $arr);
@@ -281,7 +281,7 @@ class CurriculumCreator extends CI_Controller {
 				'name'    => $course->getCourseName(),
 				'id'      => $course->getCourseID(),
 				'prereqs' => $course->getPrerequisiteCourses(),
-				'title'   => $course->getCourseTitle()
+				'number'  => $course->getCourseNumber()
 			];
 			
 			array_push($data["courses"], $arr);
