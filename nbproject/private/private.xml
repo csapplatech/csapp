@@ -3,14 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/csapp/application/controllers/Advisingform.php</file>
-            <file>file:/C:/xampp/htdocs/csapp/js/studentlist.js</file>
-            <file>file:/C:/xampp/htdocs/csapp/application/views/all_students_view.php</file>
-            <file>file:/C:/xampp/htdocs/csapp/application/views/advising_view.php</file>
-            <file>file:/C:/xampp/htdocs/csapp/application/models/Course_model.php</file>
-            <file>file:/C:/xampp/htdocs/csapp/application/views/Templates/navbar.php</file>
-            <file>file:/C:/xampp/htdocs/csapp/js/advising.js</file>
-            <file>file:/C:/xampp/htdocs/csapp/application/controllers/Mainpage.php</file>
+            <file>file:/C:/Users/Mark/Desktop/SoftwareDesign/Git/csapp/system/libraries/Calendar.php</file>
+            <file>file:/C:/Users/Mark/Desktop/SoftwareDesign/Git/csapp/application/views/MainPages/student_main_page.php</file>
+            <file>file:/C:/Users/Mark/Desktop/SoftwareDesign/Git/csapp/application/controllers/Appointment_controller.php</file>
+            <file>file:/C:/Users/Mark/Desktop/SoftwareDesign/Git/csapp/application/views/appointment_view.php</file>
         </group>
     </open-files>
 </project-private>

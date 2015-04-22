@@ -96,6 +96,7 @@ Class appointment_controller extends CI_Controller{
             }
             
             $prefs = array(
+        'user'                      =>$User_model,
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
