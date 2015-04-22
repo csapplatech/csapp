@@ -237,7 +237,7 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//clone and edit a curriculum course slot
-    public function editCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
+    public function editCurriculumCourseSlot($courseSlotName = NULL) //post: courseSlot
     {
 		///get arguments
 		if ($courseSlotName == NULL)
