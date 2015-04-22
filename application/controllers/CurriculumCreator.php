@@ -209,9 +209,10 @@ class CurriculumCreator extends CI_Controller {
 		foreach ($availableCourses as $course)
 		{
 			$arr = [
-				0 => $course->getCourseName(),
-				1 => $course->getCourseID(),
-				2 => $course->getPrerequisiteCourses()
+				'name'    => $course->getCourseName(),
+				'id'      => $course->getCourseID(),
+				'prereqs' => $course->getPrerequisiteCourses(),
+				'title'   => $course->getCourseTitle()
 			];
 			
 			array_push($data["courses"], $arr);
@@ -244,9 +245,10 @@ class CurriculumCreator extends CI_Controller {
 		foreach ($availableCourses as $course)
 		{
 			$arr = [
-				0 => $course->getCourseName(),
-				1 => $course->getCourseID(),
-				2 => $course->getPrerequisiteCourses()
+				'name'    => $course->getCourseName(),
+				'id'      => $course->getCourseID(),
+				'prereqs' => $course->getPrerequisiteCourses(),
+				'title'   => $course->getCourseTitle()
 			];
 			
 			array_push($data["courses"], $arr);
@@ -276,9 +278,10 @@ class CurriculumCreator extends CI_Controller {
 		foreach ($availableCourses as $course)
 		{
 			$arr = [
-				0 => $course->getCourseName(),
-				1 => $course->getCourseID(),
-				2 => $course->getPrerequisiteCourses()
+				'name'    => $course->getCourseName(),
+				'id'      => $course->getCourseID(),
+				'prereqs' => $course->getPrerequisiteCourses(),
+				'title'   => $course->getCourseTitle()
 			];
 			
 			array_push($data["courses"], $arr);
