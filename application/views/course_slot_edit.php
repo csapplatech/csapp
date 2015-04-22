@@ -11,8 +11,9 @@
   </select>
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
-<p>Recommended Quarter: <input name='recommendedQuarter' value="<?php echo $data['recommendedQuarter']; ?>" /></p>
-<p>Recommended Year: <input name='recommendedYear' value="<?php echo $data['recommendedYear']; ?>" /></p>
+<p>Recommended Quarter: </p>
+<input name='recommendedQuarter' />
+<p>Recommended Year: <input name='recommendedYear' /></p>
 <p>Minimum Grade:</p>
 <select size=5 name='minimumGrade'>
   <option>A</option>
