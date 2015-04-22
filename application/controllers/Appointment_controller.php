@@ -132,16 +132,22 @@ public function fill(){
      $User_model= new User_model;              //All this reiteration is temporary until integrated with the website. in which I will use the $_SESSION data
     
     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
-    $getAdvisor=$User_model->getAdvisor();
-    $getAdvisor=$getAdvisor->getUserID();
+	
+	if($User_model->isStudent())
+	{
+		$getAdvisor=$User_model->getAdvisor();
+		$getAdvisor=$getAdvisor->getUserID();
+	}
+	else if($User_model->isAdvisor())
+	{
+		$getAdvisor = $User_model->getUserID();
+	}
+    
     
     $Advising_schedule= new Advising_schedule_model();
     $Advising_appointment= new Advising_appointment_model;
     
     $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1);
-    
-    
-    
     
     if(!empty($_POST['appointments']))
     {
