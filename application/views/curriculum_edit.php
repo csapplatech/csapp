@@ -10,10 +10,10 @@
     ?>
   </select>
 <br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculumCourseSlot'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculumCourseSlot'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculumCourseSlot'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculumCourseSlot'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
 <p>Type:</p>
@@ -24,7 +24,7 @@
 </select>
 <br /><br />
 <br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculum'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum'); ?>">Save</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
