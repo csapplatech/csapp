@@ -4,7 +4,16 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
-        
+        <title>CSAPP Main Page</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
+        <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
+        <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
     <body onload = "hideTables()">
          <nav class="navbar navbar-default navbar-fixed-top">
@@ -39,9 +48,8 @@
            </div>
         </nav>
         <br>
-        <br>
-        </br>
-        </br>
+       
+       
 <?php
 $new_Start=array();
 $new_End=array();
@@ -102,6 +110,11 @@ else{
             }
         </style>
         <style>
+            #calwrap {
+                height: 450px;
+                width: 425px;
+                margin: 0 auto;
+            }
             p {
                 text-shadow: none;
                 color: black;
@@ -407,7 +420,7 @@ else{
                 });    
             }).resize(); // Trigger resize handler
         </script>
-     <script>
+        <script>
             function selectAll(e, i)
             {
                 if (e.shiftKey) //select
@@ -519,7 +532,7 @@ else{
                 else{}
             }
         </script>
-        
+        <p> <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:300px;height:225px"> </p>
         <footer>
             <font color ="white"</font>
             <p>Ruston, LA 2015</p> 
