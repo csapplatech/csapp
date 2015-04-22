@@ -34,6 +34,108 @@ class Curriculum_course_slot_model extends CI_Model
         parent::__construct();
     }
     
+	/**
+	 * Summary of toSerializedString
+	 * Serialization function for this model
+	 */
+	public function toSerializedString()
+	{
+		$arr = array();
+		
+		if($this->curriculumCourseSlotID != null)
+		{
+			$arr['curriculumCourseSlotID'] = $this->curriculumCourseSlotID;
+		}
+		
+		if($this->curriculumID != null)
+		{
+			$arr['curriculumID'] = $this->curriculumID;
+		}
+		
+		if($this->name != null)
+		{
+			$arr['name'] = $this->name;
+		}
+		
+		if($this->minimumGrade != null)
+		{
+			$arr['minimumGrade'] = $this->minimumGrade;
+		}
+		
+		if($this->recommendedQuarter != null)
+		{
+			$arr['recommendedQuarter'] = $this->recommendedQuarter;
+		}
+		
+		if($this->recommendedYear != null)
+		{
+			$arr['recommendedYear'] = $this->recommendedYear;
+		}
+		
+		if($this->notes != null)
+		{
+			$arr['notes'] = $this->notes;
+		}
+		
+		$arr['validCourseIDs'] = array();
+		
+		foreach($this->validCourseIDs as $validcourseID)
+		{
+			array_push($arr['validCourseIDs'], $validcourseID);
+		}
+		
+		return json_encode($arr);
+	}
+	
+	/**
+	 * Summary of fromSerializedString
+	 * Deserialization function for this model
+	 */
+	public function fromSerializedString($serializedString)
+	{
+		$arr = json_decode($serializedString);
+		
+		if(isset($arr->curriculumCourseSlotID))
+		{
+			$this->curriculumCourseSlotID = $arr->curriculumCourseSlotID;
+		}
+		
+		if(isset($arr->curriculumID))
+		{
+			$this->curriculumID = $arr->curriculumID;
+		}
+		
+		if(isset($arr->name))
+		{
+			$this->name = $arr->name;
+		}
+		
+		if(isset($arr->minimumGrade))
+		{
+			$this->minimumGrade = $arr->minimumGrade;
+		}
+		
+		if(isset($arr->recommendedQuarter))
+		{
+			$this->recommendedQuarter = $arr->recommendedQuarter;
+		}
+		
+		if(isset($arr->recommendedYear))
+		{
+			$this->recommendedYear = $arr->recommendedYear;
+		}
+		
+		if(isset($arr->notes))
+		{
+			$this->notes = $arr->notes;
+		}
+		
+		foreach($arr->validCourseIDs as $validcourseID)
+		{
+			array_push($this->validCourseIDs, $validcourseID);
+		}
+	}
+	
     /**
      * Summary of loadPropertiesFromPrimaryKey
      * Loads a curriculum course slot model's data and its associated models from the database into this object using a CurriculumCourseSlotID as a primary key lookup
