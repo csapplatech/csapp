@@ -86,5 +86,37 @@ class Mainpage extends CI_Controller
         //Load the guest mainpage
         $this->load->view('MainPages/guest_main_page', array('user'=>$user));
     }
+    
+    //the following two function were created by Scott
+    //There were created to allow advisor to see students advising forms
+    
+    //loads a view with all the students and their ids
+     public function loadAllStudents()
+    {
+        //
+        $puid = $_SESSION['UserID'];
+        
+        $profmod = new user_model();
+        $profmod->loadPropertiesFromPrimaryKey($puid);
+        
+        $student_list = $profmod->getAdvisees();
+        
+        $pdata = array('students' => $student_list);
+        
+        $this->load->view('all_students_view', $pdata);
+        
+    }
+    
+    //sets a session variable for advising form based on what was clicked
+    public function loadStudentID()
+    {
+        //if(isset($_POST['StudID']))
+       // {
+            //print_r($_POST['StudID']);
+            $StudentID = $_POST['StudID'];
+            $_SESSION['StudCWID'] = $StudentID;
+            //print_r("session: " . $_SESSION['StudCWID']. "CWID");
+       // }
+    }
 }
 

@@ -102,6 +102,17 @@ class User_model extends CI_Model
                         }
                     }
                     
+                    $cur_results = $this->db->get_where('UserCurriculums', array('UserID' => $this->userID));
+                    
+                    foreach($cur_results->result_array() as $row)
+                    {
+                        $curriculum = new Curriculum_model;
+                        if ($curriculum->loadPropertiesFromPrimaryKey($row['CurriculumID']))
+                        {
+                            $this->addCurriculum($curriculum);
+                        }
+                    }
+                    
                     return true;
                 }
             }
@@ -605,7 +616,7 @@ class User_model extends CI_Model
 	 */
 	public function getGradeForCourseSection($courseSection)
 	{
-		$searchstr = $courseSection->toString();
+		$searchstr = $courseSection->getCourseSectionID();
 		
 		if(isset($this->coursesTaken[$searchstr]))
 		{

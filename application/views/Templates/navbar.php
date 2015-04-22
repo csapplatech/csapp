@@ -33,7 +33,6 @@
                       unset($button);
                   }
                   ?>
-              </ul>
               <ul class="nav navbar-nav navbar-right">
                 <li><a href="<?php echo site_url('Login/logout'); ?>">Logout</a></li>
               </ul>

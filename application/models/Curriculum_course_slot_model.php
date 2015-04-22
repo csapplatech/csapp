@@ -160,7 +160,6 @@ class Curriculum_course_slot_model extends CI_Model
                 $this->recommendedQuarter = $row['RecommendedQuarter'];
 				$this->recommendedYear = $row['RecommendedYear'];
 				$this->notes = $row['Notes'];
-				
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
                 $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);

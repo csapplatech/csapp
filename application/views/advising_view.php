@@ -1,18 +1,19 @@
 <!DOCTYPE>
 <html>
     <head>
-        <link href = "css/advising.css" rel ="stylesheet">
-        <link rel="stylesheet" href="css/print.css" type="text/css" media="print" />
-        <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-        <!--<link href="<?php echo base_url('css/bootstrap.min.css'); ?>" rel="stylesheet" type="text/css">!-->
+        
+        <link href = "<?php echo base_url('css/advising.css'); ?>" rel ="stylesheet" >
+        <link rel="stylesheet" href="<?php echo base_url('css/print.css'); ?>" type="text/css" media="print" />
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
     
         <title>Advising Page</title>
+        <script>
+            var rootURL = '<?php echo URL; ?>';
+            </script>
     </head>
-    <body id="background">
-
+    <body id="background" ><div id="main">
         <h1 id="head">Advising Page</h1>
         
         <div id="courses">
@@ -20,21 +21,21 @@
              <ul>
                 <?php 
                 $id=0;
-                foreach ($courses['Recommended']->getSubjects() as $sub)
+                foreach ($recommended->getSubjects() as $sub)
                 {
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
+                                echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). " ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
                                 echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
                                 $id++;
                             }
@@ -42,73 +43,42 @@
                     }
                 }
                 ?>
-             </ul>
-
-            <h4 class="class_headers">Classes Taken</h4>
-            <ul>
+             </ul>    
+            <h4 class="class_headers" style='margin-top:.5%'>Select Subject</h4>
+             <ul>
                 <?php 
-                $id=100;
-                foreach ($courses['Passed']->getSubjects() as $sub)
+                $id=1000;
+                foreach ($all_courses->getSubjects() as $sub)
                 {
+                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
+                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
                     foreach($sub->getCourses() as $cor)
                     {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
                                 $id++;
                             }
                         echo "</ul>";
                     }
+                    echo "</ul>";
                 }
                 ?>
-             </ul>
-          
-            <h4 class="class_headers">Requirements Not Met</h4>
-            <ul>
-                
-                <?php 
-                $id=200;
-                foreach ($courses['Signature']->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe'>". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "(".$cor->getHours()." hours)</li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li>". $sec->getSectionName(). " Times:WIP <button type=\"button\" class='button' id='".$id."'>Add</button></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">WIP</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>
-            <br>
-            <p id='temp'><em><u>Link to Racing form (WIP)</u></em></p>
-               
+             </ul>  
         </div>
         
         <div id="advise" class="print">
             <table>
                 <tr>
-                    <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="<?php echo base_url('image/latech.gif'); ?>" alt="Tech Logo" class="logo"></th>
                     <th><table class='noborder'>
                         <tr><th class="noborder">Louisiana Tech University</th></tr>
                         <tr><th class="noborder">ADVISING FORM</th></tr>
@@ -117,7 +87,7 @@
                         $quarter->loadPropertiesFromPrimaryKey($quarter_id);
                         echo $quarter->getName() . " " . $quarter->getYear();?></u></th></tr>
                 </table> </th>
-                    <th><img src="image/latech.gif" alt="Tech Logo" class="logo"></th>
+                    <th><img src="<?php echo base_url('image/latech.gif'); ?>" alt="Tech Logo" class="logo"></th>
                 </tr>
             </table>
             <table>
@@ -128,28 +98,28 @@
             </table>
             <table id='target'>
               <tr>
-                <th style="width: 21%">Subject/Course/Section</th>
-                <th style="width: 17%">Title</th>
-                <th style="width: 9%">Call #</th>               
-                <th style="width: 7%">Hours</th>
-                <th style="width: 25%">Special Signature</th> 
-                <th style="width: 21%">Class Times</th>
+                <th style="width: 14%">Subj-Cor-Sec</th>
+                <th >Title</th>
+                <th style="width: 7%">Call #</th>               
+                <th style="width: 6%">Hrs</th>
+                <th style="width: 18%">Special Signature</th> 
+                <th style="width: 25%">Class Times</th>
               </tr>
             </table>
             
             <div id='alt'>
                 <table id='altTable'>
-                  <tr>
-                      <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
-                  </tr>
-                    <tr>
-                      <th style="width: 21%">Subject/Course/Section</th>
-                      <th style="width: 17%">Title</th>
-                      <th style="width: 9%">Call #</th>               
-                      <th style="width: 7%">Hours</th>
-                      <th style="width: 25%">Special Signature</th> 
-                      <th style="width: 21%">Class Times</th>
-                    </tr>
+                <tr>
+                    <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
+                </tr>
+                <tr>
+                  <th style="width: 14%">Subj-Cor-Sec</th>
+                  <th >Title</th>
+                  <th style="width: 7%">Call #</th>               
+                  <th style="width: 6%">Hrs</th>
+                  <th style="width: 18%">Special Signature</th> 
+                  <th style="width: 25%">Class Times</th>
+                </tr>
                 </table>
             </div>
             <table ID='sig'>
@@ -168,9 +138,12 @@
             </table>
         </div>
         
-        <div id="PB"><form><input type="button" value=" Print Advising Form"
-                          onclick="window.print();return false;" /></form></div>
- 
-    
-</body>
+        <div id="PB">
+            <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
+            <button type="button" id="reset"><strike>Reset</strike></button>
+            <button type="button" id="save">Save</button>
+            <button><a style="text-decoration: none; color: black"  href="<?php echo site_url('Mainpage/index'); ?>">Home</a></button>
+            <button><a style="text-decoration: none; color: black" href="<?php echo site_url('Login/logout'); ?>">Logout</a></button>
+        </div>
+</div></body>
 </html>

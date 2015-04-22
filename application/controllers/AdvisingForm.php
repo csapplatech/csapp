@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class AdvisingForm extends CI_Controller
 {
-    private $uid;
+    
     public function index()
     {
         error_reporting(E_ALL & ~E_WARNING & ~E_STRICT);
@@ -16,7 +16,7 @@ class AdvisingForm extends CI_Controller
         //$uid = $_SESSION['UserID'];
          if (isset($_SESSION['StudCWID']))
          {
-             $this->uid = $_SESSION['StudCWID'];
+             $uid = $_SESSION['StudCWID'];
          }
          else 
          {
@@ -24,12 +24,12 @@ class AdvisingForm extends CI_Controller
             {
                 redirect('login');
             }
-            $this->uid = $_SESSION['UserID'];
+            $uid = $_SESSION['UserID'];
          }
         
        // $uid = 10210078;
         //$year = 2015;
-         $prev_form = $this->loadAdvisingForm($this->uid);
+         $prev_form = $this->loadAdvisingForm($uid);
         /*if (isset($_SESSION['StudentFormUID']))
         {
             $prev_form = $this->loadAdvisingForm($_SESSION['StudentFormUID']);
@@ -50,7 +50,7 @@ class AdvisingForm extends CI_Controller
         
         //Next, load the current user and get his courses taken
         $usermod = new user_model();
-        $usermod->loadPropertiesFromPrimaryKey($this->uid);
+        $usermod->loadPropertiesFromPrimaryKey($uid);
         
         $courseids = array();
         //Get all of the course IDs for courses in the student's curricula
@@ -106,6 +106,12 @@ class AdvisingForm extends CI_Controller
             }
         }
         
+        //Now, we should have a complete list of course sections that are eligible
+        //as well as available
+        $working_list = $this->get_list($course_sections);
+        
+        
+        
         $courses_taken = $usermod->getAllCoursesTaken();
         
         $courseIDs_passed = array();
@@ -119,7 +125,6 @@ class AdvisingForm extends CI_Controller
                     if (!empty($value[0]->getCourse()->getAllCurriculumCourseSlots()))
                     {
                         $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
-                       
                         if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
                         {
                             array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
@@ -129,22 +134,6 @@ class AdvisingForm extends CI_Controller
                 
             }
         }
-        
-        foreach ($course_sections as $key => $value)
-        {
-            if (in_array($value->getCourse()->getCourseID(), $courseIDs_passed))
-            {
-                unset($course_sections[$key]);
-            }
-        }
-        
-        //Now, we should have a complete list of course sections that are eligible
-        //as well as available
-        $working_list = $this->get_list($course_sections);
-        
-        
-        
-        
         
         $course_sections = $aqm->getAllCourseSections();
         
@@ -393,36 +382,13 @@ class AdvisingForm extends CI_Controller
         
         //$jsonReceiveData = json_encode($_POST['{"Info":'], JSON_PRETTY_PRINT);
         //$uid = $_SESSION['UserID'];
-        
-        if (isset($_SESSION['StudCWID']))
-         {
-             $this->uid = $_SESSION['StudCWID'];
-         }
-         else 
-         {
-            if (!isset($_SESSION['UserID']))
-            {
-                redirect('login');
-            }
-            $this->uid = $_SESSION['UserID'];
-         }
-         
-        
         $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
+        $uid = '10210078';
+        $previous_form = $this->loadAdvisingForm($uid);
+        $previous_form->delete();
+        $data = json_decode($_POST['data']);
         
-        
-        $previous_form = $this->loadAdvisingForm($this->uid);
-        if ($previous_form !== false)
-            $previous_form->delete();
-        
-        
-        //$data = $_POST['Info'];
-        $data = json_decode($_POST['data']);//['data']);
-		
         $mod = new advising_form_model();
-        $mod->setStudentUserID(intval($this->uid));
-        $mod->setAcademicQuarterID($currentquarter->getAcademicQuarterID());
-        $mod->create();
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
@@ -443,12 +409,7 @@ class AdvisingForm extends CI_Controller
                    : advising_form_model::COURSE_SECTION_STATE_ALTERNATE;
            $mod->addCourseSection($target, $state);
         }
-        
-        //$previous_form->delete();
-        
-        
-        
-        
+        $mod->create();
         //print_r($_POST['{"Info":']);
         /*$blarg = json_decode($jsonReceiveData, true);
         foreach($blarg as $item)

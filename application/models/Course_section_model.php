@@ -14,6 +14,7 @@ class Course_section_model extends CI_Model
     private $course = null;
 	private $hours = null;
 	private $callNumber = null;
+        private $instructor = null;
     private $academicQuarter = null;
     private $courseSectionTimes = array();
     
@@ -39,8 +40,8 @@ class Course_section_model extends CI_Model
 		
 		foreach($this->courseSectionTimes as $courseSectionTime)
 		{
-			$startTime = self::militaryToStandardTime($courseSectionTime->getStartTime());
-			$endTime = self::militaryToStandardTime($courseSectionTime->getEndTime());
+			$startTime = course_section_model::militaryToStandardTime($courseSectionTime->getStartTime());
+			$endTime = course_section_model::militaryToStandardTime($courseSectionTime->getEndTime());
 			
 			$index = $startTime . " - " . $endTime;
 			

@@ -53,12 +53,14 @@ class Course_model extends CI_Model
                 $this->courseName = $row['CourseName'];
 				$this->courseCategoryName = self::getCategoryName($this->courseName);
                 $this->courseNumber = $row['CourseNumber'];
+                
 				$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
 				$this->courseTypeID = $row['CourseTypeID'];
                 
                 return true;
             }
+            
         }
         
         return false;
@@ -107,6 +109,7 @@ class Course_model extends CI_Model
 	{
 		return $this->courseTitle;
 	}
+        
 	
     /**
      * Summary of getCourseDescription

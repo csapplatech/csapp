@@ -42,9 +42,9 @@ class Advising_form_model extends CI_Model
 			{
 				$row = $results->row_array();
 				
-				$this->advisingFormID = row['AdvisingFormID'];
-				$this->studentUserID = row['StudentUserID'];
-				$this->academicQuarterID = row['AcademicQuarterID'];
+				$this->advisingFormID = $row['AdvisingFormID'];
+				$this->studentUserID = $row['StudentUserID'];
+				$this->academicQuarterID = $row['AcademicQuarterID'];
 				
 				return true;
 			}
@@ -91,7 +91,7 @@ class Advising_form_model extends CI_Model
      */
 	public function setStudentUserID($studentUserID)
 	{
-		$this->studentUserID = filter_var($studentUserID, FILTER_SANITIZE_NUMBER_INT);
+		$this->studentUserID = $studentUserID;//filter_var($studentUserID, FILTER_SANITIZE_NUMBER_INT);
 	}
 	
 	/**
