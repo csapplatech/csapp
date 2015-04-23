@@ -15,6 +15,8 @@
 		<script>
 			$(document).ready(function() {
 				
+				var upload_files = false;
+				
 				Dropzone.autoDiscover = false;
 				
 				var dropZone = new Dropzone("#upload-dropzone", {
@@ -29,30 +31,73 @@
 					
 					sending: function(file) {
 						$("#progress-wrapper").show();
-						console.log("SENDING");
 					},
 					
 					success: function(file, response) {
 						$("#progress-wrapper").hide();
+						$("#file-upload-progress-bar").attr("aria-valuenow", 0);
 						$("#message-wrapper").append("<div class='alert alert-success alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + response + "</div>");
+						
+						this.removeAllFiles();
 					},
 					
 					error: function(file, errorMessage) {
 						$("#progress-wrapper").hide();
+						$("#file-upload-progress-bar").attr("aria-valuenow", 0);
+						$("#message-wrapper").append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + errorMessage + "</div>");
 						
 						this.removeAllFiles();
-						
-						$("#message-wrapper").append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + errorMessage + "</div>");
 					},
 					
 					canceled: function(file) {
 						$("#progress-wrapper").hide();
+						$("#file-upload-progress-bar").attr("aria-valuenow", 0);
+						
+						this.removeAllFiles();
 					},
 					
 					uploadProgress: function(file, progress, bytesSent) {
-						console.log("UPLOAD PROGRESS");
+						console.log("PROGRESS: " + progress);
+						$("#file-upload-progress-bar").attr("aria-valuenow", progress);
+						$("#file-upload-progress-bar").html(progress + "%");
 					}
 					
+				});
+				
+				$('input[type=file]').on('change', function(event) {
+					upload_files = event.target.files;
+				});
+				
+				$("#fallback-upload").submit(function(event) {
+					event.preventDefault();
+					
+					if(upload_files == false && upload_files.length > 0)
+						return;
+					
+					var data = new FormData();
+					
+					data.append("boss_file", upload_files[0]);
+					
+					$("#progress-wrapper").show();
+					
+					$.ajax({
+						url: '<?php echo site_url('Bossimport/submit'); ?>',
+						method: 'POST',
+						data: data,
+						cache: false,
+						processData: false, 
+						contentType: false,
+						success: function(data, textStatus, jqXHR) {
+							$("#progress-wrapper").hide();
+							$("#file-upload-progress-bar").attr("aria-valuenow", 0);
+							$("#message-wrapper").append("<div class='alert alert-success alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + data + "</div>");
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							$("#progress-wrapper").hide();
+							$("#file-upload-progress-bar").attr("aria-valuenow", 0);
+							$("#message-wrapper").append("<div class='alert alert-danger alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + errorThrown + "</div>");
+						}
+					});
 				});
 			});
 			
@@ -84,13 +129,35 @@
 				top: 0px;
 			}
 			
+			#progress-wrapper #progress-wrapper-table
+			{
+				display: table;
+				width: 100%;
+				height: 100%;
+			}
+			
+			#progress-wrapper #progress-wrapper-table #progress-wrapper-container-wrapper
+			{
+				display: table-cell;
+				vertical-align: middle;
+				height: 100%;
+			}
+			
 		</style>
     </head>
     <body style="padding-top: 60px">
 		<div id="progress-wrapper">
 			<div id="progress-wrapper-table">
-				<div id="progress-dialog">
-					
+				<div id="progress-wrapper-container-wrapper">
+					<div class="container">
+						<div id="progress-dialog" class="col-sm-10 col-sm-offset-1 alert alert-info" style="padding: 12px;">
+							<h3>File upload progress</h3>
+							<div class="progress" role="alert">
+								<div id="file-upload-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-value="100" style="width: 100%; color: #FFF;">
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -114,12 +181,16 @@
 							</div>
 						</div>
 					</div>
+					<br />
+					<hr />
+					<br />
 					<div class="row">
 						<div class="col-md-8 col-md-offset-2">
 							<form id="fallback-upload" action="<?php echo site_url('Bossimport/submit'); ?>">
 								<div class="form-group" style="text-align: left;">
 									<label>If the above form doesn't work, try uploading here</label>
-									<input class="input"type="file" name="boss_file" />
+									<input class="input" type="file" name="boss_file" />
+									<input class="btn btn-primary pull-left" type="submit" name="Submit" style="color: #FFF;" />
 								</div>
 							</form>
 						</div>
