@@ -19,6 +19,8 @@ class Course_model extends CI_Model
 	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
 	const COURSE_REQUISITE_PREREQUISITE = 1;
 	const COURSE_REQUISITE_COREQUISITE = 2;
+	const COURSE_REQUISITE_JUNIOR_STANDING = 3;
+	const COURSE_REQUISITE_SENIOR_STANDING = 4;
 	
 	// Constant values defined by the CourseTypes table, must reflect content in that table
 	const COURSE_TYPE_UNDERGRADUATE = 1;
@@ -325,6 +327,34 @@ class Course_model extends CI_Model
 	}
 	
 	/**
+	 * Summary of getNonCourseRequisites
+	 * Get all of the non course requisites for this course
+	 *
+	 * @return Array An array containing all the non course requisites for this course
+	 */
+	public function getNonCourseRequisites()
+	{
+		$rows = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('CourseRequisiteTypeID');
+			$this->db->from('CourseRequisites');
+			$this->db->where('CourseID', $this->courseID);
+			$this->db->where('CourseRequisiteTypeID >', self::COURSE_REQUISITE_COREQUISITE);
+			
+			$results = $this->db->get();
+			
+			foreach($results->result_array() as $row)
+			{
+				array_push($rows, $row['CourseRequisiteTypeID']);
+			}
+		}
+		
+		return $rows;
+	}
+	
+	/**
 	 * Summary of addCoursePrerequisite
 	 * Add a prerequisite course to this model
 	 *
@@ -346,12 +376,12 @@ class Course_model extends CI_Model
 	
 	/**
 	 * Summary of addCourseCorequisite
-	 * Add a corequisite curriculum course slot to this model
+	 * Add a corequisite course to this model
 	 *
-	 * @param Course_model $curriculumCourseSlot The curriculum course slot model that is the corequisite to this model
+	 * @param Course_model $course The course model that is the corequisite to this model
 	 * @return boolean Whether or not the corequisite relationship was created in the database
 	 */
-	public function addCourseSlotCorequisite($course)
+	public function addCourseCorequisite($course)
 	{
 		$data = array(
 			'CourseID' => $this->courseID,
@@ -384,6 +414,61 @@ class Course_model extends CI_Model
 		$this->db->delete('CourseRequisites');
 		
 		return ($num + $this->db->affected_rows()) > 0;
+	}
+	
+	/**
+	 * Summary of addNonCourseRequisite
+	 * Add a non course based curriculum course slot to this model
+	 *
+	 * @param int $courseRequisiteType The type of requisite to bind to the course
+	 * @return boolean Whether or not the requisite was created in the database
+	 */
+	public function addNonCourseRequisite($courseRequisiteType)
+	{
+		if($courseRequisiteType == self::COURSE_REQUISITE_JUNIOR_STANDING || $courseRequisiteType == self::COURSE_REQUISITE_SENIOR_STANDING)
+		{
+			$data = array(
+				'CourseID' => $this->courseID,
+				'RequisisteCourseID' => $this->courseID,
+				'CourseRequisiteTypeID' => $courseRequisiteType
+			);
+			
+			$this->db->insert('CourseRequisites', $data);
+			
+			return $this->db->affected_rows() > 0;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of removeNonCourseRequisite
+	 * Remove a non course based curriculum course slot to this model
+	 *
+	 * @param int $courseRequisiteType The type of requisite to remove from the course
+	 * @return boolean Whether or not the requisite was created in the database
+	 */
+	public function removeNonCourseRequisite($courseRequisiteType)
+	{
+		if($courseRequisiteType == self::COURSE_REQUISITE_JUNIOR_STANDING || $courseRequisiteType == self::COURSE_REQUISITE_SENIOR_STANDING)
+		{
+			$data = array(
+				'CourseID' => $this->courseID,
+				'RequisisteCourseID' => $this->courseID,
+				'CourseRequisiteTypeID' => $courseRequisiteType
+			);
+			$this->db->where('CourseID', $this->CourseID);
+			$this->db->where('CourseRequisiteTypeID', $courseRequisiteType);
+			$this->db->delete('CourseRequisites');
+			
+			return $this->db->affected_rows() > 0;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
