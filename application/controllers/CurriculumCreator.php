@@ -178,8 +178,8 @@ class CurriculumCreator extends CI_Controller {
 				'name'    => $course->getCourseName(),
 				'id'      => $course->getCourseID(),
 				'prereqs' => $course->getPrerequisiteCourses(),
-				'number'  => $course->getCourseNumber()
-				'selected'=> FALSE;
+				'number'  => $course->getCourseNumber(),
+				'selected'=> FALSE
 			];
 			
 			foreach ($validCourse as $valid)
@@ -205,12 +205,12 @@ class CurriculumCreator extends CI_Controller {
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
 		
-		var_dump($courseSlotName);
+		//~var_dump($courseSlotName);
 		//match names
 		foreach ($courseSlots as $slot)
 		{
 			$name = $slot->getName();
-			var_dump($name);
+			//~var_dump($name);
 			if (strcmp($name,$courseSlotName) == 0)
 			{	
 				$courseSlot = $slot;
@@ -239,8 +239,8 @@ class CurriculumCreator extends CI_Controller {
 				'name'    => $course->getCourseName(),
 				'id'      => $course->getCourseID(),
 				'prereqs' => $course->getPrerequisiteCourses(),
-				'number'  => $course->getCourseNumber()
-				'selected'=> FALSE;
+				'number'  => $course->getCourseNumber(),
+				'selected'=> FALSE
 			];
 			
 			foreach ($validCourse as $valid)
