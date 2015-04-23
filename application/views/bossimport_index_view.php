@@ -110,7 +110,7 @@
 				background-position: center center;
 				background-size: 80% auto;
 				background-repeat: no-repeat no-repeat;
-				height: 250px;
+				min-height: 300px;
 			}
 			
 			div#body *
@@ -166,7 +166,7 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="row">
-						<div class="col-md-8 col-md-offset-2">
+						<div class="col-md-10 col-md-offset-1">
 							<h2 style="text-align: left;">Please upload the BOSS Data file</h2>
 							<div class="row">
 								<div id="message-wrapper" class="col-xs-12">
@@ -185,7 +185,7 @@
 					<hr />
 					<br />
 					<div class="row">
-						<div class="col-md-8 col-md-offset-2">
+						<div class="col-md-10 col-md-offset-1">
 							<form id="fallback-upload" action="<?php echo site_url('Bossimport/submit'); ?>">
 								<div class="form-group" style="text-align: left;">
 									<label>If the above form doesn't work, try uploading here</label>
