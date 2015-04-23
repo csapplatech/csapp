@@ -60,7 +60,7 @@ class Curriculum_model extends CI_Model
 		
 		foreach($this->curriculumCourseSlots as $courseSlot)
 		{
-			array_push($arr['curriculumCourseSlots'], $courseSlot->toSerializedString());
+			$arr['curriculumCourseSlots'][$courseSlot->getCurriculumCourseSlotID()] = $courseSlot->toSerializedString();
 		}
 		
 		return json_encode($arr);
@@ -100,7 +100,7 @@ class Curriculum_model extends CI_Model
 			
 			$courseSlotModel->fromSerializedString($courseSlot);
 			
-			array_push($this->curriculumCourseSlots, $courseSlotModel);
+			$this->curriculumCourseSlots[$courseSlotModel->getCurriculumCourseSlotID()] = $courseSlotModel;
 		}
 	}
 	
@@ -235,13 +235,13 @@ class Curriculum_model extends CI_Model
      */
     public function addCurriculumCourseSlot($curriculumCourseSlot)
     {
-        if( !isset($this->curriculumCourseSlots[$curriculumCourseSlot->getName()]))
+        if( !isset($this->curriculumCourseSlots[$curriculumCourseSlot->getCurriculumCourseSlotID()]))
         {
             if($this->curriculumID != null)
             {
                 $curriculumCourseSlot->setCurriculum($this);
             }
-            $this->curriculumCourseSlots[$curriculumCourseSlot->getName()] = $curriculumCourseSlot;
+            $this->curriculumCourseSlots[$curriculumCourseSlot->getCurriculumCourseSlotID()] = $curriculumCourseSlot;
         }
     }
     
@@ -253,9 +253,9 @@ class Curriculum_model extends CI_Model
      */
     public function removeCurriculumCourseSlot($curriculumCourseSlot)
     {
-        if(isset($this->curriculumCourseSlots[$curriculumCourseSlot->getName()]))
+	if(isset($this->curriculumCourseSlots[$curriculumCourseSlot->getCurriculumCourseSlotID()]))
         {
-            unset($this->curriculumCourseSlots[$curriculumCourseSlot->getName()]);
+	    unset($this->curriculumCourseSlots[$curriculumCourseSlot->getCurriculumCourseSlotID()]);
         }
     }
     
