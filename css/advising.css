@@ -1,0 +1,148 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Mar 25, 2015, 9:22:36 PM
+    Author     : Scottie
+*/
+
+#background {
+    background-color:#002f8b;
+    padding:auto;
+}
+
+
+
+#main{
+    display:block;
+    margin: 0 auto;
+    height: 600px;
+    width: 1250px;
+   // border: 4px black solid;
+}
+#head{
+    color:white;
+    margin-left:330px;
+    margin-top: 5px;
+    position:absolute;
+    display:block;
+}
+
+#courses{
+    width:320px;
+    height:600px;
+    background-color:#e31b23;
+    position:absolute;
+    color:white;
+    border-radius:5px;
+    overflow-y: auto;  
+}
+
+#advise{
+    width:900px;
+    height:520px;
+    background-color:white;
+    display:inline-block;
+    position:absolute;
+    margin-left:330px;
+    margin-top:50px;
+    border-radius:5px;
+      
+}
+
+.class_headers {
+    font-weight:bold;
+    text-decoration:underline;
+    padding-left:5px;
+}
+
+#temp {
+    padding-left:5px;
+}
+
+th, td {
+    border: 1px solid grey;
+    text-align: center;
+}
+
+table {
+    width:100%;
+    border:1px grey solid;
+    border-collapse: collapse;
+}
+
+#PB  {
+    position:absolute;
+    margin-left: 330px;
+    top: 585px;
+}
+
+.logo {
+    height:30%;
+}
+
+.noborder {
+    border:none;
+}
+
+.button{
+   float:right;
+   width:60px;
+}
+li {
+    display:block;
+    border: solid 3px #e31b23;
+}
+ul {
+    margin-top: 0;
+    margin-left: -11%;
+}
+
+h4 {
+    padding-bottom: 0;
+    margin-bottom: 2%;
+}
+
+#alt {
+    width:100%;
+    border-collapse: collapse;
+    position:absolute;
+    top:53%;
+}
+
+#sig {
+    width:100%;
+    position:absolute;
+    bottom:0;
+    border:none;
+}
+
+#topcell {
+    border:none;
+    text-align: center;
+    vertical-align: top;
+    font-weight:bold;
+    height: 22px;
+    font-size: 13px;
+}
+
+#bottomcell
+{
+    border:none;
+    text-align: center;
+    vertical-align: bottom;
+    font-weight:bold;
+    height: 26px;  
+    font-size: 13px;
+}
+
+#namecwid {
+    height: 26px;  
+    vertical-align: middle;
+}
+
+#hidden {
+    display:none;
+}

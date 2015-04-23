@@ -105,6 +105,10 @@ class CI_Calendar {
 	 * @var bool
 	 */
 	public $show_other_days = FALSE;
+        
+        public  $app_Times=array();
+        
+        public $interval = 30;
 
 	// --------------------------------------------------------------------
 
@@ -180,8 +184,52 @@ class CI_Calendar {
 	 * @param	array	the data to be shown in the calendar cells
 	 * @return	string
 	 */
-	public function generate($year = '', $month = '', $data = array())
-	{
+        
+	public function generate($year = '', $month = '', $data = array(),$interval =20)
+        {       
+          
+                if((intval($interval)== 10)||(intval($interval)== 15)||(intval($interval)== 20)||(intval($interval)== 30)) //if input is wrong
+                {
+                    $interval = $interval;
+                }
+                else
+                {
+                    $interval = 20;
+                }
+                $starthour = '7:00 am'; //start time in string format
+                $endhour = '5:00 pm';  //end time time in string format
+                $sstarthour = 7; //start time in int format 8:00 am
+                $eendhour = 5; //starttime in int format 5:00 pm
+                $totalhours = 10; //total number of hours between $sstarttime and $eendtime
+                $increment = $interval; //appointment time limits (10, 15, 20, 30)
+                $incrementratio = 60/$increment;
+                $tempk = 0;
+                //////////////////////                      
+                $time = 0; 
+                $startTime = 0;
+                $endTime = 0;
+                $formatted_increment = 0;
+                //////////////////////
+                $thour = 0; //hour var for timestamp
+                $tminutes = 0; //hour var for timestamp
+                $tseconds = 0; //hour var for timestamp
+                $tmonth = 0; //hour var for timestamp
+                $tday = 0; //hour var for timestamp
+                $tyear = 0; //hour var for timestamp
+                $tcurrmonth = 0;
+                $tprevmonth = 0;
+                $tnextmonth =0;
+                //////////////
+                $myday =array (); //captures the days of the month being produced
+                $whichWeek =0; //determines which week is being processed for $myday (usually 1 week - 5 weeks)
+                $lastWeek = 5; //determines the last week of the month
+                $timestamp1 = 0;
+                $timestamp2 = 0;
+                $tablenum = 0;
+                $eo = "class='tableodd'";
+                $switch = 0;
+                $actualdate =0; //goes in the title attribute for each appointment;
+               
 		$local_time = time();
 
 		// Set and validate the supplied month/year
@@ -259,7 +307,7 @@ class CI_Calendar {
 		$this->replacements['heading_title_cell'] = str_replace('{colspan}', $colspan,
 								str_replace('{heading}', $this->get_month_name($month).'&nbsp;'.$year, $this->replacements['heading_title_cell']));
 
-		$out .= $this->replacements['heading_title_cell']."\n";
+		$out .= $this->replacements['heading_title_cell']."";
 
 		// "next" month link
 		if ($this->show_next_prev === TRUE)
@@ -268,30 +316,41 @@ class CI_Calendar {
 			$out .= str_replace('{next_url}', $this->next_prev_url.$adjusted_date['year'].'/'.$adjusted_date['month'], $this->replacements['heading_next_cell']);
 		}
 
-		$out .= "\n".$this->replacements['heading_row_end']."\n\n"
+		$out .= "\n".$this->replacements['heading_row_end'].""
 			// Write the cells containing the days of the week
-			.$this->replacements['week_row_start']."\n";
+			.$this->replacements['week_row_start']."";
 
 		$day_names = $this->get_day_names();
 
-		for ($i = 0; $i < 7; $i ++)
-		{
-			$out .= str_replace('{week_day}', $day_names[($start_day + $i) %7], $this->replacements['week_day_cell']);
-		}
-
-		$out .= "\n".$this->replacements['week_row_end']."\n";
-
-		// Build the main body of the calendar
-		while ($day <= $total_days)
-		{
-			$out .= "\n".$this->replacements['cal_row_start']."\n";
-
-			for ($i = 0; $i < 7; $i++)
+		$out .= "\n".$this->replacements['week_row_end']."<div id='weekwrapper'>";//throws in wrapper around tables
+                $tprevmonth = $this->adjust_date($month-1, $tyear);
+                $tnextmonth = $this->adjust_date($month+1, $tyear);
+                $tcurrmonth = $month[0]+$month[1]; //current month in number format
+                $tprevmonth = $tprevmonth['month']; //previous month in number format
+                $tnextmonth = $tnextmonth['month']; //next month in number format
+                $tmonth = $tprevmonth;
+		//echo $tprevmonth." ".$tcurrmonth." ".$tnextmonth;
+                // Build the main body of the calendar
+		while ($day <= $total_days) //once get to last day, exit
+		{       
+			$out .= "\n".$this->replacements['cal_row_start'];
+                        $out .= "id= 'table$tablenum'><thead><tr><th id='col'></th><th id='col0'></th>";
+                        
+                        for ($i = 0; $i < 7; $i ++) //print out each day of the week as one row
+                        {
+                                $aa = $i +1;
+                                $out .= "<th id='col$aa'>";
+                                $out .= str_replace('{week_day}', $day_names[($start_day + $i) %7], $this->replacements['week_day_cell']);
+                                $out .= "</th>";
+                        }
+                        $out .="</tr><tr><th id='col'></th><th id='col0'></th>"; //adds a column to the second row of each table 
+			for ($i = 0; $i < 7; $i++) // adds a week
 			{
-				if ($day > 0 && $day <= $total_days)
+				if ($day > 0 && $day <= $total_days) // if days of the month
 				{
 					$out .= ($is_current_month === TRUE && $day == $cur_day) ? $this->replacements['cal_cell_start_today'] : $this->replacements['cal_cell_start'];
-
+                                        $kk = $i +1;
+                                        $out .= "id='col$kk'>";
 					if (isset($data[$day]))
 					{
 						// Cells with content
@@ -305,43 +364,287 @@ class CI_Calendar {
 						$temp = ($is_current_month === TRUE && $day == $cur_day) ?
 								$this->replacements['cal_cell_no_content_today'] : $this->replacements['cal_cell_no_content'];
 						$out .= str_replace('{day}', $day, $temp);
+                                                $myday []=str_replace('{day}', $day, $temp);
 					}
-
 					$out .= ($is_current_month === TRUE && $day == $cur_day) ? $this->replacements['cal_cell_end_today'] : $this->replacements['cal_cell_end'];
 				}
-				elseif ($this->show_other_days === TRUE)
+				elseif ($this->show_other_days === TRUE) //show other days of other months
 				{
 					$out .= $this->replacements['cal_cell_start_other'];
-
+                                        $hh = $i +1;
+                                        $out .= "id='col$hh'>";
 					if ($day <= 0)
 					{
 						// Day of previous month
 						$prev_month = $this->adjust_date($month - 1, $year);
 						$prev_month_days = $this->get_total_days($prev_month['month'], $prev_month['year']);
 						$out .= str_replace('{day}', $prev_month_days + $day, $this->replacements['cal_cell_other']);
+                                                $myday []= str_replace('{day}', $prev_month_days + $day, $this->replacements['cal_cell_other']);
 					}
 					else
 					{
 						// Day of next month
 						$out .= str_replace('{day}', $day - $total_days, $this->replacements['cal_cell_other']);
+                                                $myday []= str_replace('{day}', $day - $total_days, $this->replacements['cal_cell_other']);
 					}
-
 					$out .= $this->replacements['cal_cell_end_other'];
+                                        
 				}
 				else
 				{
 					// Blank cells
 					$out .= $this->replacements['cal_cell_start'].$this->replacements['cal_cell_blank'].$this->replacements['cal_cell_end'];
 				}
-
-				$day++;
+				$day++; // increments day 7 times then repeats
+                                
 			}
-
-			$out .= "\n".$this->replacements['cal_row_end']."\n";
-		}
-
+                        $out .= "</tr></thead><tbody>";
+                        $time = strtotime("$starthour"); //convert starting hour to appropriate format
+                        $startTime = date("H:i", strtotime('-00 minutes', $time)); //initializes the start time appropriately
+                        $hourTime = 0;
+                        $shourTime = 0;
+                        $ehourtime = 0;
+                        $formatted_increment = $increment; //initializes the increment time
+                        $whichWeek = sizeof($myday)/7;
+                        
+                        ////////////////////////////////
+                        //date("h-i-s-M-d-Y",mktime($thour,$tminutes,$tseconds,$tmonth,$tday,$tyear)); //creates date from timestamp
+                        //mktime($thour,$tminutes,$tseconds,$tmonth,$tday,$tyear) //makes timestamp
+                        for ($k = 0; $k < ($totalhours*$incrementratio); $k++ ) //creates the proper number of rows of cells (appointments) based off of interval and start/end time.
+                        {
+                            $endTime = date("H:i", strtotime("+$formatted_increment minutes", $time)); //adds 30 minutes from the vairiable time
+                            $regStartTime = date('h:i', strtotime($startTime)); //changes from militarty time to regular time
+                            $regEndTime = date('h:i', strtotime($endTime)); //changes from military time to regular time
+                            $shourTime = explode(':', $regStartTime); //splits start time into an array of size 2
+                            $ehourTime = explode(':', $regEndTime); //splits end time into an array of size 2
+                            $out .= "<tr>";//first column of every row
+                            ($k%2 == 0)? $eo = "class='tableeven'" : $eo = "class='tableodd'";
+                            if(($interval == 10)||($interval == 15)||($interval == 20)||($interval == 30)) //determines the "huge number" based on interval
+                            {
+                                if($interval == 10) //if interval = 10
+                                {
+                                   if($k%6 == 0) //if $k is at the beginning hour of each time interval output a new column 
+                                       $out .= "<td rowspan='6' id='col'>$shourTime[0]</td>";
+                                }
+                                elseif($interval == 15) //if interval = 15
+                                {
+                                    if($k%4 == 0)//if $k is at the beginning hour of each time interval output a new column 
+                                       $out .= "<td rowspan='4' id='col'>$shourTime[0]</td>";
+                                }
+                                elseif($interval == 20) //if interval = 25
+                                {
+                                    if($k%3 == 0)//if $k is at the beginning hour of each time interval output a new column 
+                                       $out .= "<td rowspan='3' id='col'>$shourTime[0]</td>";
+                                }
+                                elseif($interval == 30) //if interval = 30
+                                {
+                                    if($k%2 == 0)//if $k is at the beginning hour of each time interval output a new column 
+                                       $out .= "<td rowspan='2' id='col'>$shourTime[0]</td>";
+                                }
+                                else{}//if not interval, do nothing
+                            }
+                            if(($interval == 10)||($interval == 15)||($interval == 20)||($interval == 30)) //determines the "ending interval" based on interval
+                            {
+                                if($interval == 10) //if interval = 10
+                                {
+                                   if((($k+1)%6)== 0) //if $k is at the end hour of each time interval output a new column 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - <span style='font-weight:bold;color: #e4481b;'>$ehourTime[0]</span></td>"; //second column of every row has start and end time
+                                   else 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - :$ehourTime[1] </td>"; //second column of every row has start and end time
+                                }
+                                elseif($interval == 15) //if interval = 15
+                                {
+                                   if((($k+1)%4)== 0) //if $k is at the end hour of each time interval output a new column 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - <span style='font-weight:bold;color: #e4481b;'>$ehourTime[0]</span></td>"; //second column of every row has start and end time
+                                   else 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - :$ehourTime[1] </td>"; //second column of every row has start and end time
+                                }
+                                elseif($interval == 20) //if interval = 25
+                                {
+                                   if((($k+1)%3)== 0) //if $k is at the end hour of each time interval output a new column 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - <span style='font-weight:bold;color: #e4481b;'>$ehourTime[0]</span></td>"; //second column of every row has start and end time
+                                   else 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - :$ehourTime[1] </td>"; //second column of every row has start and end time
+                                }
+                                elseif($interval == 30) //if interval = 30
+                                {
+                                   if((($k+1)%2)== 0) //if $k is at the end hour of each time interval output a new column 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - <span style='font-weight:bold;color: #e4481b;'>$ehourTime[0]</span></td>"; //second column of every row has start and end time
+                                   else 
+                                       $out .= "<td id='col0' $eo>:$shourTime[1] - :$ehourTime[1] </td>"; //second column of every row has start and end time
+                                }
+                                else{}//if not interval, do nothing
+                            }
+                            for($l = 0; $l < 7; $l++) //7 columns
+                            {
+                                //$switch = 0;
+                                $tempk++;
+                                $jj = $l+1;
+                                $correctDay = (7*($whichWeek-1))+$l; //calculates the correct day of the stored month based on the correct week
+                                $theday = intval(strip_tags($myday[$correctDay], '<strong style="color: #e4481b;;"></strong>')); //removes unwanted html from around int
+                                $hourTime = explode(':', $startTime);
+                                
+                                $thour = $hourTime[0]; //hour var for timestamp
+                                $tminutes = $hourTime[1]; //minutes var for timestamp
+                                $tseconds = 00; //seconds var for timestamp
+                                $tday =$theday; //day var for timestamp
+ 
+                                /////////////SWITCHES TO MONTH BEFORE(DURING FIRST WEEK OR LAST) FOR EACH ROW/////////////
+                                if(($whichWeek==1)&&($switch==0)) //when switch == 0 in the beginning of month switch month to previous month
+                                {
+                                    $tmonth = $tprevmonth;
+                                }
+                                else if (($whichWeek==$lastWeek)&&($switch==1))//last week of the month
+                                {
+                                    $tmonth = $tcurrmonth;
+                                }
+                                else{}
+                                ////////////////SWTICHES TO NEXT MONTH WHEN THE FIRST OF THE MONTH(FIRST WEEK OR LAST) FOR EACH ROW///////////////////////////
+                                /*
+                                 * this chart helps determine the last week, based on the 1st (first week, not last)
+                                 *                    [ Sun;Mon ;Tue ;Wed ;Thurs;Fri;Sat;]
+                                 *    28days    1st:  [4wks,5wks;5wks;5wks;5wks;5wks;5wks]
+                                 *    29days    1st:  [5wks;5wks;5wks;5wks;5wks;5wks;5wks]
+                                 *    30days    1st:  [5wks;5wks;5wks;5wks;5wks;5wks;6wks;]
+                                 *    31days    1st:  [5wks;5wks;5wks;5wks;5wks;6wks;6wks;]
+                                 */
+                                if(($theday == '01')&&($total_days == 28)) //switch to current month from previous month && set switch to 1
+                                {
+                                    //$switch++;
+                                    //$tmonth = $tcurrmonth;
+                                    if($whichWeek == 1) //1st week  
+                                    {
+                                        $tmonth = $tcurrmonth;
+                                        $switch = 1;
+                                        if($l==0)//if the 1st of the month appears on sunday, the last week is 4
+                                        {
+                                            $lastWeek = 4;
+                                        }
+                                        else //if 1st of the month appears on any other day of the week, the last week is 5
+                                        {
+                                            $lastWeek = 5;
+                                        }
+                                    }
+                                    else if($whichWeek == $lastWeek) //last week
+                                    {
+                                        $tmonth = $tnextmonth;
+                                        $switch = 0;
+                                    }
+                                    else{}
+                                }
+                                else if (($theday == '01')&&($total_days == 29))
+                                {
+                                    if($whichWeek == 1) //1st week  
+                                    {
+                                        $tmonth = $tcurrmonth;
+                                        $switch = 1;
+                                        $lastWeek = 5;
+                                    }
+                                    else if($whichWeek == $lastWeek) //last week
+                                    {
+                                        $tmonth = $tnextmonth;
+                                        $switch = 0;
+                                    }
+                                    else{}
+                                }
+                                else if (($theday == '01')&&($total_days == 30)) //switch to next month from current month
+                                {
+                                    if($whichWeek == 1) //1st week  
+                                    {
+                                        $tmonth = $tcurrmonth;
+                                        $switch = 1;
+                                        if($l==6) //if the 1st appears on saturday, the last week is 6
+                                        {
+                                            $lastWeek = 6;
+                                        }
+                                        else //if 1st of the month appears on any other day of the week, the last week is 5
+                                        {
+                                            $lastWeek = 5;
+                                        }
+                                    }
+                                    else if($whichWeek == $lastWeek) //last week
+                                    {
+                                        $tmonth = $tnextmonth;
+                                        $switch = 0;
+                                    }
+                                    else {}
+                                }
+                                else if (($theday == '01')&&($total_days == 31))
+                                {
+                                    if($whichWeek == 1) //1st week  
+                                    {
+                                        $tmonth = $tcurrmonth;
+                                        $switch = 1;
+                                        if($l ==6) //if the 1st appears on saturday, the last week is 6
+                                        {
+                                            $lastWeek = 6;
+                                        }
+                                        else if($l == 5) //if the 1st appears on friday, the last week is 6
+                                        {
+                                            $lastWeek = 6;
+                                        }
+                                        else //if 1st of the month appears on any other day of the week, the last week is 5
+                                        {
+                                            $lastWeek = 5;
+                                        }
+                                    }
+                                    else if($whichWeek == $lastWeek) //last week
+                                    {
+                                        $tmonth = $tnextmonth;
+                                        $switch = 0;
+                                    }
+                                    else {}   
+                                }
+                                else {}
+                                
+                                $tyear = $year; //year var for timestamp
+                                $timestamp1 = mktime($thour,$tminutes,$tseconds,$tmonth,$tday,$tyear);
+                                $hourTime = explode(':', $endTime);
+                                $thour = $hourTime[0]; //hour var for timestamp
+                                $tminutes = $hourTime[1]; //minutes var for timestamp     
+                                $timestamp2 = mktime($thour,$tminutes,$tseconds,$tmonth,$tday,$tyear);
+                                
+                                $actualdate = "(".date("h:i",$timestamp1)." - ".date("h:i",$timestamp2).") ".date("M d,Y",$timestamp2);
+                                
+                                $existing_Appointment=false; 
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+                               $X=0;
+                                foreach($this->app_Times as $key){
+                                
+                                    if($key==$timestamp1){
+                                        //echo $key;
+                                        array_splice($this->app_Times,$X,1);//for efficiency
+                                        $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-' style='background-color:yellow;'></label></div></td> "; //creates a row of $l columns $k times
+                                        $existing_Appointment=true;
+                                        break;
+                                    }
+                                    $X++;
+                                }
+                                if($existing_Appointment==false){
+                                    $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-' onmouseover='selectAll(event, this)'></label></div></td>"; //creates a row of $l columns $k times
+                                }
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                               
+                                // $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-' onmouseover='selectAll(event, this)'></label></div></td>"; //creates a row of $l columns $k times
+                                if(($l == 6)&& ($whichWeek==1)) //switches back to 0 at the end of the week
+                                {
+                                    $switch = 0;
+                                }
+                                else if (($l == 6)&& ($whichWeek==$lastWeek))
+                                {
+                                    $switch = 1;
+                                }
+                                else{}
+                            }
+                            $out .= "</tr>";
+                            $startTime = $endTime; //creates start time for next appointment 
+                            $formatted_increment += $increment; //keeps track of the overall time based on the interval
+                        }
+			$out .= "\n".$this->replacements['cal_row_end']."\n"; //end of the week, but also end of individual week table
+                        $tablenum++;
+		}       
+                //print_r($myday);
 		return $out .= "\n".$this->replacements['table_close'];
-	}
+	}//end of generator
 
 	// --------------------------------------------------------------------
 
@@ -477,30 +780,30 @@ class CI_Calendar {
 	public function default_template()
 	{
 		return array(
-			'table_open'				=> '<table border="0" cellpadding="4" cellspacing="0">',
-			'heading_row_start'			=> '<tr>',
-			'heading_previous_cell'		=> '<th><a href="{previous_url}">&lt;&lt;</a></th>',
-			'heading_title_cell'		=> '<th colspan="{colspan}">{heading}</th>',
-			'heading_next_cell'			=> '<th><a href="{next_url}">&gt;&gt;</a></th>',
-			'heading_row_end'			=> '</tr>',
-			'week_row_start'			=> '<tr>',
-			'week_day_cell'				=> '<td>{week_day}</td>',
-			'week_row_end'				=> '</tr>',
-			'cal_row_start'				=> '<tr>',
-			'cal_cell_start'			=> '<td>',
-			'cal_cell_start_today'		=> '<td>',
-			'cal_cell_start_other'		=> '<td style="color: #666;">',
-			'cal_cell_content'			=> '<a href="{content}">{day}</a>',
-			'cal_cell_content_today'	=> '<a href="{content}"><strong>{day}</strong></a>',
+			'table_open'				=> ' <br><script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
+			'heading_row_start'			=> '<table id="top" class="animated fadeInUp"><tr><td><input id= "startT" type="text" value=""></td><td colspan="2"></td><td colspan="3"> <select id="intervals" name="intervals" onchange="setGetParameter(\'interval\',document.getElementById(\'intervals\').options[document.getElementById(\'intervals\').selectedIndex].value)"><option>Intervals</option><option value="10">10 min.</option><option value="15">15 min.</option><option value="20">20 min.</option><option value="30">30 min.</option></select> </td><td></td><td id ="submitwrap" rowspan="2"><input id="submit" name="submit" type="submit" value="Add"></td></tr><tr>',//<th>
+			'heading_previous_cell'		=> '<td id="pad"><input id="endT" type="text" value=""></td><td><a id="prevweek" href ="javascript:void(0);" onclick="nextOrPrev(this)"><div>&lt;</div></a></td><td><a id="previousnext" href="{previous_url}"><div>&lt;&lt;</div></a></td>',
+			'heading_title_cell'		=> '<td>{heading}</td>',
+			'heading_next_cell'			=> '<td><a id="nextprevious" href="{next_url}"><div>&gt;&gt;</div></a></td><td><a id="nextweek" href="javascript:void(0);" onclick="nextOrPrev(this)"><div>&gt;</div></a></td><td id="pad"></td></table>',
+			'heading_row_end'			=> '', //</th>
+			'week_row_start'			=> '', //<tr><div id="weekrow"></div>
+			'week_day_cell'				=> '{week_day}',
+			'week_row_end'				=> '', //</tr>
+			'cal_row_start'				=> '<table class="scroll" ',
+			'cal_cell_start'			=> '<th ',
+			'cal_cell_start_today'		=> '<th ',
+			'cal_cell_start_other'		=> '<th style="color: #f2f2f2;" ',
+			'cal_cell_content'			=> '<a href="{content}">{day}<divid="cellcontent"></div></a>',
+			'cal_cell_content_today'	=> '<a href="{content}"><strong>{day}<div id="cellcontenttoday"></div></strong></a>',
 			'cal_cell_no_content'		=> '{day}',
-			'cal_cell_no_content_today'	=> '<strong>{day}</strong>',
+			'cal_cell_no_content_today'	=> '<strong style="color: #e4481b;;">{day}</strong>',
 			'cal_cell_blank'			=> '&nbsp;',
 			'cal_cell_other'			=> '{day}',
-			'cal_cell_end'				=> '</td>',
-			'cal_cell_end_today'		=> '</td>',
-			'cal_cell_end_other'		=> '</td>',
-			'cal_row_end'				=> '</tr>',
-			'table_close'				=> '</table>'
+			'cal_cell_end'				=> '</th>',
+			'cal_cell_end_today'		=> '</th>',
+			'cal_cell_end_other'		=> '</th>',
+			'cal_row_end'				=> '</tbody></table>',
+			'table_close'				=> '</div></form></div>'
 		);
 	}
 

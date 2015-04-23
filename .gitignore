@@ -1,0 +1,7 @@
+*.phpproj
+*.sln
+*.suo
+*.project
+/nbproject/
+/nbproject/private/
+nbproject
