@@ -60,7 +60,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Manage Students
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Bossimport/index') ;?>">
             Bulk Update
         </a>
         
