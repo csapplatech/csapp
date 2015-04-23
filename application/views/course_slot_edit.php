@@ -1,27 +1,48 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <h1>Course Slot Edit</h1>
 
+<?php var_dump($data); ?>
+
 <form method="POST">
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
-  <select multiple size='3' id="AvailCourseSelect" name='validCourseIDs[]'>
+  <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
       foreach($data['courses'] as $row)
-	echo "<option value=\"$row[id]\">$row[name] $row[number]</option>"; 
+      {
+	echo "<option value=\"$row[id]\"";
+	if ($row['selected'] == TRUE)
+		echo "selected";
+	echo ">$row[name] $row[number]</option>"; 
+      }
     ?>
   </select>
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
+<p>Recommended Quarter: </p>
+<select size=4 name='recommendedQuarter'>
+  <option <?php if (strcmp($data['recommendedQuarter'], 'Fall')   == 0) echo 'selected'; ?>>Fall</option>
+  <option <?php if (strcmp($data['recommendedQuarter'], 'Winter') == 0) echo 'selected'; ?>>Winter</option>
+  <option <?php if (strcmp($data['recommendedQuarter'], 'Spring') == 0) echo 'selected'; ?>>Spring</option>
+  <option <?php if (strcmp($data['recommendedQuarter'], 'Summer') == 0) echo 'selected'; ?>>Summer</option>
+</select>
+<p>Recommended Year:</p> 
+<select size=4 name='recommendedYear'>
+  <option <?php if (strcmp($data['recommendedYear'], 'Freshman')  == 0) echo 'selected'; ?>>Freshman</option>
+  <option <?php if (strcmp($data['recommendedYear'], 'Sophomore') == 0) echo 'selected'; ?>>Sophomore</option>
+  <option <?php if (strcmp($data['recommendedYear'], 'Junior')    == 0) echo 'selected'; ?>>Junior</option>
+  <option <?php if (strcmp($data['recommendedYear'], 'Senior')    == 0) echo 'selected'; ?>>Senior</option>
+</select>
 <p>Minimum Grade:</p>
-<select size=5>
-  <option>A</option>
-  <option>B</option>
-  <option>C</option>
-  <option>D</option>
-  <option>F</option>
+<select size=5 name='minimumGrade'>
+  <option <?php if (strcmp($data['minimumGrade'], 'A') == 0) echo 'selected'; ?>>A</option>
+  <option <?php if (strcmp($data['minimumGrade'], 'B') == 0) echo 'selected'; ?>>B</option>
+  <option <?php if (strcmp($data['minimumGrade'], 'C') == 0) echo 'selected'; ?>>C</option>
+  <option <?php if (strcmp($data['minimumGrade'], 'D') == 0) echo 'selected'; ?>>D</option>
+  <option <?php if (strcmp($data['minimumGrade'], 'F') == 0) echo 'selected'; ?>>F</option>
 </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlot'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery

@@ -3,17 +3,17 @@
 
 <form method="POST">
 <p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-  <select size='10' id="CurriculumSelect" name='curriculum' required>
+  <select size='10' id="CurriculumSelect" name='curriculum'>
     <?php
       foreach($data as $row)
 	echo "<option value=\"$row[1]\">$row[0]</option>"; 
     ?>
   </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculum'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculum'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculum'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculum'); ?>">Delete</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
