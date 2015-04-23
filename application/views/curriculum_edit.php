@@ -3,10 +3,10 @@
 
 <form method="POST">
 <p>Filter: <input id="CurrEditFilter" /></p>
-  <select size='3' id="CourseSlotSelect" name='curriculumCourseSlotID'>
+  <select size='3' id="CourseSlotSelect" name='courseSlot'>
     <?php
       foreach($data['course'] as $row)
-	echo "<option>$row[0]</option>"; 
+	echo "<option value='$row[1]'>$row[0]</option>"; 
     ?>
   </select>
 <br />
