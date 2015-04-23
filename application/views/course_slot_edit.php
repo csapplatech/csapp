@@ -41,8 +41,8 @@
   <option <?php if (strcmp($data['minimumGrade'], 'F') == 0) echo 'selected'; ?>>F</option>
 </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculumCourseSlot'); ?>">Save</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery

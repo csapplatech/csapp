@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class CurriculumCreator extends CI_Controller {
+class Curriculumcreator extends CI_Controller {
 	
 	public function index()
 	{

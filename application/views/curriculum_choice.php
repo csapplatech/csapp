@@ -10,10 +10,10 @@
     ?>
   </select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/editCurriculum'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/newCurriculum'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/cloneCurriculum'); ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculum'); ?>">Delete</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
