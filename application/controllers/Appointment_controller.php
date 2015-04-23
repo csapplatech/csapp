@@ -131,42 +131,62 @@ Class appointment_controller extends CI_Controller{
 }
 public function fill(){
      $User_model= new User_model;              //All this reiteration is temporary until integrated with the website. in which I will use the $_SESSION data
-    
-    $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
+     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
+     
+     $Advising_schedule= new Advising_schedule_model();
+     $Advising_appointment= new Advising_appointment_model;
 	
 	if($User_model->isStudent())
 	{
 		$getAdvisor=$User_model->getAdvisor();
 		$getAdvisor=$getAdvisor->getUserID();
-	}
-	else if($User_model->isAdvisor())
-	{
-		$getAdvisor = $User_model->getUserID();
-	}
-    
-    
-    $Advising_schedule= new Advising_schedule_model();
-    $Advising_appointment= new Advising_appointment_model;
-    
-    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1);
-    
-    if(!empty($_POST['appointments']))
-    {
-        // Loop to store and display values of individual checked checkbox.
-        foreach($_POST['appointments'] as $selected)
-        {
-            //date("h-i-s-M-d-Y",$timestamp);
-            $aptTime = explode ("-", $selected);
-            //echo "<p>".date("h-i-s-M-d-Y",$aptTime[0])."_________".date("h-i-s-M-d-Y",$aptTime[1])."_______".$selected."</p>";
-            //echo $selected;
-            $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
-            $Advising_appointment->setStartTime($aptTime[0]);
-            $Advising_appointment->setEndTime($aptTime[1]);
-            $Advising_appointment->create();
-            
+                
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the scedule that corresponds to the students advisor and the acedemic quarter
+	
+            if(!empty($_POST['appointments']))
+            {
+                foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
+                {
+                    $aptTime = explode ("-", $selected); //separate the start and end times
+                    
+                    $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
+                    $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
+                    $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
+                    $Advising_appointment->getScheduledStudentUserID();//get the scheduled student user ID
+                    $Advising_appointment->create(); //create the advising appointment with above information
+
             //echo $selected."</br>";
         }
     }
+        }
+	else if($User_model->isAdvisor())
+	{
+		$getAdvisor = $User_model->getUserID();
+                
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the schedule that corresponds to this advisor and this academic quarter
+	
+                 if(!empty($_POST['appointments']))
+            {
+                foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
+                {
+                    $aptTime = explode ("-", $selected); //separate the start and end times
+                    
+                    $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
+                    $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
+                    $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
+                    $Advising_appointment->create(); //create the advising appointment with above information
+
+            //echo $selected."</br>";
+        }
+    }
+        }
+    
+    
+    
+    
+    
+    
+   
            
    
     
