@@ -51,14 +51,14 @@
        
        
 <?php
-echo "HELLO";
+
 $new_Start=array();
 $new_End=array();
 if($user->isAdvisor()){
-    echo "THIS IS AN ADVISOR". "<br>";
+    echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>THIS IS AN ADVISOR</p>". "<br>";
 }
 else if($user->isStudent()){
-     echo "Hello ".$user->getName(). "<br>";
+     echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Hello ".$user->getName(). "</p><br>";
 }
 else{
      echo "IDK WHO THIS IS.....". "<br>";

@@ -610,7 +610,9 @@ class CI_Calendar {
                                 
                                 $existing_Appointment=false; 
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-                             if($this->user->isStudent()){
+                           
+                                
+                            if($this->user->isStudent()){
                                  
                              $X=0;
                              foreach($this->app_Times as $key){
