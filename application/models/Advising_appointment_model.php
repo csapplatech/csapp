@@ -102,6 +102,11 @@ class Advising_appointment_model extends CI_Model
 		return $this->studentUserID;
 	}
 	
+	public function setStudentUserID($studentUserID)
+	{
+		$this->studentUserID = filter_var($studentUserID, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
 	public function setAdvisingAppointmentState($advisingAppointmentStateID)
 	{
 		$this->advisingAppointmentStateID = $advisingAppointmentStateID;
