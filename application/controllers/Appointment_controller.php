@@ -48,11 +48,12 @@ Class appointment_controller extends CI_Controller{
             }
              
             $prefs = array(
-        'app_Times'                 =>$app_Times,
-        'show_other_days'           => TRUE,
-        'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
-	);
+                'user'                      =>$User_model,
+                'app_Times'                 =>$app_Times,
+                'show_other_days'           => TRUE,
+                'show_next_prev'            => TRUE,
+                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+                );
          
             
              $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
@@ -64,12 +65,21 @@ Class appointment_controller extends CI_Controller{
         
         else{                                                          //if there were no appointments found
             $app_Times=null;                                        //null app_Times array
-			$Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
+            $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
             $Advising_schedule->setAdvisorUserID($User_model->getUserID());   //use this to create a new advising shedule
             $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
-            $this->load->view("appointment", $Appointment_array);             
             
+             $prefs = array(
+                'user'                      =>$User_model,
+                'app_Times'                 =>$app_Times,
+                'show_other_days'           => TRUE,
+                'show_next_prev'            => TRUE,
+                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+                );
+            $this->load->library('calendar',$prefs);
+            $this->load->view("appointment_view", $Appointment_array);             
+
         }
     }
     else if($User_model->isStudent()){      //if it is a student 
@@ -111,7 +121,7 @@ Class appointment_controller extends CI_Controller{
             $this->load->view("appointment_view", $Appointment_array);          //load student calendar view(which as of right now is the same as the advisor calendar view)
          }
          else{
-           //tell the student that the advisor has yet to create a schedule.
+           redirect('Mainpage/student');
          }
     }
     else{

@@ -55,11 +55,12 @@
 $new_Start=array();
 $new_End=array();
 if($user->isAdvisor()){
-    echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>THIS IS AN ADVISOR</p>". "<br>";
+    echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Select Available Office Hours</p>". "<br>";
 }
-else if($user->isStudent()){
+else if($user->isStudent()){ //if there is a schedule ID for this student's advisor
      echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Hello ".$user->getName(). "</p><br>";
 }
+
 else{
      echo "IDK WHO THIS IS.....". "<br>";
 }
