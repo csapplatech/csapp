@@ -631,7 +631,7 @@ class CI_Calendar {
                            }
                           }
                           else if($this->user->isAdvisor()){
-                               $X=0;
+                                $X=0;
                              foreach($this->app_Times as $key){
 
                                  if($key==$timestamp1){
