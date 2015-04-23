@@ -16,13 +16,12 @@
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
-<p>Type:</p>
-<select size='3' name='type' selected="<?php echo $data['type']; ?>">
-  <option>Degree</option>
-  <option>Minor</option>
-  <option>Concentration</option>
-</select>
-<br /><br />
+<p>Type:<br />
+<select size='3' name='type' required>
+  <option <?php if (strcmp($data['type'], 'Degree') == 0) echo 'selected'; ?>>Degree</option>
+  <option <?php if (strcmp($data['type'], 'Minor') == 0) echo 'selected'; ?>>Minor</option>
+  <option <?php if (strcmp($data['type'], 'Concentration') == 0) echo 'selected'; ?>>Concentration</option>
+</select></p>
 <br />
 <button type="sumbit" formaction="<?php echo site_url('CurriculumCreator/setCurriculum'); ?>">Save</button>
 </form>
