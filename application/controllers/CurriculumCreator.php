@@ -241,18 +241,19 @@ class CurriculumCreator extends CI_Controller {
     {
 		///get arguments
 		if ($courseSlotName == NULL)
-			$courseSlotName = $this->input->post('courseSlot');
+			$courseSlotName = $this->input->post('name');
 		
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
 		
+		var_dump($courseSlotName);
 		//match names
 		foreach ($courseSlots as $slot)
 		{
 			$name = $slot->getName();
-			
+			var_dump($name);
 			if (strcmp($name,$courseSlotName) == 0)
 			{	
 				$courseSlot = $slot;
@@ -283,6 +284,8 @@ class CurriculumCreator extends CI_Controller {
 		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
+		//~ var_dump($courseSlot);
+		//~ var_dump($_SESSION['courseSlot']);
 		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
 
@@ -404,7 +407,7 @@ class CurriculumCreator extends CI_Controller {
 	
 	//save a curriculum course slot
 	//validCourseIDs(int array); name(string); minimumGrade(string); 
-	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL) 
+	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL, $notes = NULL) 
 	{
 		//get arguments
 		if ($validCourseIDs == NULL)
@@ -429,14 +432,24 @@ class CurriculumCreator extends CI_Controller {
 		//~ const YEAR_SENIOR = "Senior";
 		if ($recommendedYear == NULL)
 			$recommendedYear = $this->input->post('recommendedYear');
+		
+		if ($notes == NULL)
+			$notes = $this->input->post('notes');
+			
+		if (!isset($notes))
+			$notes = " ";
 			
 		//add logic to grab arguments	
 		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->fromSerializedString($_SESSION['courseSlot']);
+		//~ var_dump($courseSlot);
 		$courseSlot->setMinimumGrade($minimumGrade);
 		$courseSlot->setName($name);
 		$courseSlot->setRecommendedQuarter($recommendedQuarter);
 		$courseSlot->setRecommendedYear($recommendedYear);
+		$courseSlot->setNotes($notes);
+		//~ var_dump($courseSlot);
+
 		
 		//populate course slot with the valid course ids
 		foreach ($validCourseIDs as $validCourse)
@@ -446,10 +459,13 @@ class CurriculumCreator extends CI_Controller {
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
+
+		$tempCourseSlot = new Curriculum_course_slot_model();
+		$tempCourseSlot->fromSerializedString($_SESSION['courseSlot']);
+		//var_dump($tempCourseSlot);
 		
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
 		{
-			$tempCourseSlot->fromSerializedString($_SESSION['courseSlot']);
 			foreach ($courseSlots as $slot)
 			{
 				if (strcmp($testCourseSlot->getName(), $slot->getName()) == 0)
