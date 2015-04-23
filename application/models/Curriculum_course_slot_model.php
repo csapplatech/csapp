@@ -10,6 +10,7 @@ class Curriculum_course_slot_model extends CI_Model
     // Member variables, use getter / setter functions for access
     private $curriculumCourseSlotID = null;
     private $curriculumID = null;
+	private $curriculumIndex = null;
     private $name = null;
     private $minimumGrade = null;
 	private $recommendedQuarter = null;
@@ -50,6 +51,11 @@ class Curriculum_course_slot_model extends CI_Model
 		if($this->curriculumID != null)
 		{
 			$arr['curriculumID'] = $this->curriculumID;
+		}
+		
+		if($this->curriculumIndex != null)
+		{
+			$arr['curriculumIndex'] = $this->curriculumIndex;
 		}
 		
 		if($this->name != null)
@@ -105,6 +111,11 @@ class Curriculum_course_slot_model extends CI_Model
 			$this->curriculumID = $arr->curriculumID;
 		}
 		
+		if(isset($arr->curriculumIndex))
+		{
+			$this->curriculumIndex = $arr->curriculumIndex;
+		}
+		
 		if(isset($arr->name))
 		{
 			$this->name = $arr->name;
@@ -155,11 +166,13 @@ class Curriculum_course_slot_model extends CI_Model
                 
                 $this->curriculumCourseSlotID = $row['CurriculumCourseSlotID'];
                 $this->curriculumID = $row['CurriculumID'];
+				$this->curriculumIndex = $row['CurriculumIndex'];
                 $this->name = $row['Name'];
                 $this->minimumGrade = $row['MinimumGrade'];
                 $this->recommendedQuarter = $row['RecommendedQuarter'];
 				$this->recommendedYear = $row['RecommendedYear'];
 				$this->notes = $row['Notes'];
+				
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
                 $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
@@ -236,6 +249,17 @@ class Curriculum_course_slot_model extends CI_Model
         return $this->curriculumID;
     }
     
+	/**
+     * Summary of getCurriculumIndex
+     * Get the curriculum index for the curriculum this model is associated with
+     * 
+     * @return int The index of the curriculum that this model is associated with
+     */
+	public function getCurriculumIndex()
+	{
+		return $this->curriculumIndex;
+	}
+	
     /**
      * Summary of getName
      * Get the name of the curriculum course slot
@@ -281,6 +305,17 @@ class Curriculum_course_slot_model extends CI_Model
     }
     
 	/**
+     * Summary of setCurriculumIndex
+     * Set the curriculum index for this curriculum course slot model to be associated with
+     * 
+     * @param int $curriculum index The curriculum to associate with this model
+     */
+	public function setCurriculumIndex($curriculumIndex)
+	{
+		$this->curriculumIndex = filter_var($curriculumIndex, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
+	/**
      * Summary of setNotes
      * Set the notes associated with this model
      * 
@@ -317,7 +352,7 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of setCurriculum
      * Set the curriculum for this curriculum course slot model to be associated with
      * 
-     * @param int $curriculum The curriculum to associate with this model
+     * @param Curriculum_model $curriculum The curriculum to associate with this model
      */
     public function setCurriculum($curriculum)
     {
@@ -549,10 +584,11 @@ class Curriculum_course_slot_model extends CI_Model
      */
     public function create()
     {
-        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->name != null)
+        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->name != null)
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
+				'CurriculumIndex' => $this->curriculumIndex,
 				'Name' => $this->name,
 				'MinimumGrade' => $this->minimumGrade,
 				'RecommendedQuarter' => $this->recommendedQuarter,
@@ -590,10 +626,11 @@ class Curriculum_course_slot_model extends CI_Model
      */
     public function update()
     {
-        if($this->curriculumCourseSlotID != null)
+        if($this->curriculumCourseSlotID != null && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT))
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
+				'CurriculumIndex' => $this->curriculumIndex,
 				'Name' => $this->name,
 				'MinimumGrade' => $this->minimumGrade,
 				'RecommendedQuarter' => $this->recommendedQuarter,
