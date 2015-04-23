@@ -6,15 +6,7 @@ Class appointment_controller extends CI_Controller{
 	{
      $app_Times=array();
 		
-     $prefs = array(
-        'app_Times'                 =>$app_Times,
-        'show_other_days'           => TRUE,
-        'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
-	);
-         
-        
-
+     
     
 
     $User_model= new User_model;
@@ -29,6 +21,7 @@ Class appointment_controller extends CI_Controller{
     
     
     if($User_model->isAdvisor()){           //If it is an advisor
+        
         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), 1)){ //if there are appointments registered to this info
            $Appointment_array= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
             
@@ -48,6 +41,7 @@ Class appointment_controller extends CI_Controller{
             }
              
             $prefs = array(
+        'user'                      =>$User_model,
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
@@ -100,7 +94,7 @@ Class appointment_controller extends CI_Controller{
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
         'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+        'next_prev_url'             => 'http://127.0.0.1/index.php/appointment_controller/index'
 	);
          
              //$app_Times=null;
@@ -131,26 +125,16 @@ Class appointment_controller extends CI_Controller{
 }
 public function fill(){
      $User_model= new User_model;              //All this reiteration is temporary until integrated with the website. in which I will use the $_SESSION data
-    
+     $Advising_schedule= new Advising_schedule_model();
+     $Advising_appointment= new Advising_appointment_model;
+     
     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
 	
 	if($User_model->isStudent())
 	{
-		$getAdvisor=$User_model->getAdvisor();
-		$getAdvisor=$getAdvisor->getUserID();
-	}
-	else if($User_model->isAdvisor())
-	{
-		$getAdvisor = $User_model->getUserID();
-	}
-    
-    
-    $Advising_schedule= new Advising_schedule_model();
-    $Advising_appointment= new Advising_appointment_model;
-    
-    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1);
-    
-    if(!empty($_POST['appointments']))
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getAdvisor()), 1);
+                
+                if(!empty($_POST['appointments']))
     {
         // Loop to store and display values of individual checked checkbox.
         foreach($_POST['appointments'] as $selected)
@@ -167,10 +151,37 @@ public function fill(){
             //echo $selected."</br>";
         }
     }
-           
-   
+                
+	}
+	else if($User_model->isAdvisor())
+	{
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), 1);
+                
+                if(!empty($_POST['appointments'])){
+        // Loop to store and display values of individual checked checkbox.
+        foreach($_POST['appointments'] as $selected)
+        {
+            //date("h-i-s-M-d-Y",$timestamp);
+            $aptTime = explode ("-", $selected);
+            //echo "<p>".date("h-i-s-M-d-Y",$aptTime[0])."_________".date("h-i-s-M-d-Y",$aptTime[1])."_______".$selected."</p>";
+            //echo $selected;
+            $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
+            $Advising_appointment->setAdvisingAppointmentID(444);
+            $Advising_appointment->setStartTime($aptTime[0]);
+            $Advising_appointment->setEndTime($aptTime[1]);
+            $Advising_appointment->create();
+            
+            //echo $selected."</br>";
+        }
+    }
+                
+                
+}
     
-    redirect('appointment_controller');
+    
+    
+    
+  redirect('appointment_controller');
  
 }
 }

@@ -51,6 +51,7 @@
        
        
 <?php
+echo "HELLO";
 $new_Start=array();
 $new_End=array();
 if($user->isAdvisor()){
