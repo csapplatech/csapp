@@ -48,6 +48,7 @@ class Checklistexport extends CI_Controller
 	    $this->generateadvchecklist($advcheck);
 
 	    //Download file object (PDF or XLS)
+	    $Excel->setActiveSheetIndex(0);
 	    $objWriter = PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
 	    header("Content-type: application/vnd.ms-exel");
 	    header("Content-Disposition: attachment; filename=test.xls");
@@ -246,6 +247,13 @@ class Checklistexport extends CI_Controller
 	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
 	    $row = 10;
 	    $prevCType = NULL;
+
+	    $reqCour = array();
+	    foreach ($requiredCourses as $c)
+	    	$reqCour[$c->getName()." ".$c->getNumber()] = $c;
+	    ksort($reqCour);
+	    $requiredCourses = $reqCour;
+
 	    foreach ($requiredCourses as $reqCourse)
 	    {
 	    	//Grab course name
