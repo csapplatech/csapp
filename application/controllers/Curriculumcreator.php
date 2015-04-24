@@ -164,7 +164,7 @@ class Curriculumcreator extends CI_Controller {
 		
 		$data = array(
 			'name'    => 'New Curriculum Course Slot',
-			'courses' =>  array()
+			'courses' =>  array(),
 		);
 		
 		$availableCourses = $courses->getAllCourses();
@@ -262,7 +262,6 @@ class Curriculumcreator extends CI_Controller {
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		
-		$courseSlot->setCurriculumIndex($_SESSION['MaxCurriculumIndex']++);
 		//~ $currIndex = $courseSlot->getCurriculumIndex();
 		//~ 
 		//Handle non-unique indeces
@@ -273,7 +272,6 @@ class Curriculumcreator extends CI_Controller {
 				//~ 
 			//~ }
 		//~ }
-
 
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
 		{
@@ -289,7 +287,9 @@ class Curriculumcreator extends CI_Controller {
 					break;
 				}
 			}
-		}
+		} 
+		else 
+			$courseSlot->setCurriculumIndex($_SESSION['MaxCurriculumIndex']++);
 
 		$curriculum->addCurriculumCourseSlot($courseSlot);
 		
