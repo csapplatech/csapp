@@ -51,11 +51,11 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Managepc') ;?>">
             Manage Program Chair
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Manage Advisors
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/create') ;?>">
+            Create Users
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Manage Students
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
+            Manage Users
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Bossimport/index') ;?>">
             Bulk Update
