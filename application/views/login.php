@@ -41,6 +41,11 @@
               {
                   echo '<div class="alert alert-danger alert-dismissable role="alert">WRONG USERNAME OR PASSWORD. PLEASE TRY AGAIN.</div>';
               }
+              if (isset($error2))
+              {
+                  echo '<div class="alert alert-danger alert-dismissable role="alert">YOUR ACCOUNT HAS BEEN DEACTIVATED DUE TO INACTIVITY, PLEASE SEE YOUR ADVISOR: '
+                  .$advisorname.'   '.$advisoremail.'</div>';
+              }
             ?>
 
             <form class="form-signin" action="<?php echo site_url('login/auth'); ?>" method="POST">

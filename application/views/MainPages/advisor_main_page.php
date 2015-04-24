@@ -48,7 +48,7 @@
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Activate New Advisee
         </a>
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('ChangePassword') ;?>">
             Change Password
         </a>
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
