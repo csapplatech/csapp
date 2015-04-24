@@ -316,7 +316,7 @@ class Curriculumcreator extends CI_Controller {
 		foreach ($courseSlots as $slot)
 		{
 			$index = $slot->getCurriculumIndex();
-			if ($index == $courseSlotIndex) == 0)
+			if ($index == $courseSlotIndex)
 			{	
 				$courseSlot = $slot;
 				break;
