@@ -12,20 +12,35 @@ class AdvisingForm extends CI_Controller
         {
             redirect('login');
         }*/
-        //$uid = 10210078;
-        //$uid = $_SESSION['UserID'];
-         if (isset($_SESSION['StudCWID']))
-         {
-             $this->uid = $_SESSION['StudCWID'];
-         }
-         else 
-         {
-            if (!isset($_SESSION['UserID']))
-            {
-                redirect('login');
-            }
-            $this->uid = $_SESSION['UserID'];
-         }
+		
+		$user = new User_model;
+		
+		if(!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+			redirect('Login/logout');
+		
+		if($user->isStudent())
+		{
+			$this->uid = $this->getUserID();
+		}
+		else if($user->isAdvisor())
+		{
+			if($this->uri->segment(3))
+			{
+				$this->uid = $this->uri->segment(3);
+			}
+			else if($_SESSION['StudCWID'])
+			{
+				$this->uid = $_SESSION['StudCWID'];
+			}
+			else
+			{
+				redirect('Login');
+			}
+		}
+		else
+		{
+			redirect('Login');
+		}
         
        // $uid = 10210078;
         //$year = 2015;

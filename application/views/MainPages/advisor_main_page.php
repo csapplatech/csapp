@@ -54,7 +54,7 @@
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             View Classes
         </a>
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Viewadvisees/index') ;?>">
             View Advisees
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('appointment_controller') ;?>">
