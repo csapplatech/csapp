@@ -72,7 +72,7 @@ class Checklistexport extends CI_Controller
 	 
 	    //Set background for header cells
 	    $advlist->getStyle("B1:P2")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
-	    					  ->getStartColor()->setRGB('EEEEEE');
+	   					  ->getStartColor()->setRGB('EEEEEE');
 	    $advlist->getStyle("A3:A14")->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)
 	    					   ->getStartColor()->setRGB('EEEEEE');
 
@@ -302,17 +302,7 @@ class Checklistexport extends CI_Controller
 						default: $term = '?'; break;
 					}
 					$checklist->getCell("G$row")->setValue($term);
-					$grade = NULL;
-					switch ($taken[1])
-					{
-						case 4: $grade = 'A'; break;
-						case 3: $grade = 'B'; break;
-						case 2: $grade = 'C'; break;
-						case 1: $grade = 'D'; break;
-						case 0: $grade = 'F'; break;
-						default: $grade = $taken[1];
-					}
-					$checklist->getCell("J$row")->setValue($grade);
+					$checklist->getCell("J$row")->setValue($taken[1]);
 					unset($coursesTaken[$key]);
 				}
 
