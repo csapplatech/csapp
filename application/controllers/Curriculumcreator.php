@@ -116,6 +116,8 @@ class Curriculumcreator extends CI_Controller {
 			$curriculum->update(); //update current curriculum for edit
 		else
 			$curriculum->create(); //create a new entry for clone/new	
+		
+		var_dump($curriculum->getAllCurriculumCourseSlots());
 			
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
@@ -127,7 +129,7 @@ class Curriculumcreator extends CI_Controller {
 	}
 	
 	//cancelling an edit to a curriculum
-	public function cancelCurriculumEdit()
+	public function cancelCurriculum()
 	{
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
@@ -365,6 +367,7 @@ class Curriculumcreator extends CI_Controller {
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		
 		$type = $curriculum->getCurriculumType();
+		$curriculumType = NULL;
 		if ($type == 1)
 			$curriculumType = 'Degree';
 		else if ($type == 2)
