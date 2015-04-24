@@ -6,7 +6,7 @@
   <select size='3' id="CourseSlotSelect" name='courseSlot'>
     <?php
       foreach($data['course'] as $row)
-	echo "<option value='$row[1]'>$row[0]</option>"; 
+	echo "<option value='$row[index]'>$row[name]</option>"; 
     ?>
   </select>
 <br />
@@ -18,9 +18,17 @@
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
 <p>Type:<br />
 <select size='3' name='type' required>
-  <option <?php if (strcmp($data['type'], 'Degree')        == 0) echo 'selected'; ?>>Degree</option>
-  <option <?php if (strcmp($data['type'], 'Minor')         == 0) echo 'selected'; ?>>Minor</option>
-  <option <?php if (strcmp($data['type'], 'Concentration') == 0) echo 'selected'; ?>>Concentration</option>
+	<?php
+	$types = array('Degree', 'Minor', 'Concentration');
+	foreach ($types as $type)
+	{
+		echo '<option';
+		if (isset($data['type'])) 
+		   if (strcmp($data['type'], $type) == 0) 
+		      echo ' selected'; 
+		echo ">$type</option>";
+	}
+	?>
 </select></p>
 <br />
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum');    ?>">Save</button>

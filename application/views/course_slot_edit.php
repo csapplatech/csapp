@@ -1,8 +1,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <h1>Course Slot Edit</h1>
 
-<?php var_dump($data); ?>
-
 <form method="POST">
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
   <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
@@ -10,8 +8,9 @@
       foreach($data['courses'] as $row)
       {
 	echo "<option value=\"$row[id]\"";
-	if ($row['selected'] == TRUE)
-		echo "selected";
+	if (isset($row['selected']))
+	   if ($row['selected'] == TRUE)
+	      echo " selected";
 	echo ">$row[name] $row[number]</option>"; 
       }
     ?>
@@ -20,27 +19,53 @@
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
 <p>Recommended Quarter: </p>
 <select size=4 name='recommendedQuarter'>
-  <option <?php if (strcmp($data['recommendedQuarter'], 'Fall')   == 0) echo 'selected'; ?>>Fall</option>
-  <option <?php if (strcmp($data['recommendedQuarter'], 'Winter') == 0) echo 'selected'; ?>>Winter</option>
-  <option <?php if (strcmp($data['recommendedQuarter'], 'Spring') == 0) echo 'selected'; ?>>Spring</option>
-  <option <?php if (strcmp($data['recommendedQuarter'], 'Summer') == 0) echo 'selected'; ?>>Summer</option>
+  <?php
+    $quarters = array('Fall', 'Winter', 'Spring', 'Summer');
+    foreach ($quarters as $quarter)
+    {
+  	echo '<option';
+  	if (isset($data['recommendedQuarter']))
+  	   if (strcmp($data['recommendedQuarter'], $quarter) == 0) 
+  	       echo ' selected'; 
+  	echo ">$quarter</option>";
+    }
+  ?>
 </select>
 <p>Recommended Year:</p> 
 <select size=4 name='recommendedYear'>
-  <option <?php if (strcmp($data['recommendedYear'], 'Freshman')  == 0) echo 'selected'; ?>>Freshman</option>
-  <option <?php if (strcmp($data['recommendedYear'], 'Sophomore') == 0) echo 'selected'; ?>>Sophomore</option>
-  <option <?php if (strcmp($data['recommendedYear'], 'Junior')    == 0) echo 'selected'; ?>>Junior</option>
-  <option <?php if (strcmp($data['recommendedYear'], 'Senior')    == 0) echo 'selected'; ?>>Senior</option>
+  <?php
+    $years = array('Freshman', 'Sophomore', 'Junior', 'Senior');
+    foreach ($years as $year)
+    {
+  	echo '<option';
+  	if (isset($data['recommendedYear']))
+  	   if (strcmp($data['recommendedYear'], $year) == 0) 
+  	       echo ' selected'; 
+  	echo ">$year</option>";
+    }
+  ?>
 </select>
 <p>Minimum Grade:</p>
 <select size=5 name='minimumGrade'>
-  <option <?php if (strcmp($data['minimumGrade'], 'A') == 0) echo 'selected'; ?>>A</option>
-  <option <?php if (strcmp($data['minimumGrade'], 'B') == 0) echo 'selected'; ?>>B</option>
-  <option <?php if (strcmp($data['minimumGrade'], 'C') == 0) echo 'selected'; ?>>C</option>
-  <option <?php if (strcmp($data['minimumGrade'], 'D') == 0) echo 'selected'; ?>>D</option>
-  <option <?php if (strcmp($data['minimumGrade'], 'F') == 0) echo 'selected'; ?>>F</option>
+  <?php
+    $grades = array('A', 'B', 'C', 'D', 'F');
+    foreach ($grades as $grade)
+    {
+  	echo '<option';
+  	if (isset($data['minimumGrade']))
+  	   if (strcmp($data['minimumGrade'], $grade) == 0) 
+  	       echo ' selected'; 
+  	echo ">$grade</option>";
+    }
+  ?>
 </select>
 <br /><br />
+<?php  
+echo "<input type='hidden' name='courseSlot'";
+if (isset($data['index']))
+  echo " value=$data[index]";
+echo '>';
+?>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
