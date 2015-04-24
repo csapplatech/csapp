@@ -8,7 +8,7 @@ class Curriculumcreator extends CI_Controller {
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model');
 		$curriculum = new Curriculum_Model(); 
-		$_SESSION['MaxCurriculumIndex'] = 1;
+		$_SESSION['maxCurriculumIndex'] = 1;
 		
 		//call and pass data to initial curriculum view
 		$curriculums = $curriculum->getAllCurriculums();
@@ -117,14 +117,12 @@ class Curriculumcreator extends CI_Controller {
 			$curriculum->update(); //update current curriculum for edit
 		else
 			$curriculum->create(); //create a new entry for clone/new	
-		
-		var_dump($curriculum->getCurriculumCourseSlots());
-			
+					
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
-		unset($_SESSION['MaxCurriculumIndex']);
+		unset($_SESSION['maxCurriculumIndex']);
 				
 		$this->index();
 	}
@@ -136,7 +134,7 @@ class Curriculumcreator extends CI_Controller {
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
-		unset($_SESSION['MaxCurriculumIndex']);
+		unset($_SESSION['maxCurriculumIndex']);
 		
 		$this->index();
 	}
@@ -276,16 +274,17 @@ class Curriculumcreator extends CI_Controller {
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		
-		//~ $currIndex = $courseSlot->getCurriculumIndex();
-		//~ 
+		$largestIndex = 0;
 		//Handle non-unique indeces
-		//~ foreach ($courseSlots as $slot)
-		//~ {
-			//~ if ($slot->getCurriculumIndex() == $currIndex)
-			//~ {
-				//~ 
-			//~ }
-		//~ }
+		foreach ($courseSlots as $slot)
+		{
+			$currentIndex = $slot->getCurriculumIndex();
+			if ($currentIndex > $largestIndex)
+				$largestIndex = $currentIndex;
+		}
+		
+		if ($largestIndex > 0)
+			$_SESSION['maxCurriculumIndex'] = $largestIndex + 1;
 
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
 		{
@@ -303,7 +302,7 @@ class Curriculumcreator extends CI_Controller {
 			}
 		} 
 		else 
-			$courseSlot->setCurriculumIndex($_SESSION['MaxCurriculumIndex']++);
+			$courseSlot->setCurriculumIndex($_SESSION['maxCurriculumIndex']++);
 
 		$curriculum->addCurriculumCourseSlot($courseSlot);
 		
