@@ -11,16 +11,14 @@
     <body style="padding-top: 60px">
           <?php $this->load->view('Templates/navbar'); ?>
         <div>
-            <img src="../../image/latech.gif" alt="Tech Logo" class="logo" style="width:450px; height:450px; position:relative; display:inline-block">
-            
-            <div style="height:400px; width:400px; margin-left: 100px; position:absolute; display:inline-block; margin-top: 10px ">
-                <p> Please Select the student you wish to view</p>
+            <div style="height:450px; width:275px; margin: 0 auto; overflow-y: auto">
+                <p style="color:black"> Please Select the student you wish to view</p>
                 <ul>
                 <?php
                 
                 foreach ($students as $stud)
                 {
-                    echo  "<li class='clickme' id='".$stud->getUserID()."'>" . $stud->getName() . "</li>";
+                    echo  "<li style='color: black; text-align:left' class='clickme' id='".$stud->getUserID()."'>" . $stud->getName() . "</li>";
                 }
                 
                 ?>
