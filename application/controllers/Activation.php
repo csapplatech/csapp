@@ -20,6 +20,8 @@ class Activation extends CI_Controller
 
 		//Array of characters to generate password
 		$charset = array(
+		        '!','@','#','$','%','^','&','*','(',')',
+			'~','=','+','_','-','?','/','>','<','.',
 			'0','1','2','3','4','5','6','7','8','9',
 			'a','b','c','d','e','f','g','h','i','j',
 			'k','l','m','n','o','p','q','r','s','t',
@@ -51,25 +53,25 @@ class Activation extends CI_Controller
 		//Email user their login information	
 		$this->load->library('email');
 		$config['protocol'] = 'smtp';
-		$config['smtp_host'] = 'smtp.gmail.com';
+		$config['smpt_crypt'] = 'ssl';
+		$config['smtp_host'] = 'ssl://smtp.gmail.com';
 		$config['smtp_port'] = '465';
 		$config['smtp_user'] = 'testseniorcapstone@gmail.com';
 		$config['smtp_pass'] = 'testpass';
 		$config['mailtype'] = 'html';
 		$config['charset'] = 'utf-8';
 		$config['newline'] = "\r\n";
+		$config['validate'] = FALSE;
+		$config['bcc_batch_mode'] = FALSE;
+		$config['bcc_batch_size'] = 200;
 		$this->email->initialize($config);
 		
+		$this->email->from('testseniorcapstone@gmail.com', 'Senior');
 		$list = array('testseniorcapstone@gmail.com');
 		$this->email->to($list);
-		
-		$this->email->from    ('testseniorcapstone@gmail.com', 'Senior');
 		$this->email->reply_to('testseniorcapstone@gmail.com', 'Senior');
-		$this->email->subject ('Subject');
-		$this->email->message (
-			'Username: '.$user->getUserID()."\r\n".
-			'Password: '.$pass."\r\n"
-		);
+		$this->email->subject('Subject');
+		$this->email->message('Email works great!');
 
 		if ($this->email->send())
 			echo "Success!";
