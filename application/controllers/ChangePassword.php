@@ -11,7 +11,7 @@ class ChangePassword extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
         {   redirect('Login/logout');} //If user did not load, logout the session
-        if (!$user->isStudent())
+        if ($user->isGuest())
         {   redirect('Mainpage');} //If not a student, redirect to mainpage
         $this->load->view('changePassword', array('user'=>$user));
     }
@@ -24,7 +24,7 @@ class ChangePassword extends CI_Controller
         $user = new User_model;
         if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
         {   redirect('Login/logout');} //If user did not load, logout the session
-        if (!$user->isStudent())
+        if ($user->isGuest())
         {   redirect('Mainpage');} //If not a student, redirect to mainpage
         $oldpw = $this->input->post('oldpw');
         $newpw = $this->input->post('newpw');

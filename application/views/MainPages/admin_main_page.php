@@ -48,7 +48,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Bug Reports
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('ChangePassword') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Changepassword') ;?>">
             Change Password
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
