@@ -238,8 +238,8 @@ class Curriculumcreator extends CI_Controller {
 		if ($notes == NULL)
 			$notes = $this->input->post('notes');
 			
-		if ($curriculumIndex == NULL)
-			$curriculumIndex = $this->input->post('index');
+		if ($index == NULL)
+			$index = $this->input->post('index');
 			
 		if (!isset($notes))
 			$notes = " ";
