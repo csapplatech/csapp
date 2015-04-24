@@ -5,11 +5,13 @@ $(document).ready(function() {
    $('.clickMe').click(function() {
            ($(this).next()).toggle();
    }); 
-   $(".button").on("click", function(){      
+   $("body").on("click", ".button", function(){ 
         var butID=$(this).attr('id');
+        if (butID[0] == "f")
+            butID = butID.substring(1);
         if($(this).text()=="Add")
         {
-            $(this).text("Add Alt");
+            $(this).text("Remove");
             var tableID="row"+butID;
             cellAid="#a"+butID;
             cellA =$(cellAid).text();
@@ -25,9 +27,9 @@ $(document).ready(function() {
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
-            $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
+            $('#target').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td><td><button type=\"button\" class='button' id='f"+butID+"'>Move</button></td></tr>");
        }
-        else if($(this).text()=="Add Alt")
+        else if($(this).text()=="Move")
         {
             save_type[save_id.indexOf(butID)]="alt";
             var removeID ="#row"+butID;
@@ -43,7 +45,7 @@ $(document).ready(function() {
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
-            $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
+            $('#altTable').append("<tr id='"+tableID+"'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td><td><button type=\"button\" class='button' id='f"+butID+"'>Remove</button></td></tr>");
         } else {
             var index = save_id.indexOf(butID);
             save_id.splice(index,1);
@@ -52,6 +54,8 @@ $(document).ready(function() {
             var removeID ="#row"+butID;
             $(this).text("Add");
             $(removeID).remove();
+            
+            $('#'+butID).text("Add");
         }
     });
     $('#reset').click(function() {

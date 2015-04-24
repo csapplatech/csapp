@@ -23,6 +23,29 @@
                 $id=0;
                 foreach ($recommended->getSubjects() as $sub)
                 {
+                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
+                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                    foreach($sub->getCourses() as $cor)
+                    {
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
+                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                            foreach($cor->getSections() as $sec)
+                            {
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
+                                     "</div>";
+                                $id++;
+                            }
+                        echo "</ul>";
+                    }
+                    echo "</ul>";
+                }
+                /*foreach ($recommended->getSubjects() as $sub)
+                {
                     foreach($sub->getCourses() as $cor)
                     {
                         echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
@@ -41,13 +64,13 @@
                             }
                         echo "</ul>";
                     }
-                }
+                }*/
                 ?>
              </ul>    
             <h4 class="class_headers" style='margin-top:.5%'>Select Subject</h4>
              <ul>
                 <?php 
-                $id=1000;
+                $id=10000;
                 foreach ($all_courses->getSubjects() as $sub)
                 {
                     echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
@@ -103,14 +126,15 @@
                 <th style="width: 7%">Call #</th>               
                 <th style="width: 6%">Hrs</th>
                 <th style="width: 18%">Special Signature</th> 
-                <th style="width: 25%">Class Times</th>
+                <th style="width: 20%">Class Times</th>
+                <th style="width: 5%">Button</th>
               </tr>
             </table>
             
             <div id='alt'>
                 <table id='altTable'>
                 <tr>
-                    <th colspan="6"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
+                    <th colspan="7"><strong><center>ALTERNATIVE COURSE CHOICES</center></strong></th>
                 </tr>
                 <tr>
                   <th style="width: 14%">Subj-Cor-Sec</th>
@@ -118,7 +142,8 @@
                   <th style="width: 7%">Call #</th>               
                   <th style="width: 6%">Hrs</th>
                   <th style="width: 18%">Special Signature</th> 
-                  <th style="width: 25%">Class Times</th>
+                  <th style="width: 20%">Class Times</th>
+                  <th style="width: 5%">Button</th>
                 </tr>
                 </table>
             </div>

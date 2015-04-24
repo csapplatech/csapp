@@ -78,7 +78,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Bug Reports
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Advisingform/index') ;?>">
             Schedule
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">

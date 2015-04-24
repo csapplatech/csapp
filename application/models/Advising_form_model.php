@@ -120,7 +120,7 @@ class Advising_form_model extends CI_Model
 			$this->db->select('CourseSectionID');
 			$this->db->from('AdvisingFormCourseSections');
 			$this->db->where('AdvisingFormID', $this->advisingFormID);
-			$this->db->where('AdvisingFormCourseSectionState', self::COURSE_SECTION_STATE_PREFERRED);
+			$this->db->where('AdvisingFormCourseSectionStateID', self::COURSE_SECTION_STATE_PREFERRED);
 			
 			$results = $this->db->get();
 			
