@@ -8,7 +8,7 @@ class Curriculumcreator extends CI_Controller {
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model');
 		$curriculum = new Curriculum_Model(); 
-		$_SESSION['MaxCurriculumIndex'] = 0;
+		$_SESSION['MaxCurriculumIndex'] = 1;
 		
 		//call and pass data to initial curriculum view
 		$curriculums = $curriculum->getAllCurriculums();
