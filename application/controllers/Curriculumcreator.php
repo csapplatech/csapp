@@ -189,17 +189,28 @@ class Curriculumcreator extends CI_Controller {
 	}
 	
 	//delete a curriculum course slot
-	public function deleteCurriculumCourseSlot($curriculumCourseSlotID = NULL) 
+	public function deleteCurriculumCourseSlot($courseSlotIndex = NULL) 
 	{
 		//get arguments
-		if ($curriculumCourseSlotID == NULL)
-			$curriculumCourseSlotID = $this->input->post('courseSlot');
+		if ($courseSlotIndex == NULL)
+			$courseSlotIndex = $this->input->post('courseSlot');
 	
-		$courseSlot = new Curriculum_course_slot_model();	
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		$courseSlot = new Curriculum_course_slot_model();
+		
+		//match indeces
+		foreach ($courseSlots as $slot)
+		{
+			$index = $slot->getCurriculumIndex();
+			if ($index == $courseSlotIndex)
+			{	
+				$courseSlot = $slot;
+				break;
+			}
+		}
+		
 		$curriculum->removeCurriculumCourseSlot($courseSlot);
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		
