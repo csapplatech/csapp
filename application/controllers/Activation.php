@@ -40,7 +40,7 @@ class Activation extends CI_Controller
 		//Email user their login information	
 		$this->load->library('email');
 		$config['protocol'] = 'smtp';
-		$config['smpt_crypt'] = 'ssl'
+		$config['smpt_crypt'] = 'ssl';
 		$config['smtp_host'] = 'ssl://smtp.gmail.com';
 		$config['smtp_port'] = '465';
 		$config['smtp_user'] = 'testseniorcapstone@gmail.com';
