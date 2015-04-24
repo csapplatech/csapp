@@ -1,13 +1,14 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class CurriculumCreator extends CI_Controller {
+class Curriculumcreator extends CI_Controller {
 	
 	public function index()
 	{
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model');
 		$curriculum = new Curriculum_Model(); 
+		$_SESSION['maxCurriculumIndex'] = 1;
 		
 		//call and pass data to initial curriculum view
 		$curriculums = $curriculum->getAllCurriculums();
@@ -16,15 +17,14 @@ class CurriculumCreator extends CI_Controller {
 		//creating easy to use array for table
 		foreach ($curriculums as $curr) 
 		{
-			$arr = [
-				0 => $curr->getName(),
-				1 => $curr->getCurriculumID(),
-				2 => $curr->getDateCreated(),
+			$arr = [ 
+				'name' => $curr->getName(),
+				'id'   => $curr->getCurriculumID(),
+				'date' => $curr->getDateCreated(),
 			];
 			
 			array_push($data, $arr);
 		}
-		array_push($data, 'test');
 		$this->load->view('curriculum_choice', array('data'=>$data));
 	}
         
@@ -34,40 +34,14 @@ class CurriculumCreator extends CI_Controller {
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
-		
-		//load curriculum
 		$curriculum = new Curriculum_Model();
 		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		
 		$_SESSION['curriculumCreationMethod'] = "clone";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		
-		$type = $curriculum->getCurriculumType();
-		if ($type == 1)
-			$curriculumType = 'Degree';
-		else if ($type == 2)
-			$curriculumType = 'Minor';
-		else if ($type == 3) 
-			$curriculumType = 'Concentration';
-		
-		$data = array(
-			"name"   => $curriculum->getName(),
-			"course" => array(),
-			"type"   => $curriculumType
-		);
-		
-		//create easy to use array for table
-		foreach ($courseSlots as $slot)
-		{
-			$arr = [
-				0 => $slot->getName(),
-				1 => $slot->getCurriculumCourseSlotID()
-			];
-			
-			array_push($data['course'], $arr);
-		}
-		
-		$this->load->view('curriculum_edit', array('data'=>$data)); 
+		//load curriculum
+		$this->loadCurriculumEdit($curriculum);
 	}
 	
 	//edit a current curriculum
@@ -76,50 +50,27 @@ class CurriculumCreator extends CI_Controller {
 		//get arguments
 		if ($curriculumID == NULL)
 			$curriculumID = $this->input->post('curriculum');
-			
-		//load curriculum
 		$curriculum = new Curriculum_Model();
 		$curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		
 		$_SESSION['curriculumCreationMethod'] = "edit";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
-		
-		$type = $curriculum->getCurriculumType();
-		if ($type == 1)
-			$curriculumType = 'Degree';
-		else if ($type == 2)
-			$curriculumType = 'Minor';
-		else if ($type == 3) 
-			$curriculumType = 'Concentration';
-		
-		$data = array(
-			"name"   => $curriculum->getName(),
-			"course" => array(),
-			"type"   => $curriculumType
-		);
-		
-		//create easy to use array for table
-		foreach ($courseSlots as $slot)
-		{
-			$arr = [
-				0 => $slot->getName(),
-				1 => $slot->getCurriculumCourseSlotID()
-			];
 			
-			array_push($data['course'], $arr);
-		}
-		
-		$this->load->view('curriculum_edit', array('data'=>$data));    
+		//load curriculum
+		$this->loadCurriculumEdit($curriculum);
 	}
 	
 	//creating a new curriculum
 	public function newCurriculum()
 	{
 		$curriculum = new Curriculum_model(); 
+		$curriculum->setName('New Curriculum');
 		$_SESSION['curriculumCreationMethod'] = "new";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		$data = array(
-			"name" => "New Curriculum"
+			'name'    => "New Curriculum",
+			'courses' => array(),
+			'type'    => ""
 		);
 		$this->load->view('curriculum_edit', array('data'=>$data));	
 	}
@@ -166,124 +117,40 @@ class CurriculumCreator extends CI_Controller {
 			$curriculum->update(); //update current curriculum for edit
 		else
 			$curriculum->create(); //create a new entry for clone/new	
-			
+					
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
-		
+		unset($_SESSION['maxCurriculumIndex']);
+				
 		$this->index();
 	}
 	
 	//cancelling an edit to a curriculum
-	public function cancelCurriculumEdit()
+	public function cancelCurriculum()
 	{
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
+		unset($_SESSION['maxCurriculumIndex']);
 		
 		$this->index();
 	}
 		
 	//clone and edit a curriculum course slot
-    public function cloneCurriculumCourseSlot($courseSlotName = NULL) //post: courseSlot
+    public function cloneCurriculumCourseSlot() 
     {
-		//get arguments
-		if ($courseSlotName == NULL)
-			$courseSlotName = $this->input->post('courseSlot');
-		
-		$curriculum = new Curriculum_model();
-		$curriculum->fromSerializedString($_SESSION['curriculum']);
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
-		$courseSlot = new Curriculum_course_slot_model();
-		
-		//match names
-		foreach ($courseSlots as $slot)
-		{
-			$name = $slot->getName();
-			
-			if (strcmp($name,$courseSlotName) == 0)
-			{	
-				$courseSlot = $slot;
-				break;
-			}
-		}
-			
 		$_SESSION['curriculumCourseSlotMethod'] = "clone";
-		$courses = new Course_model();
-		
-		$data = array(
-			"name"    => $courseSlot->getName(),
-			"courses" =>  array()
-		);
-		
-		$availableCourses = $courses->getAllCourses();
-		
-		foreach ($availableCourses as $course)
-		{
-			$arr = [
-				'name'    => $course->getCourseName(),
-				'id'      => $course->getCourseID(),
-				'prereqs' => $course->getPrerequisiteCourses(),
-				'number'  => $course->getCourseNumber()
-			];
-			
-			array_push($data["courses"], $arr);
-		}
-		
-		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
-		$this->load->view('course_slot_edit', array('data'=>$data));
+		$this->loadCurriculumCourseSlotEdit();
 	}
 	
 	//clone and edit a curriculum course slot
-    public function editCurriculumCourseSlot($courseSlotName = NULL) //post: courseSlot
+    public function editCurriculumCourseSlot() 
     {
-		///get arguments
-		if ($courseSlotName == NULL)
-			$courseSlotName = $this->input->post('courseSlot');
-		
-		$curriculum = new Curriculum_model();
-		$curriculum->fromSerializedString($_SESSION['curriculum']);
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
-		$courseSlot = new Curriculum_course_slot_model();
-		
-		//match names
-		foreach ($courseSlots as $slot)
-		{
-			$name = $slot->getName();
-			
-			if (strcmp($name,$courseSlotName) == 0)
-			{	
-				$courseSlot = $slot;
-				break;
-			}
-		}
-		
 		$_SESSION['curriculumCourseSlotMethod'] = "edit";
-		$courses = new Course_model();
-		
-		$data = array(
-			"name"    => $courseSlot->getName(),
-			"courses" =>  array()
-		);
-		
-		$availableCourses = $courses->getAllCourses();
-		
-		foreach ($availableCourses as $course)
-		{
-			$arr = [
-				'name'    => $course->getCourseName(),
-				'id'      => $course->getCourseID(),
-				'prereqs' => $course->getPrerequisiteCourses(),
-				'number'  => $course->getCourseNumber()
-			];
-			
-			array_push($data["courses"], $arr);
-		}
-		
-		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
-		$this->load->view('course_slot_edit', array('data'=>$data));
+		$this->loadCurriculumCourseSlotEdit();
 	}
 
 	//create a new curriculum course slot
@@ -297,8 +164,8 @@ class CurriculumCreator extends CI_Controller {
 		$courses = new Course_model();
 		
 		$data = array(
-			"name"    => 'New Curriculum Course Slot',
-			"courses" =>  array()
+			'name'    => 'New Curriculum Course Slot',
+			'courses' =>  array(),
 		);
 		
 		$availableCourses = $courses->getAllCourses();
@@ -312,7 +179,7 @@ class CurriculumCreator extends CI_Controller {
 				'number'  => $course->getCourseNumber()
 			];
 			
-			array_push($data["courses"], $arr);
+			array_push($data['courses'], $arr);
 		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
@@ -320,51 +187,35 @@ class CurriculumCreator extends CI_Controller {
 	}
 	
 	//delete a curriculum course slot
-	public function deleteCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
+	public function deleteCurriculumCourseSlot($courseSlotIndex = NULL) 
 	{
 		//get arguments
-		if ($curriculumCourseSlotID == NULL)
-			$curriculumCourseSlotID = $this->input->post('courseSlot');
-		
-		$courseSlot = new Curriculum_course_slot_model();	
-		$courseSlot->loadPropertiesFromPrimaryKey($curriculumCourseSlotID);
-		
+		if ($courseSlotIndex == NULL)
+			$courseSlotIndex = $this->input->post('courseSlot');
+	
 		$curriculum = new Curriculum_model();
-		$curriculum = fromSerializedString($_SESSION['curriculum']);
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		$courseSlot = new Curriculum_course_slot_model();
+		
+		//match indeces
+		foreach ($courseSlots as $slot)
+		{
+			$index = $slot->getCurriculumIndex();
+			if ($index == $courseSlotIndex)
+			{	
+				$courseSlot = $slot;
+				break;
+			}
+		}
+		
 		$curriculum->removeCurriculumCourseSlot($courseSlot);
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		
 		$courseSlot->delete();
 		
 		//load curriculum
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
-		
-		$type = $curriculum->getCurriculumType();
-		if ($type == 1)
-			$curriculumType = 'Degree';
-		else if ($type == 2)
-			$curriculumType = 'Minor';
-		else if ($type == 3) 
-			$curriculumType = 'Concentration';
-		
-		$data = array(
-			"name"   => $curriculum->getName(),
-			"course" => array(),
-			"type"   => $curriculumType
-		);
-		
-		//create easy to use array for table
-		foreach ($courseSlots as $slot)
-		{
-			$arr = [
-				0 => $slot->getName(),
-				1 => $slot->getCurriculumCourseSlotID()
-			];
-			
-			array_push($data['course'], $arr);
-		}
-		
-		$this->load->view('curriculum_edit', array('data'=>$data)); 
+		$this->loadCurriculumEdit($curriculum);
 	}
 	
 	//cancel a curriculum course slot editing
@@ -372,38 +223,13 @@ class CurriculumCreator extends CI_Controller {
 	{
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
-				
-		$type = $curriculum->getCurriculumType();
-		if ($type == 1)
-			$curriculumType = 'Degree';
-		else if ($type == 2)
-			$curriculumType = 'Minor';
-		else if ($type == 3) 
-			$curriculumType = 'Concentration';
 		
-		$data = array(
-			"name"   => $curriculum->getName(),
-			"course" => array(),
-			"type"   => $curriculumType
-		);
-		
-		//create easy to use array for table
-		foreach ($courseSlots as $slot)
-		{
-			$arr = [
-				0 => $slot->getName(),
-				1 => $slot->getCurriculumCourseSlotID()
-			];
-			
-			array_push($data['course'], $arr);
-		}
-		
-		$this->load->view('curriculum_edit', array('data'=>$data));   
+		$this->loadCurriculumEdit($curriculum); 
 	}
 	
 	//save a curriculum course slot
-	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL) //post: validCourseIDs, name, minimumGrade; validCourseIDs(int array); name(string); minimumGrade(string)
+	//validCourseIDs(int array); name(string); minimumGrade(string); 
+	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL, $notes = NULL, $index = NULL) 
 	{
 		//get arguments
 		if ($validCourseIDs == NULL)
@@ -415,12 +241,30 @@ class CurriculumCreator extends CI_Controller {
 		if ($minimumGrade == NULL)
 			$minimumGrade = $this->input->post('minimumGrade');
 			
+		if ($recommendedQuarter == NULL)
+			$recommendedQuarter = $this->input->post('recommendedQuarter');
+			
+		if ($recommendedYear == NULL)
+			$recommendedYear = $this->input->post('recommendedYear');
+		
+		if ($notes == NULL)
+			$notes = $this->input->post('notes');
+			
+		if ($index == NULL)
+			$index = $this->input->post('index');
+			
+		if (!isset($notes))
+			$notes = " ";
+			
 		//add logic to grab arguments	
 		$courseSlot = new Curriculum_course_slot_model();
 		$courseSlot->fromSerializedString($_SESSION['courseSlot']);
 		$courseSlot->setMinimumGrade($minimumGrade);
 		$courseSlot->setName($name);
-		
+		$courseSlot->setRecommendedQuarter($recommendedQuarter);
+		$courseSlot->setRecommendedYear($recommendedYear);
+		$courseSlot->setNotes($notes);
+
 		//populate course slot with the valid course ids
 		foreach ($validCourseIDs as $validCourse)
 			$courseSlot->addValidCourseID($validCourse);
@@ -430,25 +274,110 @@ class CurriculumCreator extends CI_Controller {
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		
+		$largestIndex = 0;
+		//Handle non-unique indeces
+		foreach ($courseSlots as $slot)
+		{
+			$currentIndex = $slot->getCurriculumIndex();
+			if ($currentIndex > $largestIndex)
+				$largestIndex = $currentIndex;
+		}
+		
+		if ($largestIndex > 0)
+			$_SESSION['maxCurriculumIndex'] = $largestIndex + 1;
+
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
 		{
+			$tempCourseSlot = new Curriculum_course_slot_model();
 			$tempCourseSlot->fromSerializedString($_SESSION['courseSlot']);
+			$tempCourseSlotIndex = $tempCourseSlot->getCurriculumIndex();			
+			
 			foreach ($courseSlots as $slot)
 			{
-				if (strcmp($testCourseSlot->getName(), $slot->getName()) == 0)
+				if ($tempCourseSlotIndex == $slot->getCurriculumIndex())
 				{
 					$curriculum->removeCurriculumCourseSlot($tempCourseSlot);
 					break;
 				}
 			}
-		}
+		} 
+		else 
+			$courseSlot->setCurriculumIndex($_SESSION['maxCurriculumIndex']++);
 
 		$curriculum->addCurriculumCourseSlot($courseSlot);
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
+		
+		$this->loadCurriculumEdit($curriculum);   
+	}
+
+	//passes data to and loads curriculum course slot edit view
+	private function loadCurriculumCourseSlotEdit($courseSlotIndex = NULL)
+	{
+		///get arguments
+		if ($courseSlotIndex == NULL)
+			$courseSlotIndex = $this->input->post('courseSlot'); 
+		
+		$curriculum = new Curriculum_model();
+		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		$courseSlot = new Curriculum_course_slot_model();
+		
+		//match indeces
+		foreach ($courseSlots as $slot)
+		{
+			$index = $slot->getCurriculumIndex();
+			if ($index == $courseSlotIndex)
+			{	
+				$courseSlot = $slot;
+				break;
+			}
+		}
+		
+		$courses = new Course_model();
+		
+		$data = array(
+			'name'               => $courseSlot->getName(),
+			'courses'            => array(),
+			'recommendedQuarter' => $courseSlot->getRecommendedQuarter(),
+			'recommendedYear'    => $courseSlot->getRecommendedYear(),
+			'minimumGrade'       => $courseSlot->getMinimumGrade(),
+			'notes'              => $courseSlot->getNotes(),
+			'index'				 => $courseSlotIndex
+		);
+		
+		$availableCourses = $courses->getAllCourses();
+		$validCourse = $courseSlot->getValidCourseIDs();
+		
+		foreach ($availableCourses as $course)
+		{
+			$arr = [
+				'name'    => $course->getCourseName(),
+				'id'      => $course->getCourseID(),
+				'prereqs' => $course->getPrerequisiteCourses(),
+				'number'  => $course->getCourseNumber(),
+				'selected'=> FALSE
+			];
 			
+			foreach ($validCourse as $valid)
+				if (strcmp($valid, $course->getCourseID()) == 0)
+					$arr['selected'] = TRUE;
+			
+			array_push($data['courses'], $arr);
+		}
+		
+		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
+		$this->load->view('course_slot_edit', array('data'=>$data));
+	}
+	
+	//passes data to and loads curriculum edit view
+	private function loadCurriculumEdit($curriculum)
+	{
+		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		
 		$type = $curriculum->getCurriculumType();
+		$curriculumType = NULL;
 		if ($type == 1)
 			$curriculumType = 'Degree';
 		else if ($type == 2)
@@ -457,22 +386,23 @@ class CurriculumCreator extends CI_Controller {
 			$curriculumType = 'Concentration';
 		
 		$data = array(
-			"name"   => $curriculum->getName(),
-			"course" => array(),
-			"type"   => $curriculumType
+			'name'   => $curriculum->getName(),
+			'course' => array(),
+			'type'   => $curriculumType
 		);
 		
 		//create easy to use array for table
 		foreach ($courseSlots as $slot)
 		{
-			$arr = [
-				0 => $slot->getName(),
-				1 => $slot->getCurriculumCourseSlotID()
+			$arr = [ 
+				'name' => $slot->getName(),
+				'id'   => $slot->getCurriculumCourseSlotID(),
+				'index'=> $slot->getCurriculumIndex()
 			];
 			
 			array_push($data['course'], $arr);
 		}
 		
-		$this->load->view('curriculum_edit', array('data'=>$data));   
+		$this->load->view('curriculum_edit', array('data'=>$data)); 
 	}
 }

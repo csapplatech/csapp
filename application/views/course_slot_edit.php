@@ -3,23 +3,69 @@
 
 <form method="POST">
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
-  <select multiple size='3' id="AvailCourseSelect" name='validCourseIDs[]'>
+  <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
       foreach($data['courses'] as $row)
-	echo "<option value=\"$row[id]\">$row[name] $row[number]</option>"; 
+      {
+	echo "<option value=\"$row[id]\"";
+	if (isset($row['selected']))
+	   if ($row['selected'] == TRUE)
+	      echo " selected";
+	echo ">$row[name] $row[number]</option>"; 
+      }
     ?>
   </select>
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
+<p>Recommended Quarter: </p>
+<select size=4 name='recommendedQuarter'>
+  <?php
+    $quarters = array('Fall', 'Winter', 'Spring', 'Summer');
+    foreach ($quarters as $quarter)
+    {
+  	echo '<option';
+  	if (isset($data['recommendedQuarter']))
+  	   if (strcmp($data['recommendedQuarter'], $quarter) == 0) 
+  	       echo ' selected'; 
+  	echo ">$quarter</option>";
+    }
+  ?>
+</select>
+<p>Recommended Year:</p> 
+<select size=4 name='recommendedYear'>
+  <?php
+    $years = array('Freshman', 'Sophomore', 'Junior', 'Senior');
+    foreach ($years as $year)
+    {
+  	echo '<option';
+  	if (isset($data['recommendedYear']))
+  	   if (strcmp($data['recommendedYear'], $year) == 0) 
+  	       echo ' selected'; 
+  	echo ">$year</option>";
+    }
+  ?>
+</select>
 <p>Minimum Grade:</p>
-<select size=5>
-  <option>A</option>
-  <option>B</option>
-  <option>C</option>
-  <option>D</option>
-  <option>F</option>
+<select size=5 name='minimumGrade'>
+  <?php
+    $grades = array('A', 'B', 'C', 'D', 'F');
+    foreach ($grades as $grade)
+    {
+  	echo '<option';
+  	if (isset($data['minimumGrade']))
+  	   if (strcmp($data['minimumGrade'], $grade) == 0) 
+  	       echo ' selected'; 
+  	echo ">$grade</option>";
+    }
+  ?>
 </select>
 <br /><br />
+<?php  
+echo "<input type='hidden' name='courseSlot'";
+if (isset($data['index']))
+  echo " value=$data[index]";
+echo '>';
+?>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>

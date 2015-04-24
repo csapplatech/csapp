@@ -583,8 +583,8 @@ class Curriculum_course_slot_model extends CI_Model
      * @return boolean True if all rows were successfully saved in the database, false otherwise
      */
     public function create()
-    {
-        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->name != null)
+    {		
+        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->name != null && $this->minimumGrade != null && $this->recommendedQuarter != null && $this->recommendedYear != null)
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
@@ -597,24 +597,27 @@ class Curriculum_course_slot_model extends CI_Model
 			);
             
             $this->db->insert('CurriculumCourseSlots', $data);
-            
+			
             if($this->db->affected_rows() > 0)
             {
                 $this->curriculumCourseSlotID = $this->db->insert_id();
                 
-                $data_arr = array();
+				if(count($this->validCourseIDs) > 0)
+				{
+					$data_arr = array();
                 
-                foreach($this->validCourseIDs as $courseID)
-                {
-                    array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
-                }
-                
-                $this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
-                
+					foreach($this->validCourseIDs as $courseID)
+					{
+						array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
+					}
+					
+					$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+				}
+				
                 return true;
             }
         }
-        
+		
         return false;
     }
     
@@ -626,7 +629,7 @@ class Curriculum_course_slot_model extends CI_Model
      */
     public function update()
     {
-        if($this->curriculumCourseSlotID != null && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT))
+        if($this->curriculumCourseSlotID != null && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->minimumGrade != null && $this->recommendedQuarter != null && $this->recommendedYear != null)
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
@@ -646,14 +649,17 @@ class Curriculum_course_slot_model extends CI_Model
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
             $this->db->delete('CurriculumSlotValidCourses');
             
-            $data_arr = array();
-            
-            foreach($this->validCourseIDs as $courseID)
-            {
-                array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
-            }
-            
-            $this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+            if(count($this->validCourseIDs) > 0)
+			{
+				$data_arr = array();
+			
+				foreach($this->validCourseIDs as $courseID)
+				{
+					array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
+				}
+				
+				$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+			}
             
             return $sum > 0;
         }
