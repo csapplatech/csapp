@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Summary of User_model
  * 
@@ -11,9 +10,13 @@ class User_model extends CI_Model
     private $userID = null;
     private $emailAddress = null;
     private $passwordHash = null;
+	private $passwordSalt = null;
     private $name = null;
+	private $userStateID = null;
+	private $lastLogin = null;
     private $roles = array();
     private $coursesTaken = array();
+	private $curriculums = array();
     
     // Constants to represent the various user roles as reflected in the CSC Web App database
     // If the table `Roles` or any of its rows are ever modified, reflect those changes in these constants
@@ -21,7 +24,14 @@ class User_model extends CI_Model
     const ROLE_PROGRAM_CHAIR = 2;
     const ROLE_ADVISOR = 3;
     const ROLE_STUDENT = 4;
+	const ROLE_GUEST = 5;
     
+	// Constants to represent the various user states as reflected in the CSC Web app database
+	// If the table `UserStates` or any of its rows are ever modified, reflect those changes in these constants
+	const STATE_NOT_ACTIVATED = 1;
+	const STATE_ACTIVATED = 2;
+	const STATE_BLOCKED = 3;
+	
     /**
      * Main Constructor for User_model
      */
@@ -42,20 +52,35 @@ class User_model extends CI_Model
         if($userID != null)
         {
             if(filter_var($userID, FILTER_VALIDATE_INT))
-            {
+            {				
                 $results = $this->db->get_where('Users', array('UserID' => $userID), 1);
-                
+				
                 if($results->num_rows() > 0)
                 {
                     $row = $results->row_array();
                     
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
-                    $this->passwordHash = $row['PasswordHash'];
+					
+					if(strpos($row['PasswordHash'], "$"))
+					{
+						$passwordComponents = explode("$", $row['PasswordHash']);
+						
+						$this->passwordHash = $passwordComponents[1];
+						$this->passwordSalt = $passwordComponents[0];
+					}
+					else
+					{
+						$this->passwordHash = $row['PasswordHash'];
+						$this->passwordSalt = "";
+					}
+					
                     $this->name = $row['Name'];
+					$this->lastLogin = $row['LastLogin'];
+					$this->userStateID = $row['UserStateID'];
                     
                     $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
-                    
+					
                     if($role_results->num_rows() > 0)
                     {
                         foreach($role_results->result_array() as $row)
@@ -63,7 +88,7 @@ class User_model extends CI_Model
                             array_push($this->roles, $row['RoleID']);
                         }
                     }
-                    
+					
                     $results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
                     
                     foreach($results->result_array() as $row)
@@ -106,11 +131,26 @@ class User_model extends CI_Model
                     
                     $this->userID = $row['UserID'];
                     $this->emailAddress = $row['EmailAddress'];
-                    $this->passwordHash = $row['PasswordHash'];
+                    
+					if(strpos($row['PasswordHash'], "$"))
+					{
+						$passwordComponents = explode("$", $row['PasswordHash']);
+						
+						$this->passwordHash = $passwordComponents[1];
+						$this->passwordSalt = $passwordComponents[0];
+					}
+					else
+					{
+						$this->passwordHash = $row['PasswordHash'];
+						$this->passwordSalt = "";
+					}
+					
                     $this->name = $row['Name'];
-                    
-                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
-                    
+					$this->lastLogin = $row['LastLogin'];
+					$this->userStateID = $row['UserStateID'];
+					
+                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $this->userID));
+					
                     if($role_results->num_rows() > 0)
                     {
                         foreach($role_results->result_array() as $row)
@@ -119,6 +159,18 @@ class User_model extends CI_Model
                         }
                     }
                     
+					$results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
+                    
+                    foreach($results->result_array() as $row)
+                    {
+                        $courseSection = new Course_section_model;
+                        
+                        if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
+                        {
+                            $this->addCourseSection($courseSection, $row['Grade']);
+                        }
+                    }
+					
                     return true;
                 }
             }
@@ -134,7 +186,9 @@ class User_model extends CI_Model
      */
     public function setPassword($password)
     {
-        $this->passwordHash = hash('sha512', $password);
+		$this->passwordSalt = md5(time() * rand());
+		
+        $this->passwordHash = hash('sha512', $this->passwordSalt . $password);
     }
     
     /**
@@ -148,6 +202,17 @@ class User_model extends CI_Model
         return $this->passwordHash;
     }
     
+	/**
+     * Summary of getPasswordSalt
+     * Get the password hash salt string associated with this user model
+     * 
+     * @return string The salt of the password hash associated with this user model or null if model not saved in database
+     */
+    public function getPasswordSalt()
+    {
+        return $this->passwordSalt;
+    }
+	
     /**
      * Summary of getUserID
      * Get the UserID (Primary key) of this user model
@@ -170,6 +235,17 @@ class User_model extends CI_Model
         return $this->emailAddress;
     }
     
+	/**
+	 * Summary of getCurriculums
+	 * Get all of the curriculums that this user model is bound to
+	 *
+	 * @return Array An array containing all of the curriculum models this user is bound to
+	 */
+	public function getCurriculums()
+	{
+		return $this->curriculums;
+	}
+	
     /**
      * Summary of setEmailAddress
      * Set the email address to be assoicated with this user model
@@ -192,6 +268,70 @@ class User_model extends CI_Model
         $this->name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
     }
     
+	/**
+     * Summary of setLastLogin
+     * Set the last login time of the user
+     * 
+     * @param integer $lastLogin The last login time associated with this user model
+     */
+	public function setLastLogin($lastLogin)
+	{
+		$this->lastLogin = filter_var($lastLogin, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
+	/**
+     * Summary of setState
+     * Set the user account state of the user
+     * 
+     * @param integer $state The state of this user model (see the STATE constants)
+     */
+    public function setState($state)
+    {
+        $this->userStateID = filter_var($state, FILTER_SANITIZE_NUMBER_INT);
+    }
+	
+	/**
+	 * Summary of addCurriculum
+	 * Add a curriculum model to bind to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to bind to this user model
+	 *
+	 * @return boolean True if the curriculum was added, false otherwise
+	 */
+	public function addCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			$this->curriculums[$curriculum->getCurriculumID()] = $curriculum;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of removeCurriculum
+	 * Remove a curriculum model that is bound to this user model
+	 *
+	 * @param Curriculum_model The curriculum model to remove from this user model
+	 *
+	 * @return boolean True if the curriculum was removed, false otherwise
+	 */
+	public function removeCurriculum($curriculum)
+	{
+		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		{
+			unset($this->curriculums[$curriculum->getCurriculumID()]);
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of getName
      * Get the name of the user
@@ -203,6 +343,39 @@ class User_model extends CI_Model
         return $this->name;
     }
     
+	/**
+     * Summary of getState
+     * Get the user account state of the user (see STATE constants of this class)
+     * 
+     * @return integer The state of this user model or null if model not saved in database
+     */
+    public function getState()
+    {
+        return $this->userStateID;
+    }
+	
+	/**
+     * Summary of getLastLogin
+     * Get the last login time of the user
+     * 
+     * @return integer The last login time associated with this user model or null if model not saved in database
+     */
+	public function getLastLogin()
+	{
+		return $this->lastLogin;
+	}
+	
+	/**
+     * Summary of isGuest
+     * Check whether this user has the role of a guest
+     * 
+     * @return boolean True is the user has a guest role, false otherwise
+     */
+	public function isGuest()
+	{
+		return in_array(self::ROLE_GUEST, $this->roles);
+	}
+	
     /**
      * Summary of isStudent
      * Check whether this user has the role of a student
@@ -313,13 +486,13 @@ class User_model extends CI_Model
      * @return User_model The user model for the advisor of this student user model, or null if no advisor exists or this model doesn't have a student role
      */
     public function getAdvisor()
-    {
+    {		
         if($this->isStudent())
         {
             $this->db->select('AdvisorUserID');
             $this->db->from('StudentAdvisors');
             $this->db->where('StudentUserID', $this->userID);
-            
+            			
             $results = $this->db->get();
             
             $advisor = new User_model;
@@ -364,14 +537,14 @@ class User_model extends CI_Model
      * Add a course section to be associated with this user model
      * 
      * @param mixed $courseSection The course section model to associate with this model
-     * @param mixed $grade The grade this student got for the course section (0 = F, 4 = A)
+     * @param string $grade The grade this student got for the course section (0 = F, 4 = A)
      * @return boolean True if the course section was successfully added, false otherwise
      */
     public function addCourseSection($courseSection, $grade)
     {
-        $searchstr = $courseSection->toString();
+        $searchstr = $courseSection->getCourseSectionID();
         
-        if(!isset($this->coursesTaken[$searchstr]))
+        if($searchstr != null && !isset($this->coursesTaken[$searchstr]))
         {
             $this->coursesTaken[$searchstr] = array();
             $this->coursesTaken[$searchstr][0] = $courseSection;
@@ -392,9 +565,9 @@ class User_model extends CI_Model
      */
     public function removeCourseSection($courseSection)
     {
-        $searchstr = $courseSection->toString();
+        $searchstr = $courseSection->getCourseSectionID();
         
-        if(isset($this->coursesTaken[$searchstr]))
+        if($searchstr != null && isset($this->coursesTaken[$searchstr]))
         {
             unset($this->coursesTaken[$searchstr]);
             
@@ -427,7 +600,7 @@ class User_model extends CI_Model
 	 * Get the grade the student user model got for a particular course section
 	 *
 	 * @param Course_section_model The course section model to look up a grade for
-	 * @return mixed Returns the grade a student got for that course section or false if no grade was found
+	 * @return string Returns the grade a student got for that course section or false if no grade was found
 	 */
 	public function getGradeForCourseSection($courseSection)
 	{
@@ -443,6 +616,41 @@ class User_model extends CI_Model
 		}
 	}
 	
+	/**
+	 * Summary of getAllTransferCourses
+	 * Get all of the student transfer course models associated with this user
+	 *
+	 * @return Array An array containing all the student transfer course models associated with this user model
+	 */
+	public function getAllTransferCourses()
+	{
+		$models = array();
+		
+		if($this->userID != null)
+		{
+			$this->db->select('StudentTransferCourseID');
+			$this->db->from('StudentTransferCourses');
+			$this->db->where('StudentUserID');
+			
+			$results = $this->db->get();
+			
+			if($results->num_rows() > 0)
+			{
+				foreach($results->result_array() as $row)
+				{
+					$model = new Student_transfer_course_model;
+					
+					if($model->loadPropertiesFromPrimaryKey($row['StudentTransferCourseID']))
+					{
+						array_push($models, $model);
+					}
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this user model with newly modified information
@@ -451,9 +659,15 @@ class User_model extends CI_Model
      */
     public function update()
     {
-        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if($this->userID != null && filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array(
+				'EmailAddress' => $this->emailAddress, 
+				'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+				'Name' => $this->name, 
+				'LastLogin' => $this->lastLogin,
+				'UserStateID' => $this->userStateID
+			);
             
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
@@ -463,7 +677,7 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
             
-            if(count($this->coursesTaken) > 0)
+            if(count($this->roles) > 0)
             {
                 foreach($this->roles as $role)
                 {
@@ -471,10 +685,20 @@ class User_model extends CI_Model
                 }
             }
             
+			$this->db->where('UserID', $this->userID);
+			$this->db->delete('UserCurriculums');
+			
+			if(count($this->curriculums) > 0)
+			{
+				foreach($this->curriculums as $curriculum)
+				{
+					$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+				}
+			}
+			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
-            
-            
+		
             if(count($this->coursesTaken) > 0)
             {
                 $data_arr = array();
@@ -502,9 +726,15 @@ class User_model extends CI_Model
      */
     public function create()
     {   
-        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL))
+        if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array('EmailAddress' => $this->emailAddress, 'PasswordHash' => $this->passwordHash, 'Name' => $this->name);
+            $data = array(
+				'EmailAddress' => $this->emailAddress, 
+				'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+				'Name' => $this->name, 
+				'LastLogin' => $this->lastLogin,
+				'UserStateID' => $this->userStateID
+			);
             
             $this->db->insert('Users', $data);
             
@@ -519,6 +749,14 @@ class User_model extends CI_Model
                     $this->db->insert('UserRoles', $roledata);
                 }
                 
+				if(count($this->curriculums) > 0)
+				{
+					foreach($this->curriculums as $curriculum)
+					{
+						$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
+					}
+				}
+				
                 if(count($this->coursesTaken) > 0)
                 {
                     $data_arr = array();
@@ -576,12 +814,19 @@ class User_model extends CI_Model
      */
     public function authenticate($passwordGuess)
     {
-        $hashedPasswordGuess = hash('sha512', $passwordGuess);
+        $hashedPasswordGuess = hash('sha512', $this->passwordSalt . $passwordGuess);
         
         $len = strlen($hashedPasswordGuess);
         
         $finalFlag = true;
-        
+		
+		$len2 = strlen($this->passwordHash);
+		
+		if($len < 1 || $len2 != $len)
+		{
+			$finalFlag = false;
+		}
+		
         for($i=0;$i<$len;$i++)
         {
             if ($finalFlag && $hashedPasswordGuess[$i] != $this->passwordHash[$i])
@@ -592,4 +837,39 @@ class User_model extends CI_Model
         
         return $finalFlag;
     }
+	
+	/**
+	 * Summary of getAllAdvisors
+	 * Get all of the users in the database with an advising role
+	 *
+	 * @return Array An array containing all users who have an advisor role
+	 */
+	public static function getAllAdvisors()
+	{
+		$db = get_instance()->db;
+		
+		$models = array();
+		
+		$db->select('Users.UserID');
+		$db->from('Users');
+		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
+		$db->where('UserRoles.RoleID', self::ROLE_ADVISOR);
+		
+		$results = $db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
 }
