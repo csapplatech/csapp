@@ -15,9 +15,6 @@ class User_model extends CI_Model
     private $name = null;
 	private $userStateID = null;
 	private $lastLogin = null;
-    private $roles = array();
-    private $coursesTaken = array();
-	private $curriculums = array();
     
     // Constants to represent the various user roles as reflected in the CSC Web App database
     // If the table `Roles` or any of its rows are ever modified, reflect those changes in these constants
@@ -80,39 +77,6 @@ class User_model extends CI_Model
 					$this->lastLogin = $row['LastLogin'];
 					$this->userStateID = $row['UserStateID'];
                     
-                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $userID));
-					
-                    if($role_results->num_rows() > 0)
-                    {
-                        foreach($role_results->result_array() as $row)
-                        {
-                            array_push($this->roles, $row['RoleID']);
-                        }
-                    }
-					
-                    $results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
-                    
-                    foreach($results->result_array() as $row)
-                    {
-                        $courseSection = new Course_section_model;
-                        
-                        if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
-                        {
-                            $this->addCourseSection($courseSection, $row['Grade']);
-                        }
-                    }
-                    
-                    $cur_results = $this->db->get_where('UserCurriculums', array('UserID' => $this->userID));
-                    
-                    foreach($cur_results->result_array() as $row)
-                    {
-                        $curriculum = new Curriculum_model;
-                        if ($curriculum->loadPropertiesFromPrimaryKey($row['CurriculumID']))
-                        {
-                            $this->addCurriculum($curriculum);
-                        }
-                    }
-                    
                     return true;
                 }
             }
@@ -160,28 +124,6 @@ class User_model extends CI_Model
                     $this->name = $row['Name'];
 					$this->lastLogin = $row['LastLogin'];
 					$this->userStateID = $row['UserStateID'];
-					
-                    $role_results = $this->db->get_where('UserRoles', array('UserID' => $this->userID));
-					
-                    if($role_results->num_rows() > 0)
-                    {
-                        foreach($role_results->result_array() as $row)
-                        {
-                            array_push($this->roles, $row['RoleID']);
-                        }
-                    }
-                    
-					$results = $this->db->get_where('StudentCourseSections', array('StudentUserID' => $this->userID));
-                    
-                    foreach($results->result_array() as $row)
-                    {
-                        $courseSection = new Course_section_model;
-                        
-                        if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
-                        {
-                            $this->addCourseSection($courseSection, $row['Grade']);
-                        }
-                    }
 					
                     return true;
                 }
@@ -312,10 +254,16 @@ class User_model extends CI_Model
 	 */
 	public function addCurriculum($curriculum)
 	{
-		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
-			$this->curriculums[$curriculum->getCurriculumID()] = $curriculum;
-			return true;
+			$data = array(
+				"UserID" => $this->userID,
+				"CurriculumID" => $curriculum->getCurriculumID()
+			);
+			
+			$this->db->insert('UserCurriculums', $data);
+			
+			return $this->db->affected_rows() > 0;
 		}
 		else
 		{
@@ -333,10 +281,14 @@ class User_model extends CI_Model
 	 */
 	public function removeCurriculum($curriculum)
 	{
-		if($curriculum != null && $curriculum->getCurriculumID() != null && !isset($this->curriculums[$curriculum->getCurriculumID()]))
+		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
-			unset($this->curriculums[$curriculum->getCurriculumID()]);
-			return true;
+			$this->db->where('UserID', $this->userID);
+			$this->db->where('CurriculumID', $curriculum->getCurriculumID());
+			
+			$this->db->delete('UserCurriculums');
+			
+			return $this->db->affected_rows() > 0;
 		}
 		else
 		{
@@ -385,7 +337,12 @@ class User_model extends CI_Model
      */
 	public function isGuest()
 	{
-		return in_array(self::ROLE_GUEST, $this->roles);
+		$this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', self::ROLE_GUEST);
+		
+		$results = $this->db->get('UserRoles');
+		
+		return $results->num_rows() > 0;
 	}
 	
     /**
@@ -396,7 +353,12 @@ class User_model extends CI_Model
      */
     public function isStudent()
     {
-        return in_array(self::ROLE_STUDENT, $this->roles);
+        $this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', self::ROLE_STUDENT);
+		
+		$results = $this->db->get('UserRoles');
+		
+		return $results->num_rows() > 0;
     }
     
     /**
@@ -407,7 +369,12 @@ class User_model extends CI_Model
      */
     public function isAdmin()
     {
-        return in_array(self::ROLE_ADMIN, $this->roles);
+        $this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', self::ROLE_ADMIN);
+		
+		$results = $this->db->get('UserRoles');
+		
+		return $results->num_rows() > 0;
     }
     
     /**
@@ -418,7 +385,12 @@ class User_model extends CI_Model
      */
     public function isProgramChair()
     {
-        return in_array(self::ROLE_PROGRAM_CHAIR, $this->roles);
+        $this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', self::ROLE_PROGRAM_CHAIR);
+		
+		$results = $this->db->get('UserRoles');
+		
+		return $results->num_rows() > 0;
     }
     
     /**
@@ -429,7 +401,12 @@ class User_model extends CI_Model
      */
     public function isAdvisor()
     {
-        return in_array(self::ROLE_ADVISOR, $this->roles);
+        $this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', self::ROLE_ADVISOR);
+		
+		$results = $this->db->get('UserRoles');
+		
+		return $results->num_rows() > 0;
     }
     
     /**
@@ -440,10 +417,12 @@ class User_model extends CI_Model
      */
     public function addRole($roleType)
     {
-        if(!in_array($roleType, $this->roles))
-        {
-            array_push($this->roles, $roleType);
-        }
+        $data = array(
+			"UserID" => $this->userID,
+			"RoleID" => $roleType
+		);
+		
+		$this->db->insert('UserRoles', $data);
     }
     
     /**
@@ -454,10 +433,10 @@ class User_model extends CI_Model
      */
     public function removeRole($roleType)
     {
-        if(in_array($roleType, $this->roles))
-        {
-            unset($this->roles[array_search($roleType, $this->roles)]);
-        }
+        $this->db->where('UserID', $this->userID);
+		$this->db->where('RoleID', $roleType);
+		
+		$this->db->delete('UserRoles');
     }
     
     /**
@@ -554,18 +533,15 @@ class User_model extends CI_Model
      */
     public function addCourseSection($courseSection, $grade)
     {
-        $searchstr = $courseSection->getCourseSectionID();
-        
-        if($searchstr != null && !isset($this->coursesTaken[$searchstr]))
-        {
-            $this->coursesTaken[$searchstr] = array();
-            $this->coursesTaken[$searchstr][0] = $courseSection;
-            $this->coursesTaken[$searchstr][1] = $grade;
-            
-            return true;
-        }
-        
-        return false;
+        $data = array(
+			"StudentUserID" => $this->userID,
+			"CourseSectionID" => $courseSection->getCourseSectionID(),
+			"Grade" => $grade
+		);
+		
+		$this->db->insert("StudentCourseSections", $data);
+		
+		return $this->db->affected_rows() > 0;
     }
     
     /**
@@ -577,16 +553,12 @@ class User_model extends CI_Model
      */
     public function removeCourseSection($courseSection)
     {
-        $searchstr = $courseSection->getCourseSectionID();
-        
-        if($searchstr != null && isset($this->coursesTaken[$searchstr]))
-        {
-            unset($this->coursesTaken[$searchstr]);
-            
-            return true;
-        }
-        
-        return false;
+        $this->db->where('CourseSectionID', $courseSection->getCourseSectionID());
+		$this->db->where('StudentUserID', $this->userID);
+		
+		$this->db->delete('StudentCourseSections');
+		
+		return $this->db->affected_rows() > 0;
     }
     
     /**
@@ -597,14 +569,28 @@ class User_model extends CI_Model
      */
     public function getAllCoursesTaken()
     {
-        $data = array();
-        
-        foreach($this->coursesTaken as $courseTaken)
-        {
-            array_push($data, $courseTaken);
-        }
-        
-        return $data;
+		$models = array();
+		
+		$this->db->select('CourseSectionID');
+		$this->db->from('StudentCourseSections');
+        $this->db->where('StudentUserID', $this->userID);
+		
+		$results = $this->db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$courseSection = new Course_section_model;
+				
+				if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
+				{
+					array_push($models, $courseSection);
+				}
+			}
+		}
+		
+		return $models;
     }
 	
 	/**
@@ -616,11 +602,16 @@ class User_model extends CI_Model
 	 */
 	public function getGradeForCourseSection($courseSection)
 	{
-		$searchstr = $courseSection->getCourseSectionID();
+		$this->db->select('Grade');
+		$this->db->from('StudentCourseSections');
+		$this->db->where('StudentUserID', $this->userID);
+		$this->db->where('CourseSectionID', $courseSection->getCourseSectionID());
 		
-		if(isset($this->coursesTaken[$searchstr]))
+		$results = $this->db->get();
+		
+		if($results->num_rows() > 0)
 		{
-			return $this->coursesTaken[$searchstr][1];
+			return $results->row_array()["Grade"];
 		}
 		else
 		{
@@ -684,44 +675,7 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->update('Users', $data);
             
-            $sum = $this->db->affected_rows();
-            
-            $this->db->where('UserID', $this->userID);
-            $this->db->delete('UserRoles');
-            
-            if(count($this->roles) > 0)
-            {
-                foreach($this->roles as $role)
-                {
-                    $this->db->insert('UserRoles', array('UserID' => $this->userID, 'RoleID' => $role));
-                }
-            }
-            
-			$this->db->where('UserID', $this->userID);
-			$this->db->delete('UserCurriculums');
-			
-			if(count($this->curriculums) > 0)
-			{
-				foreach($this->curriculums as $curriculum)
-				{
-					$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
-				}
-			}
-			
-            $this->db->where('StudentUserID', $this->userID);
-            $this->db->delete('StudentCourseSections');
-		
-            if(count($this->coursesTaken) > 0)
-            {
-                $data_arr = array();
-                
-                foreach($this->coursesTaken as $courseTaken)
-                {
-                    $this->db->insert('StudentCourseSections', array('StudentUserID' => $this->userID, 'CourseSectionID' => $courseTaken[0]->getCourseSectionID(), 'Grade' => $courseTaken[1]));
-                }
-            }
-            
-            return $sum > 0;
+            return $this->db->affected_rows() > 0;
         }
         else
         {
@@ -750,37 +704,7 @@ class User_model extends CI_Model
             
             $this->db->insert('Users', $data);
             
-            if($this->db->affected_rows() > 0)
-            {
-                $this->userID = $this->db->insert_id();
-                
-                foreach($this->roles as $role)
-                {
-                    $roledata = array('UserID' => $this->userID, 'RoleID' => $role);
-                    
-                    $this->db->insert('UserRoles', $roledata);
-                }
-                
-				if(count($this->curriculums) > 0)
-				{
-					foreach($this->curriculums as $curriculum)
-					{
-						$this->db->insert('UserCurriculums', array('UserID' => $this->userID, 'CurriculumID' => $curriculum->getCurriculumID()));
-					}
-				}
-				
-                if(count($this->coursesTaken) > 0)
-                {
-                    $data_arr = array();
-                    
-                    foreach($this->coursesTaken as $courseTaken)
-                    {
-                        $this->db->insert('StudentCourseSections', array('StudentUserID' => $this->userID, 'CourseSectionID' => $courseTaken[0]->getCourseSectionID(), 'Grade' => $courseTaken[1]));
-                    }
-                }
-                
-                return true;
-            }
+            return $this->db->affected_rows() > 0;
         }
         return false;
     }
@@ -866,6 +790,41 @@ class User_model extends CI_Model
 		$db->from('Users');
 		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
 		$db->where('UserRoles.RoleID', self::ROLE_ADVISOR);
+		
+		$results = $db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getAllProgramChairs
+	 * Get all of the users in the database with a program chair role
+	 *
+	 * @return Array An array containing all users who have a program chair role
+	 */
+	public static function getAllProgramChairs()
+	{
+		$db = get_instance()->db;
+		
+		$models = array();
+		
+		$db->select('Users.UserID');
+		$db->from('Users');
+		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
+		$db->where('UserRoles.RoleID', self::ROLE_PROGRAM_CHAIR);
 		
 		$results = $db->get();
 		
