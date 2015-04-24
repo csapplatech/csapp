@@ -64,6 +64,7 @@ class Curriculumcreator extends CI_Controller {
 	public function newCurriculum()
 	{
 		$curriculum = new Curriculum_model(); 
+		$curriculum->setName('New Curriculum');
 		$_SESSION['curriculumCreationMethod'] = "new";
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		$data = array(
@@ -188,7 +189,7 @@ class Curriculumcreator extends CI_Controller {
 	}
 	
 	//delete a curriculum course slot
-	public function deleteCurriculumCourseSlot($curriculumCourseSlotID = NULL) //post: courseSlot
+	public function deleteCurriculumCourseSlot($curriculumCourseSlotID = NULL) 
 	{
 		//get arguments
 		if ($curriculumCourseSlotID == NULL)
@@ -306,7 +307,7 @@ class Curriculumcreator extends CI_Controller {
 	{
 		///get arguments
 		if ($courseSlotIndex == NULL)
-			$courseSlotIndex = $this->input->post('courseSlot'); //yoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
+			$courseSlotIndex = $this->input->post('courseSlot'); 
 		
 		$curriculum = new Curriculum_model();
 		$curriculum->fromSerializedString($_SESSION['curriculum']);
@@ -356,7 +357,6 @@ class Curriculumcreator extends CI_Controller {
 			array_push($data['courses'], $arr);
 		}
 		
-		//~ var_dump($data);
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
