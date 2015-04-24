@@ -41,7 +41,7 @@ class Checklistexport extends CI_Controller
 	    $checklist = $Excel->getActiveSheet();
 	    $checklist->setTitle("Checklist");
 	    $this->generatechecklist($checklist, $user, $curriculum);
-
+	    
 	    //Generate advisor checklist sheet
 	    $advcheck = $Excel->createSheet(NULL, 1);
 	    $advcheck->setTitle("Advisor Checklist");
@@ -166,7 +166,7 @@ class Checklistexport extends CI_Controller
 	    $checklist->getColumnDimension('P')->setWidth(6);
 
 	    $this->checklistheader($checklist, $user->getName(), $user->getUserID(), 
-			  $user->getAdvisor(), "2014-15", $user->getEmailAddress());
+			  $user->getAdvisor()->getName(), "2014-15", $user->getEmailAddress());
 
 	    $coursesTaken = $user->getAllCoursesTaken();
 	    $this->checklistcore($checklist, $coursesTaken, $curriculum);
