@@ -150,10 +150,13 @@ class User extends CI_Controller {
         if ($data['pass'] == $data['confPass']) {
             $user->setPassword($data['pass']);
         }
-        $this->addUserRoles($data, $user);
+		
         $user->setState(1);
         $user->setLastLogin(0);
         $user->create();
+		
+		$this->addUserRoles($data, $user);
+		
         return $user->getUserID();
     }
 

@@ -45,9 +45,6 @@
 
         <h3> Welcome to the Admin Main Page, <?php echo $user->getName(); ?>!</h3>
         
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Bug Reports
-        </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Changepassword') ;?>">
             Change Password
         </a>
