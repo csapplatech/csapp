@@ -41,6 +41,11 @@ class Login extends CI_Controller {
                         redirect('Mainpage');
                     }
                 }
+				else
+				{
+					//Incorrect username or password, reload login and display an error
+					$this->load->view('login', array("error"=>TRUE));
+				}
             }
             else
             {
