@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Summary of User_model
  * 
@@ -885,3 +884,4 @@ class User_model extends CI_Model
 		return $models;
 	}
 }
+

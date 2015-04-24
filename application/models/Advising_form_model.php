@@ -41,7 +41,7 @@ class Advising_form_model extends CI_Model
 			if($results->num_rows() > 0)
 			{
 				$row = $results->row_array();
-				
+
 				$this->advisingFormID = $row['AdvisingFormID'];
 				$this->studentUserID = $row['StudentUserID'];
 				$this->academicQuarterID = $row['AcademicQuarterID'];

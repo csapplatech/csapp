@@ -26,6 +26,10 @@ class Course_model extends CI_Model
 	const COURSE_TYPE_UNDERGRADUATE = 1;
 	const COURSE_TYPE_GRADUATE = 2;
 	
+	// Constant values defined by the CourseTypes table, must reflect content in that table
+	const COURSE_TYPE_UNDERGRADUATE = 1;
+	const COURSE_TYPE_GRADUATE = 2;
+	
     /**
      * Main constructor for Course_model
      */
@@ -55,7 +59,6 @@ class Course_model extends CI_Model
                 $this->courseName = $row['CourseName'];
 				$this->courseCategoryName = self::getCategoryName($this->courseName);
                 $this->courseNumber = $row['CourseNumber'];
-                
 				$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
 				$this->courseTypeID = $row['CourseTypeID'];
@@ -111,7 +114,6 @@ class Course_model extends CI_Model
 	{
 		return $this->courseTitle;
 	}
-        
 	
     /**
      * Summary of getCourseDescription
@@ -327,6 +329,7 @@ class Course_model extends CI_Model
 	}
 	
 	/**
+<<<<<<< HEAD
 	 * Summary of getNonCourseRequisites
 	 * Get all of the non course requisites for this course
 	 *
@@ -417,6 +420,7 @@ class Course_model extends CI_Model
 	}
 	
 	/**
+<<<<<<< HEAD
 	 * Summary of addNonCourseRequisite
 	 * Add a non course based curriculum course slot to this model
 	 *

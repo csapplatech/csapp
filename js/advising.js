@@ -2,10 +2,7 @@ $(document).ready(function() {
     var save_id = new Array();
     var save_callnum = new Array();
     var save_type = new Array(); //save type is alt or norm
-   $('.clickMe').click(function() {
-           ($(this).next()).toggle();
-   }); 
-   $(".button").on("click", function(){      
+
         var butID=$(this).attr('id');
         if($(this).text()=="Add")
         {

@@ -4,6 +4,7 @@
         
         <link href = "<?php echo base_url('css/advising.css'); ?>" rel ="stylesheet" >
         <link rel="stylesheet" href="<?php echo base_url('css/print.css'); ?>" type="text/css" media="print" />
+
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
@@ -120,6 +121,7 @@
                   <th style="width: 18%">Special Signature</th> 
                   <th style="width: 25%">Class Times</th>
                 </tr>
+
                 </table>
             </div>
             <table ID='sig'>
@@ -137,7 +139,6 @@
                 </tr>
             </table>
         </div>
-        
         <div id="PB">
             <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
             <button type="button" id="reset"><strike>Reset</strike></button>

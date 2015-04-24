@@ -416,6 +416,7 @@ class Curriculum_course_slot_model extends CI_Model
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
@@ -496,6 +497,7 @@ class Curriculum_course_slot_model extends CI_Model
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
 			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+
 			
 			$results = $this->db->get('CourseRequisites');
 			
@@ -524,7 +526,9 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
+
 			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
 		);
 		
@@ -545,6 +549,7 @@ class Curriculum_course_slot_model extends CI_Model
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
 			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
 		);
 		
@@ -563,13 +568,17 @@ class Curriculum_course_slot_model extends CI_Model
 	public function removeCourseSlotRequisite($curriculumCourseSlot)
 	{
 		$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
+
 		$this->db->where('RequisiteCurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		$num = $this->db->affected_rows();
 		
 		$this->db->where('CurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+
 		$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		return ($num + $this->db->affected_rows()) > 0;
