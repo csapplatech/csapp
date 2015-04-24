@@ -17,7 +17,7 @@ class Curriculumcreator extends CI_Controller {
 		//creating easy to use array for table
 		foreach ($curriculums as $curr) 
 		{
-			$arr = [ //yooooooooooooooooooooooooooooooooooooooooooooo changed to strings
+			$arr = [ 
 				'name' => $curr->getName(),
 				'id'   => $curr->getCurriculumID(),
 				'date' => $curr->getDateCreated(),
@@ -217,7 +217,7 @@ class Curriculumcreator extends CI_Controller {
 	
 	//save a curriculum course slot
 	//validCourseIDs(int array); name(string); minimumGrade(string); 
-	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL, $notes = NULL, $curriculumIndex = NULL) 
+	public function setCurriculumCourseSlot($validCourseIDs = NULL, $name = NULL, $minimumGrade = NULL, $recommendedQuarter = NULL, $recommendedYear = NULL, $notes = NULL, $index = NULL) 
 	{
 		//get arguments
 		if ($validCourseIDs == NULL)
@@ -238,8 +238,8 @@ class Curriculumcreator extends CI_Controller {
 		if ($notes == NULL)
 			$notes = $this->input->post('notes');
 			
-		//~ if ($curriculumIndex == NULL)
-			//~ $curriculumIndex = $this->input->post('curriculumIndex');
+		if ($curriculumIndex == NULL)
+			$curriculumIndex = $this->input->post('index');
 			
 		if (!isset($notes))
 			$notes = " ";
@@ -311,7 +311,6 @@ class Curriculumcreator extends CI_Controller {
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
 		
-		var_dump($courseSlotIndex);
 		//match indeces
 		foreach ($courseSlots as $slot)
 		{
@@ -331,7 +330,8 @@ class Curriculumcreator extends CI_Controller {
 			'recommendedQuarter' => $courseSlot->getRecommendedQuarter(),
 			'recommendedYear'    => $courseSlot->getRecommendedYear(),
 			'minimumGrade'       => $courseSlot->getMinimumGrade(),
-			'notes'              => $courseSlot->getNotes()
+			'notes'              => $courseSlot->getNotes(),
+			'index'				 => $courseSlotIndex
 		);
 		
 		$availableCourses = $courses->getAllCourses();
