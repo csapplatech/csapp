@@ -152,21 +152,27 @@ public function fill(){
 		$getAdvisor=$getAdvisor->getUserID();
                 
                 $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the scedule that corresponds to the students advisor and the acedemic quarter
-	
-            if(!empty($_POST['appointments']))
+                $all_Appointments=$Advising_schedule->getAllAdvisingAppointments();
+            if(($_POST['student_selection']))
             {
-                foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
+                
+                $aptTime = explode ("-", $_POST['student_selection']); //separate the start and end times
+                
+                foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
-                    $aptTime = explode ("-", $selected); //separate the start and end times
+                    if(($selected->getStartTime()==$aptTime[0])&& $selected->isOpen())
+                     {
+                        $Advising_appointment->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());//load the specific appointment from the ID
+                        $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
+                        $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
+                        $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
+                        $Advising_appointment->setAdvisingAppointmentState(1);
+                        $Advising_appointment->update(); //update the advising appointment with above information it is now marked as shceduled
+                     }
                     
-                    $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
-                    $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
-                    $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
-                    $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
-                    $Advising_appointment->setAdvisingAppointmentState(1);
-                    $Advising_appointment->create(); //create the advising appointment with above information
+                    
 
-            //echo $selected."</br>";
+            
         }
     }
         }
