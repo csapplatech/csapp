@@ -206,7 +206,46 @@ else{
                 visibility: hidden;
             }
             /* creates box size for label to sit in*/
-            .cboxwrapper
+            
+             .Open
+            {
+                width: 40px;
+                height: 20px;
+                
+                position: relative;
+            }
+            /* replaces orginal checkbox for styled checkbox*/
+            .Open label
+            {
+                display: block;
+                width: 40px;
+                height: 20px;
+                
+                -webkit-transition: all .8s ease;
+                -moz-transition: all .8s ease;
+                -o-transition: all .8s ease;
+                -ms-transition: all .8s ease;
+                transition: all .8s ease;
+                cursor: pointer;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 1;
+                
+                background-color: #F1EA9B;
+            }
+            .Open label:hover {
+                background-color: #f1cc73;
+            }
+            /* Create the checked state*/
+            .Open input[type=checkbox]:checked + label {
+                    background-color: black;
+            }
+            
+            
+            
+            
+        .cboxwrapper
             {
                 width: 40px;
                 height: 20px;

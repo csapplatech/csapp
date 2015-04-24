@@ -162,7 +162,8 @@ public function fill(){
                     $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
                     $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
                     $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
-                    $Advising_appointment->getScheduledStudentUserID();//get the scheduled student user ID
+                    $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
+                    $Advising_appointment->setAdvisingAppointmentState(1);
                     $Advising_appointment->create(); //create the advising appointment with above information
 
             //echo $selected."</br>";
@@ -182,6 +183,8 @@ public function fill(){
                     $aptTime = explode ("-", $selected); //separate the start and end times
                     
                     $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
+                    $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID to the advisors ID
+                    $Advising_appointment->setAdvisingAppointmentState(5);
                     $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
                     $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
                     $Advising_appointment->create(); //create the advising appointment with above information
