@@ -148,7 +148,7 @@ class Advising_appointment_model extends CI_Model
             
             if($this->db->affected_rows() > 0 && !$this->isOpen())
             {
-				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AdvisingAppointmentStateID' => $this->advisingAppointmentStateID);
+				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AppointmentStateID' => $this->advisingAppointmentStateID);
 				
 				$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
 				$this->db->update('ScheduledAdvisingAppointments', $data);
