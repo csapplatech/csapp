@@ -20,7 +20,7 @@ class AdvisingForm extends CI_Controller
 		
 		if($user->isStudent())
 		{
-			$this->uid = $this->getUserID();
+			$this->uid = $user->getUserID();
 		}
 		else if($user->isAdvisor())
 		{
