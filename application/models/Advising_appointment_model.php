@@ -125,17 +125,17 @@ class Advising_appointment_model extends CI_Model
 	
 	public function isCompleted()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_COMPLETED;
 	}
 	
 	public function isCanceledByAdvisor()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_CANCELED_BY_ADVISOR;
 	}
 	
 	public function isCanceledByStudent()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_CANCELED_BY_STUDENT;
 	}
 	
     public function update()
