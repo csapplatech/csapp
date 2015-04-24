@@ -250,10 +250,10 @@ class Checklistexport extends CI_Controller
 
 	    $reqCour = array();
 	    foreach ($requiredCourses as $c)
-	    	$reqCour[$c->getName()." ".$c->getNumber()] = $c;
+	    	$reqCour[$c->getName()] = $c;
 	    ksort($reqCour);
-	    $requiredCourses = $reqCour;
-
+	    $requiredCourses = $reqCour;		
+		
 	    foreach ($requiredCourses as $reqCourse)
 	    {
 	    	//Grab course name
