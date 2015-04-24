@@ -196,7 +196,26 @@ class User_model extends CI_Model
 	 */
 	public function getCurriculums()
 	{
-		return $this->curriculums;
+		$models = array();
+		
+		$this->db->select('CurriculumID');
+		$this->db->from('UserCurriculums');
+		$this->db->where('UserID', $this->userID);
+		
+		$results = $this->db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new Curriculum_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['CurriculumID']))
+					array_push($models, $model);
+			}
+		}
+		
+		return $models;
 	}
 	
     /**
@@ -570,7 +589,7 @@ class User_model extends CI_Model
     {
 		$models = array();
 		
-		$this->db->select('CourseSectionID');
+		$this->db->select('CourseSectionID, Grade');
 		$this->db->from('StudentCourseSections');
         $this->db->where('StudentUserID', $this->userID);
 		
@@ -584,7 +603,7 @@ class User_model extends CI_Model
 				
 				if($courseSection->loadPropertiesFromPrimaryKey($row['CourseSectionID']))
 				{
-					array_push($models, $courseSection);
+					array_push($models, array($courseSection, $row['Grade']));
 				}
 			}
 		}
