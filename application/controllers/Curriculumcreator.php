@@ -121,7 +121,7 @@ class Curriculumcreator extends CI_Controller {
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
-		unset($
+		unset($_SESSION['MaxCurriculumIndex']);
 				
 		$this->index();
 	}
@@ -133,6 +133,7 @@ class Curriculumcreator extends CI_Controller {
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
 		unset($_SESSION['curriculumCourseSlotMethod']);
+		unset($_SESSION['MaxCurriculumIndex']);
 		
 		$this->index();
 	}
