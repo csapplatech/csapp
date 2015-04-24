@@ -377,12 +377,11 @@ class Curriculumcreator extends CI_Controller {
 			'course' => array(),
 			'type'   => $curriculumType
 		);
-		var_dump($data);
 		
 		//create easy to use array for table
 		foreach ($courseSlots as $slot)
 		{
-			$arr = [ //yooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo changed indeces from 0-2 to strings
+			$arr = [ 
 				'name' => $slot->getName(),
 				'id'   => $slot->getCurriculumCourseSlotID(),
 				'index'=> $slot->getCurriculumIndex()
