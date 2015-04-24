@@ -25,22 +25,28 @@ class Login extends CI_Controller {
                 //If password is correct
                 if ($user->authenticate($password))
                 {
-                    if (null !== $user->getLastLogin())
+                    if (null !== $user->getLastLogin()&&0<$user->getLastLogin()&&$user->getLastLogin()+10368000<time())
                     {
-                        if ($user->getLastLogin()+10368000<time())
-                        {}
+                        $advisor = $user->getAdvisor();
+                        $this->load->view('login', array("error2"=>TRUE, 'advisorname'=>$advisor->getName(), 'advisoremail'=>$advisor->getEmailAddress()));
                     }
-                    //Set the logged in timestamp
-                    $user->setLastLogin(time());
-                    $user->update();
-                    //Activate the session
-                    $_SESSION['UserID'] = $user->getUserID();
-                    //Redirect to the mainpage controller
-                    redirect('Mainpage');
+                    else
+                    {
+                        //Set the logged in timestamp
+                        $user->setLastLogin(time());
+                        $user->update();
+                        //Activate the session
+                        $_SESSION['UserID'] = $user->getUserID();
+                        //Redirect to the mainpage controller
+                        redirect('Mainpage');
+                    }
                 }
             }
-            //Incorrect username or password, reload login and display an error
-            $this->load->view('login', array("error"=>TRUE));
+            else
+            {
+                //Incorrect username or password, reload login and display an error
+                $this->load->view('login', array("error"=>TRUE));
+            }
         }
         
         public function guestLogin()
