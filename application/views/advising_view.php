@@ -102,23 +102,7 @@
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
                                 "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
                                      "</div>";
-                               if ($form !== false)
-                               {
-                                foreach ($form->getPrefferedCourseSections() as $pref)
-                                {
-                                    if($pref->getCallNumber() === $sec->getCallNumber())
-                                    {
-                                        echo '<script>addMain('.$id.');</script>';
-                                    }
-                                }
-                                foreach ($form->getAlternateCourseSections() as $alt)
-                                {
-                                    if($alt->getCallNumber() === $sec->getCallNumber())
-                                    {
-                                        echo '<script>addALT('.$id.');</script>';
-                                    }
-                                }
-                               }
+                               
                                 $id++;
                             }
                         echo "</ul>";
