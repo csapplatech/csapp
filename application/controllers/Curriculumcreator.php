@@ -117,7 +117,7 @@ class Curriculumcreator extends CI_Controller {
 		else
 			$curriculum->create(); //create a new entry for clone/new	
 		
-		var_dump($curriculum->getAllCurriculumCourseSlots());
+		var_dump($curriculum->getCurriculumCourseSlots());
 			
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
