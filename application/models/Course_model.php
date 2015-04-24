@@ -26,10 +26,6 @@ class Course_model extends CI_Model
 	const COURSE_TYPE_UNDERGRADUATE = 1;
 	const COURSE_TYPE_GRADUATE = 2;
 	
-	// Constant values defined by the CourseTypes table, must reflect content in that table
-	const COURSE_TYPE_UNDERGRADUATE = 1;
-	const COURSE_TYPE_GRADUATE = 2;
-	
     /**
      * Main constructor for Course_model
      */
