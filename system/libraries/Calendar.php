@@ -56,6 +56,7 @@ class CI_Calendar {
 	 * @var mixed
 	 */
         
+        public $advising_app;
     
 	public $template = '';
         
@@ -191,7 +192,8 @@ class CI_Calendar {
         
 	public function generate($year = '', $month = '', $data = array(),$interval =20)
         {       
-          
+            
+            
                 if((intval($interval)== 10)||(intval($interval)== 15)||(intval($interval)== 20)||(intval($interval)== 30)) //if input is wrong
                 {
                     $interval = $interval;
@@ -619,6 +621,8 @@ class CI_Calendar {
                              $X=0;
                              foreach($this->app_Times as $key){
 
+                                 
+                                 
                                  if($key==$timestamp1){
                                      //echo $key;
                                      array_splice($this->app_Times,$X,1);//remove timestamp from app_Times and squishes the array back together for efficiency
