@@ -186,7 +186,6 @@ class Curriculum_course_slot_model extends CI_Model
                         $this->addValidCourseID($row['CourseID']);
                     }
                 }
-                
                 return true;
             }
         }
@@ -411,17 +410,17 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
-			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
@@ -443,17 +442,17 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
-			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
 				{
@@ -475,17 +474,17 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
-			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
@@ -495,13 +494,13 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
-			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CourseRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
