@@ -343,7 +343,7 @@ class Curriculumcreator extends CI_Controller {
 		if ($largestIndex > 0)
 			$_SESSION['maxCurriculumIndex'] = $largestIndex + 1;
 		
-		if (isset($prerequisites) or isset($corequisites))
+		if (!empty($prerequisites) or !empty($corequisites))
 		{
 			//be sure to delete old reqs that were altered this session
 			if (isset($_SESSION['reqs']))
@@ -384,8 +384,9 @@ class Curriculumcreator extends CI_Controller {
 				$courseSlot->removeValidCourseID($prevID);
 
 		//populate course slot with the new valid course ids
-		foreach ($validCourseIDs as $validCourse)
-			$courseSlot->addValidCourseID($validCourse);
+		if (isset($validCourseIDs))
+			foreach ($validCourseIDs as $validCourse)
+				$courseSlot->addValidCourseID($validCourse);
 					
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
 		{
