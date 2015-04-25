@@ -21,7 +21,7 @@ Class appointment_controller extends CI_Controller{
     
     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
     
-    $Advising_schedule= new Advising_schedule_model();
+    $Advising_schedule= new Advising_schedule_model;
     
     
     
@@ -85,9 +85,9 @@ Class appointment_controller extends CI_Controller{
     else if($User_model->isStudent()){      //if it is a student 
 		
 		$getAdvisor=$User_model->getAdvisor();
-		$getAdvisor=$getAdvisor->getUserID();
-	
-         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1)){  
+		
+	//print_r ($getAdvisor);
+         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1)){  
              
              $Appointment_array= ($Advising_schedule->getAllAdvisingAppointments());
            // print_r ($Appointment_array);
@@ -106,6 +106,7 @@ Class appointment_controller extends CI_Controller{
             }
             
             $prefs = array(
+        'advising_app'              =>$Advising_appointment,
         'user'                      =>$User_model,
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
@@ -120,25 +121,11 @@ Class appointment_controller extends CI_Controller{
             
             $this->load->view("appointment_view", $Appointment_array);          //load student calendar view(which as of right now is the same as the advisor calendar view)
          }
-         else{
-           redirect('Mainpage/student');
-         }
-    }
-    else{
-        //You don't need to make a calendar
-    }
-    
-    
-    
-    
-   
-  
          
-           
-           
-           
-           
-}
+    }
+   
+    
+    }
 public function fill(){
      $User_model= new User_model;              //All this reiteration is temporary until integrated with the website. in which I will use the $_SESSION data
      $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
