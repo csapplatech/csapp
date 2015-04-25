@@ -112,11 +112,20 @@ class Curriculumcreator extends CI_Controller {
 			$curriculum->setCurriculumType(2);
 		else if ($type == "Concentration")
 			$curriculum->setCurriculumType(3);
-
+		
+		//save curriculum
+		if ($_SESSION['curriculumCreationMethod'] == "edit")
+			$curriculum->update(); //update current curriculum for edit
+		else
+			$curriculum->create(); //create a new entry for clone/new	
+				
 ////////////////////////////////////////////////////////////////////////		
-			
+		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
-
+		
+		echo '<br>120<br>';
+		var_dump($_SESSION['reqs']);
+		
 		//find and delete old reqs and save new ones
 		if (isset($_SESSION['reqs']))
 		{
@@ -154,8 +163,17 @@ class Curriculumcreator extends CI_Controller {
 							}
 						}
 						
-						//add co
-						
+						//save new coreqs
+						if (isset($reqs['coreqs'])) //will this save it correctly?
+						{
+							$co = new Curriculum_course_slot_model();
+							foreach ($reqs['coreqs'] as $r)
+							{
+								$co->fromSerializedString($r);
+								$slot->addCourseSlotPrerequisite($co);
+							}
+						}
+											
 						break;
 					}
 				}	
@@ -163,13 +181,7 @@ class Curriculumcreator extends CI_Controller {
 		} 
 	
 ////////////////////////////////////////////////////////////////////////		
-		
-		//save curriculum
-		if ($_SESSION['curriculumCreationMethod'] == "edit")
-			$curriculum->update(); //update current curriculum for edit
-		else
-			$curriculum->create(); //create a new entry for clone/new	
-					
+	
 		unset($_SESSION['curriculum']);
 		unset($_SESSION['courseSlot']);
 		unset($_SESSION['curriculumCreationMethod']);
@@ -284,8 +296,8 @@ class Curriculumcreator extends CI_Controller {
 		if ($prereqIDs == NULL)
 			$prereqIDs = $this->input->post('prereqIDs');
 			
-		if ($prereqIDs == NULL)
-			$prereqIDs = $this->input->post('coreqIDs');
+		if ($coreqIDs == NULL)
+			$coreqIDs = $this->input->post('coreqIDs');
 			
 		if (!isset($notes))
 			$notes = " ";
@@ -355,9 +367,11 @@ class Curriculumcreator extends CI_Controller {
 			if (isset($prerequisites))
 				foreach ($prerequisites as $p)
 					array_push($arr['prereqs'], $p->toSerializedString());
-			
-			//add co
-			
+					
+			if (isset($corequisites))
+				foreach ($corequisites as $c)
+					array_push($arr['coreqs'], $c->toSerializedString());
+						
 			array_push($_SESSION['reqs'], $arr);
 		}
 		
