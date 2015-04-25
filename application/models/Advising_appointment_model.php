@@ -15,6 +15,7 @@ class Advising_appointment_model extends CI_Model
 	const APPOINTMENT_STATE_COMPLETED = 2;
 	const APPOINTMENT_STATE_CANCELED_BY_STUDENT = 3;
 	const APPOINTMENT_STATE_CANCELED_BY_ADVISOR = 4;
+        const APPOINTMENT_STATE_OPEN=5;
 	
     function __construct()
     {
@@ -146,7 +147,7 @@ class Advising_appointment_model extends CI_Model
             $this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
             $this->db->update('AdvisingAppointments', $data);
             
-            if(!$this->isOpen())
+            if($this->db->affected_rows() > 0 && !$this->isOpen())
             {
 				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AppointmentStateID' => $this->advisingAppointmentStateID);
 				
