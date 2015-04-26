@@ -56,7 +56,7 @@ class CI_Calendar {
 	 * @var mixed
 	 */
         
-        public $advising_app;
+        public $all_apps='';
     
 	public $template = '';
         
@@ -616,26 +616,41 @@ class CI_Calendar {
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
                            
                                 
-                            if($this->user->isStudent()){
+                            if($this->user->isStudent())
+                                {
                                  
-                             $X=0;
-                             foreach($this->app_Times as $key){
+                                    
+                                    foreach($this->all_apps as $key)
+                                       {
 
-                                 
-                                 
-                                 if($key==$timestamp1){
-                                     //echo $key;
-                                     array_splice($this->app_Times,$X,1);//remove timestamp from app_Times and squishes the array back together for efficiency
-                                     $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='student_selection' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
-                                     $existing_Appointment=true;
-                                     break;
-                                 }
-                                 $X++;
-                             }
-                             if($existing_Appointment==false){
-                                 $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-'></label></div></td>"; //creates a row of $l columns $k times
-                           }
-                          }
+
+                                        if($key->getStartTime()==$timestamp1)
+                                           {
+
+                                               if($key->isScheduled())  //if a student has already picked this time slot
+                                                   {
+                                                    $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                                    $existing_Appointment=true;
+                                                    break;
+                                                    
+                                                   } 
+
+                                               else
+                                                   {
+                                                   //array_splice($this->app_Times,$X,1);//remove timestamp from app_Times and squishes the array back together for efficiency
+                                                    $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='student_selection' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
+                                                    $existing_Appointment=true;
+                                                    break;
+                                                   }
+                                           
+                                           }
+                                       }
+
+                                    if($existing_Appointment==false)
+                                        {
+                                        $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-'></label></div></td>"; //creates a row of $l columns $k times
+                                        }
+                                }
                           else if($this->user->isAdvisor()){
                             if($this->app_Times !=null)
                               {  

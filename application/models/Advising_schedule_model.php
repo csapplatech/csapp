@@ -172,9 +172,22 @@ class Advising_schedule_model extends CI_Model
             $appt->setAdvisingScheduleID($row['AdvisingScheduleID']);
             $appt->setStartTime($row['StartTime']);
             $appt->setEndTime($row['EndTime']);
+           
+            $results = $this->db->get_where('ScheduledAdvisingAppointments', array('AdvisingAppointmentID' => $row['AdvisingAppointmentID']), 1);
+            if($results->num_rows() > 0)
+                {
+                    $row = $results->row_array();
+
+                    $appt->setAdvisingAppointmentState($row['AppointmentStateID']);
+                    $appt->setStudentUserID($row['StudentUserID']);
+                }
+            
             
             array_push($data_arr, $appt);
         }
+        
+				
+				
         
         return $data_arr;      
     }

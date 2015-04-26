@@ -52,43 +52,40 @@
        
 <?php
 
-$new_Start=array();
-$new_End=array();
-if($user->isAdvisor()){
-    echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Select Available Office Hours</p>". "<br>";
-}
-else if($user->isStudent()){ //if there is a schedule ID for this student's advisor
-     echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Hello ".$user->getName(). "</p><br>";
-}
-
-else{
-     echo "IDK WHO THIS IS.....". "<br>";
-}
-
-
-//if appointment_array is null make new calendar if it is populated modify the caledar
-if($app_Times){
-   
-   
-}
-else{
-    echo "app_Times was null. This is a new Schedule";
-
-}
-$aptTime;
-if(isset($_POST['submit']))
-{//to run PHP script on submit
-    if(!empty($_POST['appointments']))
+if($user->isAdvisor())
     {
-   
-    redirect('appointment_controller/fill');
+        echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Select Available Office Hours</p>". "<br>";
     }
-}
+else if($user->isStudent())
+    { //if there is a schedule ID for this student's advisor
+        echo "<p style='z-index: 1000; color:black; background-color: yellow; margin-top:30px;'>Hello ".$user->getName(). "</p><br>";
+    }
+
+else
+    {
+     echo "IDK WHO THIS IS.....". "<br>";
+    }
 
 
-else{
-    echo $this->calendar->generate($this->uri->segment(3), $this->uri->segment(4),'' ,(isset($_GET['interval']))? $_GET['interval'] : 20);
-}
+//if appointment_array is null make new calendar if it is populated modify the calendar
+if($app_Times==null)
+    {
+      echo "app_Times was null. This is a new Schedule";
+    }
+
+if(isset($_POST['submit']))
+    {//to run PHP script on submit
+        if(!empty($_POST['appointments']))
+        {
+            redirect('appointment_controller/fill');
+        }
+    }
+
+
+else
+    {
+        echo $this->calendar->generate($this->uri->segment(3), $this->uri->segment(4),'' ,(isset($_GET['interval']))? $_GET['interval'] : 20);
+    }
 ?>
         <style>    
             table.scroll tbody,
@@ -206,6 +203,42 @@ else{
                 visibility: hidden;
             }
             /* creates box size for label to sit in*/
+            
+             .Scheduled
+            {
+                width: 40px;
+                height: 20px;
+                
+                position: relative;
+            }
+            /* replaces orginal checkbox for styled checkbox*/
+            .Scheduled label
+            {
+                display: block;
+                width: 40px;
+                height: 20px;
+                
+                -webkit-transition: all .8s ease;
+                -moz-transition: all .8s ease;
+                -o-transition: all .8s ease;
+                -ms-transition: all .8s ease;
+                transition: all .8s ease;
+                cursor: pointer;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 1;
+                
+                background-color: #ff482b;
+            }
+            .Scheduled label:hover {
+                background-color: #ff2522;
+            }
+            /* Create the checked state*/
+            .Scheduled input[type=checkbox]:checked + label {
+                    background-color: black;
+            }
+            
             
              .Open
             {

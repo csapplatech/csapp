@@ -47,7 +47,7 @@ class Advising_appointment_model extends CI_Model
 				{
 					$row = $results->row_array();
 					
-					$this->advisingAppointmentStateID = $row['AdvisingAppointmentStateID'];
+					$this->advisingAppointmentStateID = $row['AppointmentStateID'];
 					$this->studentUserID = $row['StudentUserID'];
 				}
 				

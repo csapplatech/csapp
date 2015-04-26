@@ -4,39 +4,26 @@ Class appointment_controller extends CI_Controller{
    
     public function index()
 	{
-     $app_Times=array();
-		
-     $prefs = array(
-        'app_Times'                 =>$app_Times,
-        'show_other_days'           => TRUE,
-        'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
-	);
-         
-        
-
-    
-
+    $app_Times=array();
+       
     $User_model= new User_model;
     
     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
     
     $Advising_schedule= new Advising_schedule_model;
     
-    
-    
     $Advising_appointment= new Advising_appointment_model;
     
     
     if($User_model->isAdvisor()){           //If it is an advisor
         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), 1)){ //if there are appointments registered to this info
-           $Appointment_array= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
+           $All_apps= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
             
              
             $startTime=0;
             $endTime=0;
              
-           foreach ($Appointment_array as $key) //grabs each object inside array
+           foreach ($All_apps as $key) //grabs each object inside array
                 {
                $startTime = $key->getStartTime();
               
@@ -48,6 +35,7 @@ Class appointment_controller extends CI_Controller{
             }
              
             $prefs = array(
+                'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
                 'show_other_days'           => TRUE,
@@ -70,7 +58,10 @@ Class appointment_controller extends CI_Controller{
             $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
             
+            $All_apps= ($Advising_schedule->getAllAdvisingAppointments()); //for the sake o defining all_apps. It will be null
+            
              $prefs = array(
+                'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
                 'show_other_days'           => TRUE,
@@ -89,13 +80,13 @@ Class appointment_controller extends CI_Controller{
 	//print_r ($getAdvisor);
          if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1)){  
              
-             $Appointment_array= ($Advising_schedule->getAllAdvisingAppointments());
+             $All_apps= ($Advising_schedule->getAllAdvisingAppointments());
            // print_r ($Appointment_array);
              
             $startTime=0;
             $endTime=0;
              
-           foreach ($Appointment_array as $key) //grabs each object inside array
+           foreach ($All_apps as $key) //grabs each object inside array
                 {
                $startTime = $key->getStartTime();
                
@@ -106,7 +97,7 @@ Class appointment_controller extends CI_Controller{
             }
             
             $prefs = array(
-        'advising_app'              =>$Advising_appointment,
+        'all_apps'                  =>$All_apps,
         'user'                      =>$User_model,
         'app_Times'                 =>$app_Times,
         'show_other_days'           => TRUE,
@@ -126,7 +117,14 @@ Class appointment_controller extends CI_Controller{
    
     
     }
-public function fill(){
+
+    
+    
+    
+    
+    
+public function fill()
+    {
      $User_model= new User_model;              //All this reiteration is temporary until integrated with the website. in which I will use the $_SESSION data
      $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
      
@@ -150,54 +148,33 @@ public function fill(){
                     if(($selected->getStartTime()==$aptTime[0])&& $selected->isOpen())
                      {
                         $Advising_appointment->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());//load the specific appointment from the ID
-                        $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
-                        $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
                         $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
                         $Advising_appointment->setAdvisingAppointmentState(1);
                         $Advising_appointment->update(); //update the advising appointment with above information it is now marked as shceduled
                      }
-                    
-                    
-
-            
-        }
-    }
+                }
+            }
         }
 	else if($User_model->isAdvisor())
 	{
-		$getAdvisor = $User_model->getUserID();
+            $getAdvisor = $User_model->getUserID();
+            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the schedule that corresponds to this advisor and this academic quarter
                 
-                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the schedule that corresponds to this advisor and this academic quarter
-	
-                 if(!empty($_POST['appointments']))
-            {
-                foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
+                if(!empty($_POST['appointments']))
                 {
-                    $aptTime = explode ("-", $selected); //separate the start and end times
-                    
-                    $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
-                    $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID to the advisors ID
-                    $Advising_appointment->setAdvisingAppointmentState(5);
-                    $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
-                    $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
-                    $Advising_appointment->create(); //create the advising appointment with above information
+                    foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
+                    {
+                        $aptTime = explode ("-", $selected); //separate the start and end times
 
-            //echo $selected."</br>";
+                        $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
+                        $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
+                        $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
+                        $Advising_appointment->create(); //create the advising appointment with above information
+                    }
+                }
         }
+    
+   redirect('appointment_controller');
     }
-        }
-    
-    
-    
-    
-    
-    
-   
-           
-   
-    
-    redirect('appointment_controller');
- 
-}
 }
 
