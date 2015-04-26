@@ -510,6 +510,7 @@ class Curriculumcreator extends CI_Controller {
 			if (!$prereqsEdited)
 			{	//normal prereq functionality
 				$slotPrereqs = $slot->getPrequisiteCourseSlots();
+				var_dump($slotPrereqs);
 				if (isset($slotPrereqs))
 					foreach ($slotPrereqs as $prereq)
 						if ($prereq->getCurriculumIndex() == $arr['index'])
