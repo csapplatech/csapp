@@ -60,7 +60,7 @@ function checkinsertdatabase($conn, $sql, $insertquery){
 	else if (mysqli_num_rows($result) == 0){
 		//echo $insertquery."\n";
 		$result = mysqli_query($conn, $insertquery)or die(mysqli_error($conn));
-		$primaryID = $mysqli->insert_id;
+		$primaryID = $mysqli_insert_id($conn);
 		// if(!empty($result)) echo $insertquery."\n";
 	}
 	else

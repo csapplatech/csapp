@@ -54,7 +54,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Manage Transfer Credits
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Coursemanager/index') ;?>">
             Manage Classes
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Curriculumcreator/index') ;?>">
