@@ -14,7 +14,7 @@ class ManagePC extends CI_Controller
 		if (!$user->isAdmin())
 			redirect('Login/logout');
 		
-		$this->load->view('managepc_index_view');
+		$this->load->view('managepc_index_view', array('user'=>$user));
 	}
 	
 	public function getLists()

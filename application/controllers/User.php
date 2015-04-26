@@ -17,17 +17,27 @@ class User extends CI_Controller {
      * @param int  $userID The ID of user that will be acted upon.
      */
     public function index($action = 'create', $userID = NULL) {
-        $this->checkSec();
+        
+		$user = new User_model;
+		
+		if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+            redirect('Login/logout');
+		
+		if (!$user->isAdmin())
+			redirect('Login/logout');
+		
+		$this->checkSec();
         $validActions = array('create', 'modify', 'remove');
         if (!in_array($action, $validActions)) {
             show_error('Invalid Action Selected');
         }
         $_SESSION['action'] = $action;
-
+		
         if (!isset($userID) && $action != 'create') {
-            $this->load->view('select_user_form');
+            $this->load->view('select_user_form', array('user'=>$user));
         } else {
             $userData = $this->loadUserData($userID);
+			$userData['user'] = $user;
             $this->load->view('user_form', $userData);
         }
     }
@@ -72,6 +82,7 @@ class User extends CI_Controller {
             $userData['email'] = $user->getEmailAddress();
             $userData = $this->loadUserName($userData, $user->getName());
             $userData['roles'] = $this->loadUserRoles($user);
+			$userData['user'] = $user;
         }
         return $userData;
     }
@@ -178,7 +189,7 @@ class User extends CI_Controller {
         if ($user->loadPropertiesFromPrimaryKey($uID)) {
             redirect('User/index/' . $action . '/' . $uID);
         }
-        $this->load->view('select_user_form');
+        $this->load->view('select_user_form', array('user'=>$user));
     }
 
     /**
@@ -186,6 +197,14 @@ class User extends CI_Controller {
      * @param int $uID ID of user to be modified, if this is null a new user should be created.
      */
     public function submitUserForm($uID = NULL) {
+		$user = new User_model;
+		
+		if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+            redirect('Login/logout');
+		
+		if (!$user->isAdmin())
+			redirect('Login/logout');
+		
         $userData = array();
         $userData['uID'] = $uID;
         $userData['email'] = $this->input->post('email');
@@ -194,6 +213,7 @@ class User extends CI_Controller {
         $userData['lName'] = $this->input->post('lName');
         $userData['pass'] = $this->input->post('pass');
         $userData['confPass'] = $this->input->post('confPass');
+		$userData['user'] = $user;
 
         $roles = array();
         for ($i = 1; $i <= 4; $i++) {
@@ -249,13 +269,22 @@ class User extends CI_Controller {
     }
 
     public function prepareAddCourses($sID) {
+		$user = new User_model;
+		
+		if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+            redirect('Login/logout');
+		
+		if (!$user->isAdmin())
+			redirect('Login/logout');
+		
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
 //        $curriculums = $student->getCurriculums();
         $curriculums = $this->Curriculum_model->getAllCurriculums();
         $studentData = array(
             'sID' => $sID,
-            'courseData' => array()
+            'courseData' => array(),
+			'user' => $user
         );
         $allCourseData = array();
         foreach ($curriculums as $curriculum) {

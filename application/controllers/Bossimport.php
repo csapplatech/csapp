@@ -17,7 +17,9 @@ class BossImport extends CI_Controller
 		if (!$user->isAdmin())
 			redirect('Login/logout');
 		
-		$this->load->view('bossimport_index_view');
+		$data = array('user' => $user);
+		
+		$this->load->view('bossimport_index_view', $data);
 	}
 	
 	public function submit()
