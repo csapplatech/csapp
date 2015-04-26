@@ -654,7 +654,7 @@ class CI_Calendar {
                                     
                                     if($key->isScheduled())  //if a student has already picked this time slot
                                {
-                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
                                 $existing_Appointment=true;
                                 break;
 
@@ -662,7 +662,7 @@ class CI_Calendar {
 
                            else
                                {
-                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='student_selection' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
+                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='Open[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
                                 $existing_Appointment=true;
                                 break;
                                }

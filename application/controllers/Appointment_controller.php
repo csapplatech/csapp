@@ -145,7 +145,7 @@ public function fill()
                 
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
-                    if(($selected->getStartTime()==$aptTime[0])&& $selected->isOpen())
+                    if(($selected->getStartTime()==$aptTime[0]))
                      {
                         $Advising_appointment->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());//load the specific appointment from the ID
                         $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
@@ -157,24 +157,50 @@ public function fill()
         }
 	else if($User_model->isAdvisor())
 	{
-            $getAdvisor = $User_model->getUserID();
-            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the schedule that corresponds to this advisor and this academic quarter
-                
-                if(!empty($_POST['appointments']))
+            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), 1); //load the schedule that corresponds to this advisor and this academic quarter
+            $all_Appointments=$Advising_schedule->getAllAdvisingAppointments(); 
+           
+                if(!empty($_POST['appointments']))// this will handle the cells that the advisor marked as available
                 {
                     foreach($_POST['appointments'] as $selected) // Loop to store and display values of individual checked checkbox.
                     {
                         $aptTime = explode ("-", $selected); //separate the start and end times
-
+                        
                         $Advising_appointment->setAdvisingScheduleID($Advising_schedule->getAdvisingScheduleID());
                         $Advising_appointment->setStartTime($aptTime[0]);//push start time to the database
                         $Advising_appointment->setEndTime($aptTime[1]);//push the end time to the database
                         $Advising_appointment->create(); //create the advising appointment with above information
                     }
                 }
+                
+                if(!empty($_POST['Open']))//if this array is not empty then the advisor has removed an unscheduled, available office hour
+                {
+                    foreach($_POST['Open'] as $open)
+                    {
+                        $aptTime = explode ("-", $open); //separate the start and end times
+                        foreach($all_Appointments as $selected)
+                        {
+                            if($selected->getStartTime()==$aptTime[0])
+                            {
+                                $selected->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());
+                                $selected->delete();
+                            }
+                        }
+                    }
+                
+                }
+                
+                if(!empty($_POST['student_scheduled']))//if this array is not empty, then the advisor has canceled an appointment
+                {
+                    
+                }
         }
     
    redirect('appointment_controller');
     }
-}
+}                
+              
+                
+               
+        
 
