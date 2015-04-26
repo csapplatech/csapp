@@ -15,6 +15,8 @@
 		<script>
 			$(document).ready(function() {
 				
+				$("#year-selector").val(new Date().getFullYear());
+				
 				var upload_files = false;
 				
 				Dropzone.autoDiscover = false;
@@ -22,14 +24,19 @@
 				var dropZone = new Dropzone("#upload-dropzone", {
 					maxFiles: 1,
 					uploadMultiple: false,
-					url: '<?php echo site_url('Bossimport/submit'); ?>',
+					url: '<?php echo site_url('Futurecourses/submit'); ?>',
 					method: 'post',
 					paramName: 'boss_file',
 					clickable: true,
 					maxFilesize: 250,
 					previewsContainer: '#previews',
 					
-					sending: function(file) {
+					sending: function(file, xhr, formData) {
+						
+						formData.append('year', $("#year-selector").val());
+					
+						formData.append('quarter', $("#quarter-selector").val());
+						
 						$("#progress-wrapper").show();
 					},
 					
@@ -75,6 +82,10 @@
 						return;
 					
 					var data = new FormData();
+					
+					data.append('year', $("#year-selector").val());
+					
+					data.append('quarter', $("#quarter-selector").val());
 					
 					data.append("boss_file", upload_files[0]);
 					
@@ -174,6 +185,24 @@
 								</div>
 							</div>
 							<hr />
+							<h4 style='text-align: left;'><strong style='color: red;'>Be sure to enter the correct Academic Quarter information before uploading the file</strong></h4>
+							<div class="row">
+								<div class="col-md-8">
+									<div class="form-group" style='text-align: left;'>
+										<label>Academic Quarter</label>
+										<select id="quarter-selector" class="form-control" name="year">
+											<option value="Fall">Fall</option>
+											<option value="Winter">Winter</option>
+											<option value="Spring">Spring</option>
+											<option value="Summer">Summer</option>
+										</select>
+									</div>
+									<div class="form-group" style='text-align: left;'>
+										<label>Academic Year</label>
+										<input id="year-selector" class="form-control" name="year" />
+									</div>
+								</div>
+							</div>
 							<div id="upload-dropzone" class="jumbotron">
 								<div id="previews" class="hide">
 								
@@ -186,7 +215,7 @@
 					<br />
 					<div class="row">
 						<div class="col-md-10 col-md-offset-1">
-							<form id="fallback-upload" action="<?php echo site_url('Bossimport/submit'); ?>">
+							<form id="fallback-upload" action="<?php echo site_url('Futurecourses/submit'); ?>">
 								<div class="form-group" style="text-align: left;">
 									<label>If the above form doesn't work, try uploading here</label>
 									<input class="input" type="file" name="boss_file" />
