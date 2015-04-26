@@ -269,7 +269,8 @@ class AdvisingForm extends CI_Controller
                     'quarter_id' => $qid,
                     'cwid' => $usermod->getUserID(),
                     'student_name' => $usermod->getName(),
-                    'form' => $prev_form);
+                    'form' => $prev_form,
+					'user' => $user);
         $this->load->view('advising_view', $data);
     }
     
