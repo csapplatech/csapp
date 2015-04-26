@@ -123,9 +123,6 @@ class Curriculumcreator extends CI_Controller {
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		
-		echo '<br>120<br>';
-		var_dump($_SESSION['reqs']);
-		
 		//find and delete old reqs and save new ones
 		if (isset($_SESSION['reqs']))
 		{

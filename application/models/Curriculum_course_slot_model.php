@@ -523,7 +523,7 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
-			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'RequisiteCurriculumCourseSlotID' => intval($curriculumCourseSlot->curriculumCourseSlotID),
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
 		);
 		
