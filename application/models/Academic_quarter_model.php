@@ -69,17 +69,20 @@ class Academic_quarter_model extends CI_Model
 			$name = filter_var($name, FILTER_SANITIZE_MAGIC_QUOTES);
 			
 			$this->db->where('Name', $name);
-			$this->db->where('Year', $year);
+			$this->db->where('Year', intval($year));
 			
 			$results = $this->db->get('AcademicQuarters');
 			
-			$row = $results->row_array();
+			if($results->num_rows() > 0)
+			{
+				$row = $results->row_array();
 			
-			$this->academicQuarterID = $row['AcademicQuarterID'];
-            $this->name = $row['Name'];
-            $this->year = $row['Year'];
-            
-            return true;
+				$this->academicQuarterID = $row['AcademicQuarterID'];
+				$this->name = $row['Name'];
+				$this->year = $row['Year'];
+				
+				return true;
+			}
 		}
 		return false;
 	}

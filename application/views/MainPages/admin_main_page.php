@@ -57,6 +57,9 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
             Manage Users
         </a>
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Futurecourses/index') ;?>">
+            Future Courses Update
+        </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Bossimport/index') ;?>">
             Bulk Update
         </a>
