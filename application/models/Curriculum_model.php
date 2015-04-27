@@ -205,6 +205,33 @@ class Curriculum_model extends CI_Model
         return $this->curriculumCourseSlots;
     }
     
+	/**
+	 * Summary of updateCurriculumCourseSlot
+	 * Update the properties of a curriculum course slot model with the properties of a provided couse slot model based on the curriculum index of the models
+	 *
+	 * @param Curriculum_course_slot_model $courseSlot The course slot model with new properties to update with
+	 * @return Boolean True if the model was successfully updated, false otherwise
+	 */
+	public function updateCurriculumCourseSlot($courseSlot)
+	{
+		if(isset($this->curriculumCourseSlots[$courseSlot->getCurriculumIndex()]))
+		{
+			$mCourseSlot = $this->curriculumCourseSlots[$courseSlot->getCurriculumIndex()];
+			
+			$mCourseSlot->setName($courseSlot->getName());
+			$mCourseSlot->setMinimumGrade($courseSlot->getMinimumGrade());
+			$mCourseSlot->setRecommendedQuarter($courseSlot->getRecommendedQuarter());
+			$mCourseSlot->setRecommendedYear($courseSlot->getRecommendedYear());
+			$mCourseSlot->setNotes($courseSlot->getNotes());
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of setName
      * Set the name to be associated with this curriculum model
