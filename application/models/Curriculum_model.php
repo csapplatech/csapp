@@ -353,7 +353,9 @@ class Curriculum_model extends CI_Model
 					if(in_array($courseSlot->getCurriculumCourseSlotID(), $arr))
 					{
 						$index = array_search($courseSlot->getCurriculumCourseSlotID(), $arr);
-						unset($this->curriculumCourseSlots[$index]);
+						unset($arr[$index]);
+						
+						$courseSlot->update();
 					}
 					else
 					{
