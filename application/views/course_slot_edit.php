@@ -1,30 +1,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<head>
-    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
-    <style>
-        p
-        {
-            color: black;
-        }
-        h1
-        {
-            color: black;
-        }
-        body
-        {
-            padding-top: 60px;
-            padding-bottom: 100px;
-        }
-    </style>
-</head>
-<body>
-    <?php include_once('application/views/Templates/navbar.php'); ?>
-    <div class="container">
 <h1>Course Slot Edit</h1>
 
 <form method="POST">
 <p>Valid Classes:</p>
-<input id="CourseSlotEditFilter" class='form-control' placeholder="Filter" value="<?php echo $data['name'];  ?>" style="margin-bottom:10px" required autofocus />
+<p>Filter: <input id="CourseSlotEditFilter" /></p>
   <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
       foreach($data['courses'] as $row)
@@ -38,7 +17,8 @@
     ?>
   </select>
 <br /><br />
-<input name='name' class='form-control' placeholder="Name" value="<?php echo $data['name'];?>" style="margin-bottom:10px" required autofocus />
+<p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
+<p>Title: <input name='notes' value="<?php if (isset($data['notes'])) echo $data['notes']; ?>" /></p>
 
 <p>Recommended Quarter: </p>
 <select size=4 name='recommendedQuarter'>
@@ -92,7 +72,7 @@ echo '>';
 
 <!-- TEST CODE -->
 <p>Prerequisites: </p>
-<input name='name' class='form-control' placeholder="Filter" value="<?php echo $data['name'];?>" style="margin-bottom:10px" required autofocus />
+<p>Filter: <input id="CourseSlotPreReqsFilter" /></p>
 <select multiple size='5' id="AvailCourseSlotPreReqs" name='prereqIDs[]'>
 	<?php
 	foreach($data['prereqs'] as $row)
@@ -105,7 +85,7 @@ echo '>';
 <br /><br />
 
 <p>Corequisites: </p>
-<input name='name' class='form-control' placeholder="Filter" value="<?php echo $data['name'];?>" style="margin-bottom:10px" required autofocus />
+<p>Filter: <input id="CourseSlotCoReqsFilter" /></p>
 <select multiple size='5' id="AvailCourseSlotCoReqs" name='coreqIDs[]'>
 	<?php
 	foreach($data['coreqs'] as $row)
@@ -122,8 +102,8 @@ echo '>';
 <!-- TEST CODE -->
 
 
-<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
-<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
@@ -232,6 +212,3 @@ Filter.on("keyup", function ()
   FilterSelect(Select, userInput);
 });
 </script>
-</div>
-		<?php include_once('application/views/Templates/footer.php');?>
-</body>

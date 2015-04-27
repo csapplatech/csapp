@@ -1,14 +1,3 @@
-<head>
-    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
-    <style>
-
-button{
-        display: inline-block;
-}</style>
-</head>
-
-<body>
-    <?php include_once('application/views/Templates/navbar.php'); ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <h1>Curriculum</h1>
 
@@ -21,11 +10,10 @@ button{
     ?>
   </select>
 <br /><br />
-<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
-<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
-<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
-<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
-
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
@@ -64,5 +52,3 @@ Filter.on("keyup", function ()
   FilterSelect(Select, userInput);
 });
 </script>
-        <!--?php include_once('application/views/Templates/footer.php'); ?-->
-</body>
