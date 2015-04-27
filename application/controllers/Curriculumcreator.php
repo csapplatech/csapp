@@ -102,7 +102,8 @@ class Curriculumcreator extends CI_Controller {
 		
 		//set curriculum name
 		$curriculum = new Curriculum_model();
-		$curriculum->fromSerializedString($_SESSION['curriculum']);
+		if (isset($_SESSION['curriculum']))
+			$curriculum->fromSerializedString($_SESSION['curriculum']);
 		$curriculum->setName($name);
 		
 		//set curriculum type
@@ -114,11 +115,14 @@ class Curriculumcreator extends CI_Controller {
 			$curriculum->setCurriculumType(3);
 		
 		//save curriculum
-		if ($_SESSION['curriculumCreationMethod'] == "edit")
-			$curriculum->update(); //update current curriculum for edit
-		else
-			$curriculum->create(); //create a new entry for clone/new	
-				
+		if (isset($_SESSION['curriculumCreationMethod']))
+		{
+			if ($_SESSION['curriculumCreationMethod'] == "edit")
+				$curriculum->update(); //update current curriculum for edit
+			else
+				$curriculum->create(); //create a new entry for clone/new	
+		}
+			
 ////////////////////////////////////////////////////////////////////////		
 		
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
@@ -156,6 +160,11 @@ class Curriculumcreator extends CI_Controller {
 							foreach ($reqs['prereqs'] as $r)
 							{
 								$pre->fromSerializedString($r);
+								var_dump($pre);
+								echo '<br><br>';
+								var_dump($r);
+								echo '<br><br>';
+								echo $pre->getCurriculumCourseSlotID();
 								$slot->addCourseSlotPrerequisite($pre);
 							}
 						}
@@ -332,8 +341,8 @@ class Curriculumcreator extends CI_Controller {
 						array_push($prerequisites, $slot);
 			
 			if (isset($coreqIDs))
-				foreach ($coreqIDs as $p)
-					if ($currentIndex == $p)
+				foreach ($coreqIDs as $c)
+					if ($currentIndex == $c)
 						array_push($corequisites, $slot);
 		}
 				
@@ -351,7 +360,7 @@ class Curriculumcreator extends CI_Controller {
 					$reqsSlot = new Curriculum_course_slot_model();
 					$reqsSlot->fromSerializedString($reqs['slot']);
 					if ($reqsSlot->getCurriculumIndex() == $currIndex)
-						unset($reqs); //will this delete the sessoin array??
+						unset($reqs); 
 				}
 			}
 					
@@ -386,24 +395,12 @@ class Curriculumcreator extends CI_Controller {
 				$courseSlot->addValidCourseID($validCourse);
 					
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
-		{
-			$tempCourseSlot = new Curriculum_course_slot_model();
-			$tempCourseSlot->fromSerializedString($_SESSION['courseSlot']);
-			$tempCourseSlotIndex = $tempCourseSlot->getCurriculumIndex();			
-			
-			foreach ($courseSlots as $slot)
-			{
-				if ($tempCourseSlotIndex == $slot->getCurriculumIndex())
-				{
-					$curriculum->removeCurriculumCourseSlot($tempCourseSlot);
-					break;
-				}
-			}
-		} 
+			$curriculum->updateCurriculumCourseSlot($courseSlot);
 		else 
+		{
 			$courseSlot->setCurriculumIndex($_SESSION['maxCurriculumIndex']++);
-
-		$curriculum->addCurriculumCourseSlot($courseSlot);
+			$curriculum->addCurriculumCourseSlot($courseSlot);
+		}
 		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
@@ -433,7 +430,7 @@ class Curriculumcreator extends CI_Controller {
 				break;
 			}
 		}
-		
+
 		if ($courseSlot->getName() == NULL)
 			$courseSlot->setName("New Curriculum Course Slot");
 		
@@ -475,19 +472,22 @@ class Curriculumcreator extends CI_Controller {
 		$prereqsEdited = FALSE;
 		$coreqsEdited  = FALSE;
 		
-		foreach ($_SESSION['reqs'] as $reqs)
+		if (isset($_SESSION['reqs']))
 		{
-			foreach ($courseSlots as $slot) 
+			foreach ($_SESSION['reqs'] as $reqs)
 			{
-				$reqsSlot = new Curriculum_course_slot_model();
-				$reqsSlot->fromSerializedString($reqs['slot']);
-				//find the right course slot
-				if ($slot->getCurriculumIndex() == $reqsSlot->getCurriculumIndex()) 
-				{			
-					if (isset($reqs['prereqs']))
-						$prereqsEdited = TRUE;
-					if (isset($reqs['coreqs']))
-						$coreqsEdited = TRUE;
+				foreach ($courseSlots as $slot) 
+				{
+					$reqsSlot = new Curriculum_course_slot_model();
+					$reqsSlot->fromSerializedString($reqs['slot']);
+					//find the right course slot
+					if ($slot->getCurriculumIndex() == $reqsSlot->getCurriculumIndex()) 
+					{			
+						if (isset($reqs['prereqs']))
+							$prereqsEdited = TRUE;
+						if (isset($reqs['coreqs']))
+							$coreqsEdited = TRUE;
+					}
 				}
 			}
 		}
@@ -507,7 +507,6 @@ class Curriculumcreator extends CI_Controller {
 			if (!$prereqsEdited)
 			{	//normal prereq functionality
 				$slotPrereqs = $slot->getPrequisiteCourseSlots();
-				var_dump($slotPrereqs);
 				if (isset($slotPrereqs))
 					foreach ($slotPrereqs as $prereq)
 						if ($prereq->getCurriculumIndex() == $arr['index'])
