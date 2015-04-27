@@ -420,7 +420,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
@@ -444,7 +444,7 @@ class Curriculum_course_slot_model extends CI_Model
 		
 		if($this->curriculumCourseSlotID != null)
 		{
-			$this->db->select('CurriculumCourseSlotID');
+			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
@@ -452,9 +452,9 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
-				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
 					array_push($models, $model);
 				}
@@ -484,7 +484,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
@@ -610,7 +610,7 @@ class Curriculum_course_slot_model extends CI_Model
 						array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
 					}
 					
-					$this->db->insert('CurriculumSlotValidCourses', $data_arr);
+					$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
 				}
 				
                 return true;
