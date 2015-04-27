@@ -2,6 +2,7 @@
 <h1>Course Slot Edit</h1>
 
 <form method="POST">
+<p>Valid Classes:</p>
 <p>Filter: <input id="CourseSlotEditFilter" /></p>
   <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
@@ -17,6 +18,8 @@
   </select>
 <br /><br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
+<p>Title: <input name='notes' value="<?php if (isset($data['notes'])) echo $data['notes']; ?>" /></p>
+
 <p>Recommended Quarter: </p>
 <select size=4 name='recommendedQuarter'>
   <?php
@@ -66,6 +69,39 @@ if (isset($data['index']))
   echo " value=$data[index]";
 echo '>';
 ?>
+
+<!-- TEST CODE -->
+<p>Prerequisites: </p>
+<p>Filter: <input id="CourseSlotPreReqsFilter" /></p>
+<select multiple size='5' id="AvailCourseSlotPreReqs" name='prereqIDs[]'>
+	<?php
+	foreach($data['prereqs'] as $row)
+		echo "<option value='$row[index]'>$row[name]</option>"; 
+		if (isset($row['selected']))
+		   if ($row['selected'] == TRUE)
+			  echo " selected";
+	?>
+</select>
+<br /><br />
+
+<p>Corequisites: </p>
+<p>Filter: <input id="CourseSlotCoReqsFilter" /></p>
+<select multiple size='5' id="AvailCourseSlotCoReqs" name='coreqIDs[]'>
+	<?php
+	foreach($data['coreqs'] as $row)
+		echo "<option value='$row[index]'>$row[name]</option>"; 
+		if (isset($row['selected']))
+		   if ($row['selected'] == TRUE)
+			  echo " selected";
+	?>
+</select>
+<br /><br />
+
+
+
+<!-- TEST CODE -->
+
+
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
@@ -75,6 +111,76 @@ echo '>';
 var Filter = $("#CourseSlotEditFilter");
 // ID of <select> to filter
 var Select = $("#AvailCourseSelect");
+
+/**
+* Only shows options that contain a given text.
+* @OriginalAuthor Larry Battle <bateru.com/news>
+* @ModifiedBy     William Keen
+*     Modification: Streamlined functions for our purpose
+*	(Removed unnecessary if statements, variables, made easier to modify)
+*/
+var FilterSelect = function (select, str) 
+{
+  str = str.toLowerCase();
+  
+  //cache the jQuery object of the element
+  var $el = $(select);
+  
+  //cache all the options inside the element
+  if (!$el.data("options")) 
+    $el.data("options", $el.find("option").clone());
+  
+  //Addeds the new options based on matches
+  var newOptions = $el.data("options").filter(function () 
+    {return $(this).text().toLowerCase().match(str);});
+  $el.empty().append(newOptions);
+};
+
+Filter.on("keyup", function () 
+{
+  var userInput = Filter.val();
+  FilterSelect(Select, userInput);
+});
+</script>
+
+<script type="text/javascript"> //Uses jQuery
+var Filter = $("#CourseSlotPreReqsFilter");
+var Select = $("#AvailCourseSlotPreReqs");
+
+/**
+* Only shows options that contain a given text.
+* @OriginalAuthor Larry Battle <bateru.com/news>
+* @ModifiedBy     William Keen
+*     Modification: Streamlined functions for our purpose
+*	(Removed unnecessary if statements, variables, made easier to modify)
+*/
+var FilterSelect = function (select, str) 
+{
+  str = str.toLowerCase();
+  
+  //cache the jQuery object of the element
+  var $el = $(select);
+  
+  //cache all the options inside the element
+  if (!$el.data("options")) 
+    $el.data("options", $el.find("option").clone());
+  
+  //Addeds the new options based on matches
+  var newOptions = $el.data("options").filter(function () 
+    {return $(this).text().toLowerCase().match(str);});
+  $el.empty().append(newOptions);
+};
+
+Filter.on("keyup", function () 
+{
+  var userInput = Filter.val();
+  FilterSelect(Select, userInput);
+});
+</script>
+
+<script type="text/javascript"> //Uses jQuery
+var Filter = $("#CourseSlotCoReqsFilter");
+var Select = $("#AvailCourseSlotCoReqs");
 
 /**
 * Only shows options that contain a given text.

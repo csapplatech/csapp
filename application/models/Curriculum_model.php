@@ -205,6 +205,33 @@ class Curriculum_model extends CI_Model
         return $this->curriculumCourseSlots;
     }
     
+	/**
+	 * Summary of updateCurriculumCourseSlot
+	 * Update the properties of a curriculum course slot model with the properties of a provided couse slot model based on the curriculum index of the models
+	 *
+	 * @param Curriculum_course_slot_model $courseSlot The course slot model with new properties to update with
+	 * @return Boolean True if the model was successfully updated, false otherwise
+	 */
+	public function updateCurriculumCourseSlot($courseSlot)
+	{
+		if(isset($this->curriculumCourseSlots[$courseSlot->getCurriculumIndex()]))
+		{
+			$mCourseSlot = $this->curriculumCourseSlots[$courseSlot->getCurriculumIndex()];
+			
+			$mCourseSlot->setName($courseSlot->getName());
+			$mCourseSlot->setMinimumGrade($courseSlot->getMinimumGrade());
+			$mCourseSlot->setRecommendedQuarter($courseSlot->getRecommendedQuarter());
+			$mCourseSlot->setRecommendedYear($courseSlot->getRecommendedYear());
+			$mCourseSlot->setNotes($courseSlot->getNotes());
+			
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
     /**
      * Summary of setName
      * Set the name to be associated with this curriculum model
@@ -303,25 +330,51 @@ class Curriculum_model extends CI_Model
     {
         if($this->curriculumID != null && $this->name != null && $this->curriculumType != null && filter_var($this->curriculumType, FILTER_VALIDATE_INT))
         {
+			$arr = array();
+			
+			foreach($this->curriculumCourseSlots as $slot)
+			{
+				array_push($arr, $slot->getCurriculumCourseSlotID());
+			}
+			
             $data = array('Name' => $this->name, 'CurriculumTypeID' => $this->curriculumType);
             
             $this->db->where('CurriculumID', $this->curriculumID);
             $this->db->update('Curriculums', $data);
             
             $results = $this->db->get_where('CurriculumCourseSlots', array('CurriculumID' => $this->curriculumID));
-            
+			
             foreach($results->result_array() as $row)
             {
                 $courseSlot = new Curriculum_course_slot_model;
-                $courseSlot->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']);
-                
-                $courseSlot->delete();
+				
+                if($courseSlot->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					if(in_array($courseSlot->getCurriculumCourseSlotID(), $arr))
+					{
+						$index = array_search($courseSlot->getCurriculumCourseSlotID(), $arr);
+						unset($arr[$index]);
+						
+						$courseSlot->update();
+					}
+					else
+					{
+						$courseSlot->delete();
+					}
+				}
             }
-            
-            foreach($this->curriculumCourseSlots as $course)
-            {
-                $course->create();
-            }
+			
+			foreach($arr as $id)
+			{
+				foreach($this->curriculumCourseSlots as $slot)
+				{
+					if($slot->getCurriculumCourseSlotID() == $id)
+					{
+						$slot->create();
+						break;
+					}
+				}
+			}
             
             return true;
         }
