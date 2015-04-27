@@ -332,7 +332,7 @@ class Curriculum_model extends CI_Model
         {
 			$arr = array();
 			
-			foreach($this->currriculumCourseSlots as $slot)
+			foreach($this->curriculumCourseSlots as $slot)
 			{
 				array_push($arr, $slot->getCurriculumCourseSlotID());
 			}
