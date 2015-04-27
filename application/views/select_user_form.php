@@ -21,12 +21,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 			.container {
 				color: black;
-				text-align: left;
+				text-align: center;
 			}
 
 			.container * {
 				text-align: left;
 			}
+                        
+                        br{
+                            text-align: center;
+                            padding-top: 5px;
+                        }
 			
 		</style>
     </head>
@@ -37,9 +42,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<b>Select a user to <?= $_SESSION['action'] ?></b>
 			<form action="<?php echo site_url('User/submitSelectUserForm'); ?>" method="POST">
 				<label>Input User ID:</label>
-				<input type="text" name="userID"><br />
-				<input type="submit" value="Confirm"><br />
-			</form>
+				<input type="text" name="userID" class="form-control" placeholder="User ID" style="margin-bottom:5px" required autofocus><br />
+                                <button class="btn btn-primary btn" type="submit" style="margin-bottom:5px">Confirm</button>			</form>
 		</div>
 		<?php include_once('application/views/Templates/footer.php'); ?>
     </body>

@@ -1,21 +1,31 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<head>
+    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
+    <style>body{
+        padding-top: 60px;
+}</style>
+</head>
+<body>
+    		<?php include_once('application/views/Templates/navbar.php'); ?>
+    <div class = "container">
+
 <h1>Curriculum Edit</h1>
 
 <form method="POST">
-<p>Filter: <input id="CurrEditFilter" /></p>
-  <select size='3' id="CourseSlotSelect" name='courseSlot'>
+<input class="form-control" placeholder="Filter" id="CurrEditFilter" style="margin-bottom:5px" required autofocus />
+  <select size='5' id="CourseSlotSelect" name='courseSlot'>
     <?php
       foreach($data['course'] as $row)
-	echo "<option value='$row[index]'>$row[name]</option>"; 
+	echo "<option value='$row[index]'>$row[name]</option>";
     ?>
   </select>
 <br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculumCourseSlot');   ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculumCourseSlot');    ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculumCourseSlot');  ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculumCourseSlot');   ?>">Edit</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculumCourseSlot');    ?>">New</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculumCourseSlot');  ?>">Clone</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
-<p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
+<input class="form-control" placeholder="New Curriculum" name='name' style="margin-bottom:5px" value="<?php echo $data['name']; ?>" required autofocus></p>
 <p>Type:<br />
 <select size='3' name='type' required>
 	<?php
@@ -31,8 +41,8 @@
 	?>
 </select></p>
 <br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum');    ?>">Save</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculum'); ?>">Cancel</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum');    ?>">Save</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculum'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
@@ -71,3 +81,7 @@ Filter.on("keyup", function ()
   FilterSelect(Select, userInput);
 });
 </script>
+</div>
+		<?php include_once('application/views/Templates/footer.php');?>
+
+</body>
