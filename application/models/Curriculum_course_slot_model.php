@@ -420,7 +420,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
@@ -452,7 +452,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
@@ -484,7 +484,7 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
