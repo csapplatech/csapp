@@ -435,12 +435,28 @@ class User_model extends CI_Model
      */
     public function addRole($roleType)
     {
-        $data = array(
-			"UserID" => $this->userID,
-			"RoleID" => $roleType
-		);
+		$this->db->select('RoleID');
+		$this->db->from('UserRoles');
+		$this->db->where('UserID', $this->userID);
 		
-		$this->db->insert('UserRoles', $data);
+		$results = $this->db->get();
+		
+		$arr = array();
+		
+		foreach($results->result_array() as $row)
+		{
+			array_push($arr, $row['RoleID']);
+		}
+		
+		if(!in_array($roleType, $arr))
+		{
+			$data = array(
+				"UserID" => $this->userID,
+				"RoleID" => $roleType
+			);
+			
+			$this->db->insert('UserRoles', $data);
+		}
     }
     
     /**
