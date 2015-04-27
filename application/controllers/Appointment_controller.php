@@ -149,8 +149,9 @@ public function fill()
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
                    
-                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID']))
+                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID'])&&($selected->isScheduled()))
                      {
+                      
                         $_POST['student_selection']=0;
                      }
                      
@@ -159,9 +160,9 @@ public function fill()
                 
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
-                   
-                    if(($selected->getStartTime()==$aptTime[0]) && ($selected->getScheduledStudentUserID() != $_SESSION['UserID']) )
-                     {
+                  
+                    if((($selected->getStartTime()==$aptTime[0]) && !($selected->isScheduled())))
+                     { 
                         $Advising_appointment->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());//load the specific appointment from the ID
                         $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
                         $Advising_appointment->setAdvisingAppointmentState(1);
