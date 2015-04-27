@@ -610,7 +610,7 @@ class Curriculum_course_slot_model extends CI_Model
 						array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
 					}
 					
-					$this->db->insert('CurriculumSlotValidCourses', $data_arr);
+					$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
 				}
 				
                 return true;
