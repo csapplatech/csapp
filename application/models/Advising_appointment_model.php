@@ -15,6 +15,7 @@ class Advising_appointment_model extends CI_Model
 	const APPOINTMENT_STATE_COMPLETED = 2;
 	const APPOINTMENT_STATE_CANCELED_BY_STUDENT = 3;
 	const APPOINTMENT_STATE_CANCELED_BY_ADVISOR = 4;
+        const APPOINTMENT_STATE_OPEN=5;
 	
     function __construct()
     {
@@ -46,7 +47,7 @@ class Advising_appointment_model extends CI_Model
 				{
 					$row = $results->row_array();
 					
-					$this->advisingAppointmentStateID = $row['AdvisingAppointmentStateID'];
+					$this->advisingAppointmentStateID = $row['AppointmentStateID'];
 					$this->studentUserID = $row['StudentUserID'];
 				}
 				
@@ -102,6 +103,11 @@ class Advising_appointment_model extends CI_Model
 		return $this->studentUserID;
 	}
 	
+	public function setStudentUserID($studentUserID)
+	{
+		$this->studentUserID = filter_var($studentUserID, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
 	public function setAdvisingAppointmentState($advisingAppointmentStateID)
 	{
 		$this->advisingAppointmentStateID = $advisingAppointmentStateID;
@@ -119,17 +125,17 @@ class Advising_appointment_model extends CI_Model
 	
 	public function isCompleted()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_COMPLETED;
 	}
 	
 	public function isCanceledByAdvisor()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_CANCELED_BY_ADVISOR;
 	}
 	
 	public function isCanceledByStudent()
 	{
-		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_SCHEDULED;
+		return $this->advisingAppointmentStateID == self::APPOINTMENT_STATE_CANCELED_BY_STUDENT;
 	}
 	
     public function update()
@@ -141,9 +147,9 @@ class Advising_appointment_model extends CI_Model
             $this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
             $this->db->update('AdvisingAppointments', $data);
             
-            if($this->db->affected_rows() > 0 && !$this->isOpen())
+            if(!$this->isOpen())
             {
-				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AdvisingAppointmentStateID' => $this->advisingAppointmentStateID);
+				$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AppointmentStateID' => $this->advisingAppointmentStateID);
 				
 				$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
 				$this->db->update('ScheduledAdvisingAppointments', $data);
@@ -178,7 +184,7 @@ class Advising_appointment_model extends CI_Model
                 
 				if(!$this->isOpen())
 				{
-					$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AdvisingAppointmentStateID' => $this->advisingAppointmentStateID);
+					$data = array('AdvisingAppointmentID' => $this->advisingAppointmentID, 'StudentUserID' => $this->studentUserID, 'AppointmentStateID' => $this->advisingAppointmentStateID);
 				
 					$this->db->where('AdvisingAppointmentID', $this->advisingAppointmentID);
 					$this->db->update('ScheduledAdvisingAppointments', $data);

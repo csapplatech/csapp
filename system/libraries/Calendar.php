@@ -55,6 +55,9 @@ class CI_Calendar {
 	 *
 	 * @var mixed
 	 */
+        
+        public $all_apps='';
+    
 	public $template = '';
         
         public $user='';
@@ -189,7 +192,8 @@ class CI_Calendar {
         
 	public function generate($year = '', $month = '', $data = array(),$interval =20)
         {       
-          
+            
+            
                 if((intval($interval)== 10)||(intval($interval)== 15)||(intval($interval)== 20)||(intval($interval)== 30)) //if input is wrong
                 {
                     $interval = $interval;
@@ -610,44 +614,71 @@ class CI_Calendar {
                                 
                                 $existing_Appointment=false; 
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-                             if($this->user->isStudent()){
-                                 
-                             $X=0;
-                             foreach($this->app_Times as $key){
+            if($this->user->isStudent())
+            {
+                foreach($this->all_apps as $key)
+                   {
+                        if($key->getStartTime()==$timestamp1)
+                        {
 
-                                 if($key==$timestamp1){
-                                     //echo $key;
-                                     array_splice($this->app_Times,$X,1);//remove timestamp from app_Times and squishes the array back together for efficiency
-                                     $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-' style='background-color:yellow;'></label></div></td> "; //creates a row of $l columns $k times
-                                     $existing_Appointment=true;
-                                     break;
-                                 }
-                                 $X++;
-                             }
-                             if($existing_Appointment==false){
-                                 $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-' onmouseover='selectAll(event, this)'></label></div></td>"; //creates a row of $l columns $k times
-                           }
-                          }
-                          else if($this->user->isAdvisor()){
-                               $X=0;
-                             foreach($this->app_Times as $key){
+                           if($key->isScheduled())  //if a student has already picked this time slot
+                               {
+                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                $existing_Appointment=true;
+                                break;
 
-                                 if($key==$timestamp1){
-                                     //echo $key;
-                                     array_splice($this->app_Times,$X,1);//remove timestamp from app_Times and squishes the array back together for efficiency
-                                     $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-' style='background-color:yellow;'></label></div></td> "; //creates a row of $l columns $k times
-                                     $existing_Appointment=true;
-                                     break;
-                                 }
-                                 $X++;
-                             }
-                             if($existing_Appointment==false){
-                                 $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-' onmouseover='selectAll(event, this)'></label></div></td>"; //creates a row of $l columns $k times
-                           }
-                          }
-                         else{
-                             
-                         }
+                               } 
+
+                           else
+                               {
+                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='student_selection' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
+                                $existing_Appointment=true;
+                                break;
+                               }
+                        }
+                    }
+
+                if($existing_Appointment==false)
+                    {
+                    $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' disabled id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-'></label></div></td>"; //creates a row of $l columns $k times
+                    }
+            }
+        else if($this->user->isAdvisor())
+            {
+                    if($this->app_Times !=null)
+                {  
+                    foreach($this->all_apps as $key)
+                        {
+                            if($key->getStartTime()==$timestamp1)
+                                {
+                                    
+                                    if($key->isScheduled())  //if a student has already picked this time slot
+                               {
+                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                $existing_Appointment=true;
+                                break;
+
+                               } 
+
+                           else
+                               {
+                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='Open[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
+                                $existing_Appointment=true;
+                                break;
+                               }
+                                }
+
+                        }
+
+                }
+             if($existing_Appointment==false)
+                {
+                 $out .= "<td id='clickable'><div class='cboxwrapper'><input type='checkbox' id='$tempk' class='row$k' name='appointments[]' value='$timestamp1-$timestamp2'><label title = '$actualdate' for='$tempk' id='$tempk-' onmouseover='selectAll(event, this)'></label></div></td>"; //creates a row of $l columns $k times
+                }
+            }
+
+                   
+                         
                          
                                  
                               
@@ -805,9 +836,11 @@ class CI_Calendar {
 	 *
 	 * @return	array
 	 */
+       
 	public function default_template()
 	{
-		return array(
+		if($this->user->isAdvisor()){
+                return array(
 			'table_open'				=> ' <br><script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
 			'heading_row_start'			=> '<table id="top" class="animated fadeInUp"><tr><td><input id= "startT" type="text" value=""></td><td colspan="2"></td><td colspan="3"> <select id="intervals" name="intervals" onchange="setGetParameter(\'interval\',document.getElementById(\'intervals\').options[document.getElementById(\'intervals\').selectedIndex].value)"><option>Intervals</option><option value="10">10 min.</option><option value="15">15 min.</option><option value="20">20 min.</option><option value="30">30 min.</option></select> </td><td></td><td id ="submitwrap" rowspan="2"><input id="submit" name="submit" type="submit" value="Add"></td></tr><tr>',//<th>
 			'heading_previous_cell'		=> '<td id="pad"><input id="endT" type="text" value=""></td><td><a id="prevweek" href ="javascript:void(0);" onclick="nextOrPrev(this)"><div>&lt;</div></a></td><td><a id="previousnext" href="{previous_url}"><div>&lt;&lt;</div></a></td>',
@@ -832,7 +865,35 @@ class CI_Calendar {
 			'cal_cell_end_other'		=> '</th>',
 			'cal_row_end'				=> '</tbody></table>',
 			'table_close'				=> '</div></form></div>'
-		);
+                );}
+                
+                if($this->user->isStudent()){
+                return array(
+			'table_open'				=> '<script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
+			'heading_row_start'			=> '<table id="top" class="animated fadeInUp"><tr><td><input id= "startT" type="text" value=""></td><td colspan="2"></td><td colspan="3">  </td><td></td><td id ="submitwrap" rowspan="2"><input id="submit" name="submit" type="submit" value="Add"></td></tr><tr>',//<th>
+			'heading_previous_cell'		=> '<td id="pad"><input id="endT" type="text" value=""></td><td><a id="prevweek" href ="javascript:void(0);" onclick="nextOrPrev(this)"><div>&lt;</div></a></td><td><a id="previousnext" href="{previous_url}"><div>&lt;&lt;</div></a></td>',
+			'heading_title_cell'		=> '<td>{heading}</td>',
+			'heading_next_cell'			=> '<td><a id="nextprevious" href="{next_url}"><div>&gt;&gt;</div></a></td><td><a id="nextweek" href="javascript:void(0);" onclick="nextOrPrev(this)"><div>&gt;</div></a></td><td id="pad"></td></table>',
+			'heading_row_end'			=> '', //</th>
+			'week_row_start'			=> '', //<tr><div id="weekrow"></div>
+			'week_day_cell'				=> '{week_day}',
+			'week_row_end'				=> '', //</tr>
+			'cal_row_start'				=> '<table class="scroll" ',
+			'cal_cell_start'			=> '<th ',
+			'cal_cell_start_today'		=> '<th ',
+			'cal_cell_start_other'		=> '<th style="color: #f2f2f2;" ',
+			'cal_cell_content'			=> '<a href="{content}">{day}<divid="cellcontent"></div></a>',
+			'cal_cell_content_today'	=> '<a href="{content}"><strong>{day}<div id="cellcontenttoday"></div></strong></a>',
+			'cal_cell_no_content'		=> '{day}',
+			'cal_cell_no_content_today'	=> '<strong style="color: #e4481b;;">{day}</strong>',
+			'cal_cell_blank'			=> '&nbsp;',
+			'cal_cell_other'			=> '{day}',
+			'cal_cell_end'				=> '</th>',
+			'cal_cell_end_today'		=> '</th>',
+			'cal_cell_end_other'		=> '</th>',
+			'cal_row_end'				=> '</tbody></table>',
+			'table_close'				=> '</div></form></div>'
+                );}
 	}
 
 	// --------------------------------------------------------------------
