@@ -738,6 +738,8 @@ class User_model extends CI_Model
             
             $this->db->insert('Users', $data);
             
+			$this->userID = $this->db->insert_id();
+			
             return $this->db->affected_rows() > 0;
         }
         return false;
