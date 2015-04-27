@@ -30,7 +30,7 @@
 		
 		</style>
     </head>
-    <body style="padding-top: 60px">
+    <body style="padding: 60px 0px;">
         <?php include_once('application/views/Templates/navbar.php'); ?>
 		<div id="body" class="container">
 			<div class="row">
