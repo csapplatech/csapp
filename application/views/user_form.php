@@ -21,12 +21,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 			.container {
 				color: black;
-				text-align: left;
+				text-align: center;
 			}
 			
 			.container * {
 				text-align: left;
 			}
+                        
+                        br{
+                            text-align: center;
+                            padding-top: 5px;
+                        }
 
 		</style>
     </head>
@@ -38,14 +43,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<form action="<?php echo site_url('User/submitUserForm/' . $uID); ?>" method="POST" >
 				<p><b>Please fill out user info.</b></p><br/>
 				<table>
-					<tr><p>Email Address: <input type="text" name="email" value="<?= $email ?>"></p></tr>
-					<tr><p>Password: <input type="password" name="pass" ></p></tr>
-					<tr><p>Confirm New Password: <input type="password" name="confPass" ></p></tr>
-					<tr><p>First Name (Middle Name opt.): <input type="text" name="fName" value="<?= $fName ?>" ></p></tr>
-					<!--<tr><p>Middle Name: <input type="text" name="mName" value="<?= $mName ?>" ></p></tr>-->
-					<tr><p>Last Name: <input type="text" name="lName" value="<?= $lName ?>" ></p></tr>
+                                        <tr><p><input type="text" id="username" name="email" value="<?= $email ?>" class="form-control" placeholder="Email Address" style="margin-bottom:5px" required autofocus></tr></p>
+                                        <tr><p><input type="text" name="pass" class="form-control" placeholder="Password" style="margin-bottom:5px" required autofocus></tr></p
+                                        <tr><p><input type="text" name="confPass" class="form-control" placeholder="Confirm New Password" style="margin-bottom:5px" required autofocus></tr></p>
+                                        <tr><p><input type="text" name="fName" class="form-control" placeholder="First Name (Middle Name Optional)" value="<?= $fName ?>" style="margin-bottom:5px" required autofocus></tr></p>
+                                        <tr><p><input type="text" name="lName" class="form-control" placeholder="Last Name" value="<?= $lName ?>" style="margin-bottom:5px" required autofocus></tr></p>
 				</table>
-				<p><b>Please select user Roles.</b></p><br/>
+				<p2><b>Please select user Roles.</b></p2><br/>
 				<?php
 				$roleNames = array(NULL, 'Administrator', 'Program Chair', 'Advisor', 'Student');
 				for ($i = 1; $i <= 4; $i++) {
@@ -57,8 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				}
 				?>
 				<br />
-				<tr><input type="submit" value="NEXT"></tr>
-
+                                <button class="btn btn-primary btn" type="submit" style="margin-bottom:5px">NEXT</button>
 			</form>
 		</div>
 		<?php include_once('application/views/Templates/footer.php'); ?>
