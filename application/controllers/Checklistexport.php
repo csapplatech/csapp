@@ -171,9 +171,10 @@ class Checklistexport extends CI_Controller
 	    $checklist->getColumnDimension('J')->setWidth(8.2);
 	    $checklist->getColumnDimension('K')->setWidth(3.2);
 	    $checklist->getColumnDimension('L')->setWidth(20);
-	    $checklist->getColumnDimension('M')->setWidth(6);
-	    $checklist->getColumnDimension('O')->setWidth(6);
-	    $checklist->getColumnDimension('P')->setWidth(6);
+	    $checklist->getColumnDimension('M')->setWidth(8.2);
+	    $checklist->getColumnDimension('N')->setWidth(8.2);
+	    $checklist->getColumnDimension('O')->setWidth(8.2);
+	    $checklist->getColumnDimension('P')->setWidth(8.2);
 
 	    $this->checklistheader($checklist, $user->getName(), $user->getUserID(), 
 			  $user->getAdvisor()->getName(), "2014-15", $user->getEmailAddress());
@@ -297,7 +298,8 @@ class Checklistexport extends CI_Controller
 		//Put in all course credit information and term/year
 	        $checklist->getStyle("F$row:J$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		foreach ($coursesTaken as $key=>$taken)
-			foreach ($reqCourse->getValidCourseIDs() as $prereqID)
+			foreach ($reqCourse->getValidCourseIDs() as $reqkey=>$prereqID)
+			{
 				if ($prereqID == $taken[0]->getCourse()->getCourseID())
 				{
 					$checklist->getCell("H$row")->setValue($taken[0]->getAcademicQuarter()->getYear());
@@ -308,32 +310,110 @@ class Checklistexport extends CI_Controller
 						case 'Winter': $term = 'W'; break;
 						case 'Summer': $term = 'Su'; break;
 						case 'Spring': $term = 'Sp'; break;
-						default: $term = '?'; break;
+						default: $term = '?';
 					}
 					$checklist->getCell("G$row")->setValue($term);
 					$checklist->getCell("J$row")->setValue($taken[1]);
 					unset($coursesTaken[$key]);
 				}
-
+				
+				if ($checklist->getCell("F$row")->getValue() == NULL)
+					$checklist->getCell("F$row")->setValue($taken[0]->getHours());
+			}
 		//Put in astrik if it's a prereq of another course
+		
 
+		//Set borders between columns for course information
+		$checklist->getStyle("B9:B$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("F9:F$row")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("F9:F$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("G9:G$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("H9:H$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("I9:I$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		$checklist->getStyle("J9:J$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		
+		//Merge preresuiqite cells
+		for ($i = 0; $i <= $row; $i++)
+			$checklist->mergeCells("C$i:E$i");
 		$row++;
 	    }
-
-	    //Set borders between columns for course information
-	    $checklist->getStyle("B9:B$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("F9:F$row")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("F9:F$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("G9:G$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("H9:H$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("I9:I$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-	    $checklist->getStyle("J9:J$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    
-	    //Merge preresuiqite cells
-	    for ($i = 0; $i <= $row; $i++)
-	    	$checklist->mergeCells("C$i:E$i");
+	    //Add extra blank at the bottom for astectics
+	    $checklist->getStyle("A$row:B$row")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    $checklist->mergeCells("C$row:E$row");
+	    for ($i = 'C'; $i <= 'J'; $i++)
+	    {
+	    	$checklist->getStyle("$i$row")->getBorders()->getRight() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	$checklist->getStyle("$i$row")->getBorders()->getLeft()  ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	$checklist->getStyle("$i$row")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    }
+	    
+	    //Put all left over classes into Additional Courses
+	    $checklist->getStyle("L8:P8")->applyFromArray($this->titlestyle);	
+	    $checklist->getStyle("L8:P8")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	    $checklist->getCell("L8")->setValue("ADDITIONAL COURSE");
+	    $checklist->getCell("M8")->setValue("SCH");
+	    $checklist->getCell("N8")->setValue("TERM");
+	    $checklist->getCell("O8")->setValue("YEAR");
+	    $checklist->getCell("P8")->setValue("GRADE");
+
+	    //Sort courses for putting into Additional Course
+	    $courses = array();
+	    foreach ($coursesTaken as $key=>$taken)
+	    {
+	    	$course = $taken[0]->getCourse();
+	    	$courses[$course->getCourseName()." ".$course->getCourseNumber()] = $taken;
+	    }
+	    ksort($courses);
+
+	    //Insert into additional course
+	    $irow = 9;
+	    $cols = array('L', 'M', 'N', 'O', 'P');
+	    foreach ($cols as $col)
+	    {
+	    	$checklist->getStyle("$col$irow")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    }
+	    $irow++;
+	    foreach ($courses as $key=>$taken)
+	    {
+	    	foreach ($cols as $col)
+	    	{
+	    		$checklist->getStyle("$col$irow")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    		$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	}
+	    	$checklist->getStyle("M$irow:P$irow")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	    	$course = $taken[0]->getCourse();
+	    	$checklist->getCell("L$irow")->setValue($key);
+	    	$checklist->getCell("O$irow")->setValue($taken[0]->getAcademicQuarter()->getYear());
+	    			
+	    	$term = NULL;
+	    	switch ($taken[0]->getAcademicQuarter()->getName())
+	    	{
+	    		case 'Fall':   $term = 'F'; break;
+	    		case 'Winter': $term = 'W'; break;
+	    		case 'Summer': $term = 'Su'; break;
+	    		case 'Spring': $term = 'Sp'; break;
+	    		default: $term = '?';
+	    	}
+	    	$checklist->getCell("N$irow")->setValue($term);
+	    	$checklist->getCell("P$irow")->setValue($taken[1]);
+	    
+	    	if ($checklist->getCell("M$irow")->getValue() == NULL)
+	    		$checklist->getCell("M$irow")->setValue($taken[0]->getHours());
+	    	$irow++;
+	    }
+	    
+	    $cols = array('L', 'M', 'N', 'O', 'P');
+	    foreach ($cols as $col)
+	    {
+	    	$checklist->getStyle("$col$irow")->getBorders()->getRight() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	$checklist->getStyle("$col$irow")->getBorders()->getLeft()  ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    	$checklist->getStyle("$col$irow")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+	    }
 	}
 
+	//Generate quarter view
 	private function generate_quarter_view($sheet, $user, $curriculum)
 	{
 		//Set column widths
@@ -357,6 +437,7 @@ class Checklistexport extends CI_Controller
 		$this->generate_quarter_view_core($sheet, $user, $curriculum);
 	}
 		
+	//Quarter View Core
 	private function generate_quarter_view_core($sheet, $user, $curriculum)
 	{
 	    //Organize courses by year/quarter in an array $arr[$year][$quarter][$course]
@@ -468,6 +549,7 @@ class Checklistexport extends CI_Controller
 		}
 	}
 
+	//Quarter View Header
 	private function generate_quarter_view_header($sheet, $name, $studID, $email)
 	{
 	    //Set name fields
