@@ -41,7 +41,7 @@ class Advising_form_model extends CI_Model
 			if($results->num_rows() > 0)
 			{
 				$row = $results->row_array();
-				
+
 				$this->advisingFormID = $row['AdvisingFormID'];
 				$this->studentUserID = $row['StudentUserID'];
 				$this->academicQuarterID = $row['AcademicQuarterID'];
@@ -120,7 +120,7 @@ class Advising_form_model extends CI_Model
 			$this->db->select('CourseSectionID');
 			$this->db->from('AdvisingFormCourseSections');
 			$this->db->where('AdvisingFormID', $this->advisingFormID);
-			$this->db->where('AdvisingFormCourseSectionState', self::COURSE_SECTION_STATE_PREFERRED);
+			$this->db->where('AdvisingFormCourseSectionStateID', self::COURSE_SECTION_STATE_PREFERRED);
 			
 			$results = $this->db->get();
 			
@@ -153,7 +153,7 @@ class Advising_form_model extends CI_Model
 			$this->db->select('CourseSectionID');
 			$this->db->from('AdvisingFormCourseSections');
 			$this->db->where('AdvisingFormID', $this->advisingFormID);
-			$this->db->where('AdvisingFormCourseSectionState', self::COURSE_SECTION_STATE_ALTERNATE);
+			$this->db->where('AdvisingFormCourseSectionStateID', self::COURSE_SECTION_STATE_ALTERNATE);
 			
 			$results = $this->db->get();
 			

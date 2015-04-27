@@ -218,3 +218,4 @@ class Student_transfer_course_model extends CI_Model
 		return false;
 	}
 }
+

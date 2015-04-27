@@ -50,11 +50,13 @@ class Advising_schedule_model extends CI_Model
 			$this->db->where('AcademicQuarterID', $academicQuarterID);
 			
 			$results = $this->db->get('AdvisingSchedules');
-			
+		
+                        
 			if($results->num_rows() > 0)
 			{
 				$row = $results->row_array();
 				
+                                
 				$this->advisingScheduleID = $row['AdvisingScheduleID'];
 				$this->advisorUserID = $row['AdvisorUserID'];
 				$this->academicQuarterID = $row['AcademicQuarterID'];
@@ -67,6 +69,7 @@ class Advising_schedule_model extends CI_Model
 	
     public function getAdvisingScheduleID()
     {
+        echo"TEXT".$this->advisingScheduleID;
         return $this->advisingScheduleID;
     }
     
@@ -169,9 +172,22 @@ class Advising_schedule_model extends CI_Model
             $appt->setAdvisingScheduleID($row['AdvisingScheduleID']);
             $appt->setStartTime($row['StartTime']);
             $appt->setEndTime($row['EndTime']);
+           
+            $results = $this->db->get_where('ScheduledAdvisingAppointments', array('AdvisingAppointmentID' => $row['AdvisingAppointmentID']), 1);
+            if($results->num_rows() > 0)
+                {
+                    $row = $results->row_array();
+
+                    $appt->setAdvisingAppointmentState($row['AppointmentStateID']);
+                    $appt->setStudentUserID($row['StudentUserID']);
+                }
+            
             
             array_push($data_arr, $appt);
         }
+        
+				
+				
         
         return $data_arr;      
     }

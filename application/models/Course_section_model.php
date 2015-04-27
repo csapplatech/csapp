@@ -14,7 +14,7 @@ class Course_section_model extends CI_Model
     private $course = null;
 	private $hours = null;
 	private $callNumber = null;
-        private $instructor = null;
+	private $instructor = null;
     private $academicQuarter = null;
     private $courseSectionTimes = array();
     
@@ -25,7 +25,7 @@ class Course_section_model extends CI_Model
     {
         parent::__construct();
     }
-    
+	
 	/**
 	 * Summary of getCourseSectionTimesAsString
 	 * Get the course sections times for this course section as a string similar to how they are represented on BOSS
@@ -52,7 +52,7 @@ class Course_section_model extends CI_Model
 			
 			$temp[$index][$courseSectionTime->getDayOfWeek()] = $courseSectionTime->getDayOfWeekLetter();
 		}
-		
+
 		foreach($temp as $key => $t)
 		{	
 			$tStr = "";
@@ -76,7 +76,7 @@ class Course_section_model extends CI_Model
 			{
 				$tStr = $tStr . $t[Course_section_time_model::DAY_THURSDAY];
 			}
-			
+
 			if(isset($t[Course_section_time_model::DAY_FRIDAY]))
 			{
 				$tStr = $tStr . $t[Course_section_time_model::DAY_FRIDAY];
@@ -105,7 +105,7 @@ class Course_section_model extends CI_Model
 		}
 		
 		$minute = intval($time % 100);
-		
+
 		return $hour . ":" . (($minute < 10) ? "0" . $minute : $minute);
 	}
 	

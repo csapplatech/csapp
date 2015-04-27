@@ -19,6 +19,8 @@ class Course_model extends CI_Model
 	// Constant values defined by the CourseRequisiteTypes table, must reflect content in that table
 	const COURSE_REQUISITE_PREREQUISITE = 1;
 	const COURSE_REQUISITE_COREQUISITE = 2;
+	const COURSE_REQUISITE_JUNIOR_STANDING = 3;
+	const COURSE_REQUISITE_SENIOR_STANDING = 4;
 	
 	// Constant values defined by the CourseTypes table, must reflect content in that table
 	const COURSE_TYPE_UNDERGRADUATE = 1;
@@ -53,7 +55,6 @@ class Course_model extends CI_Model
                 $this->courseName = $row['CourseName'];
 				$this->courseCategoryName = self::getCategoryName($this->courseName);
                 $this->courseNumber = $row['CourseNumber'];
-                
 				$this->courseTitle = $row['CourseTitle'];
                 $this->courseDescription = $row['CourseDescription'];
 				$this->courseTypeID = $row['CourseTypeID'];
@@ -109,7 +110,17 @@ class Course_model extends CI_Model
 	{
 		return $this->courseTitle;
 	}
-        
+	
+	/**
+     * Summary of getCourseType
+     * Get the course type of this model
+     * 
+     * @return integer The course type associated with this course model
+     */
+	public function getCourseType()
+	{
+		return $this->courseTypeID;
+	}
 	
     /**
      * Summary of getCourseDescription
@@ -325,6 +336,34 @@ class Course_model extends CI_Model
 	}
 	
 	/**
+	 * Summary of getNonCourseRequisites
+	 * Get all of the non course requisites for this course
+	 *
+	 * @return Array An array containing all the non course requisites for this course
+	 */
+	public function getNonCourseRequisites()
+	{
+		$rows = array();
+		
+		if($this->courseID != null)
+		{
+			$this->db->select('CourseRequisiteTypeID');
+			$this->db->from('CourseRequisites');
+			$this->db->where('CourseID', $this->courseID);
+			$this->db->where('CourseRequisiteTypeID >', self::COURSE_REQUISITE_COREQUISITE);
+			
+			$results = $this->db->get();
+			
+			foreach($results->result_array() as $row)
+			{
+				array_push($rows, $row['CourseRequisiteTypeID']);
+			}
+		}
+		
+		return $rows;
+	}
+	
+	/**
 	 * Summary of addCoursePrerequisite
 	 * Add a prerequisite course to this model
 	 *
@@ -335,7 +374,7 @@ class Course_model extends CI_Model
 	{
 		$data = array(
 			'CourseID' => $this->courseID,
-			'RequisisteCourseID' => $course->courseID,
+			'RequisiteCourseID' => $course->courseID,
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
 		);
 		
@@ -346,16 +385,16 @@ class Course_model extends CI_Model
 	
 	/**
 	 * Summary of addCourseCorequisite
-	 * Add a corequisite curriculum course slot to this model
+	 * Add a corequisite course to this model
 	 *
-	 * @param Course_model $curriculumCourseSlot The curriculum course slot model that is the corequisite to this model
+	 * @param Course_model $course The course model that is the corequisite to this model
 	 * @return boolean Whether or not the corequisite relationship was created in the database
 	 */
-	public function addCourseSlotCorequisite($course)
+	public function addCourseCorequisite($course)
 	{
 		$data = array(
 			'CourseID' => $this->courseID,
-			'RequisisteCourseID' => $course->courseID,
+			'RequisiteCourseID' => $course->courseID,
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
 		);
 		
@@ -374,16 +413,71 @@ class Course_model extends CI_Model
 	public function removeCourseRequisite($course)
 	{
 		$this->db->where('CourseID', $this->courseID);
-		$this->db->where('RequisisteCurriculumCourseSlotID', $course->courseID);
+		$this->db->where('RequisiteCourseID', $course->courseID);
 		$this->db->delete('CourseRequisites');
 		
 		$num = $this->db->affected_rows();
 		
 		$this->db->where('CourseID', $course->courseID);
-		$this->db->where('RequisisteCurriculumCourseSlotID', $this->courseID);
+		$this->db->where('RequisiteCourseID', $this->courseID);
 		$this->db->delete('CourseRequisites');
 		
 		return ($num + $this->db->affected_rows()) > 0;
+	}
+	
+	/**
+	 * Summary of addNonCourseRequisite
+	 * Add a non course based curriculum course slot to this model
+	 *
+	 * @param int $courseRequisiteType The type of requisite to bind to the course
+	 * @return boolean Whether or not the requisite was created in the database
+	 */
+	public function addNonCourseRequisite($courseRequisiteType)
+	{
+		if($courseRequisiteType == self::COURSE_REQUISITE_JUNIOR_STANDING || $courseRequisiteType == self::COURSE_REQUISITE_SENIOR_STANDING)
+		{
+			$data = array(
+				'CourseID' => $this->courseID,
+				'RequisiteCourseID' => $this->courseID,
+				'CourseRequisiteTypeID' => $courseRequisiteType
+			);
+			
+			$this->db->insert('CourseRequisites', $data);
+			
+			return $this->db->affected_rows() > 0;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of removeNonCourseRequisite
+	 * Remove a non course based curriculum course slot to this model
+	 *
+	 * @param int $courseRequisiteType The type of requisite to remove from the course
+	 * @return boolean Whether or not the requisite was created in the database
+	 */
+	public function removeNonCourseRequisite($courseRequisiteType)
+	{
+		if($courseRequisiteType == self::COURSE_REQUISITE_JUNIOR_STANDING || $courseRequisiteType == self::COURSE_REQUISITE_SENIOR_STANDING)
+		{
+			$data = array(
+				'CourseID' => $this->courseID,
+				'RequisiteCourseID' => $this->courseID,
+				'CourseRequisiteTypeID' => $courseRequisiteType
+			);
+			$this->db->where('CourseID', $this->CourseID);
+			$this->db->where('CourseRequisiteTypeID', $courseRequisiteType);
+			$this->db->delete('CourseRequisites');
+			
+			return $this->db->affected_rows() > 0;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
@@ -486,15 +580,40 @@ class Course_model extends CI_Model
     {
         if($this->courseID != null)
         {
-            $this->db->where('CourseID', $this->courseID);
-            $this->db->delete('CourseSections');
+			$this->db->select('CourseSectionID');
+			$this->db->from('CourseSections');
+			$this->db->where('CourseID', $this->courseID);
+			
+			$results = $this->db->get();
+			
+			$ids = array();
+			
+			foreach($results->result_array() as $row)
+			{
+				array_push($ids, $row['CourseSectionID']);
+			}
+			
+			if(count($ids) > 0)
+			{
+				$this->db->where_in('CourseSectionID', $ids);
+				$this->db->delete('CourseSectionTimes');
+				
+				$this->db->where_in('CourseSectionID', $ids);
+				$this->db->delete('StudentCourseSections');
+				
+				$this->db->where('CourseID', $this->courseID);
+				$this->db->delete('CourseSections');
+			}
+			
+			$this->db->where('CourseID', $this->courseID);
+			$this->db->delete('CurriculumSlotValidCourses');
+			
+			$this->db->where('EquivilentCourseID', $this->courseID);
+			$this->db->delete('StudentTransferCourseEquivilentCourses');
             
             $this->db->where('CourseID', $this->courseID);
             $this->db->or_where('RequisiteCourseID', $this->courseID);
             $this->db->delete('CourseRequisites');
-            
-            $this->db->where('EquivilentCourseID', $this->courseID);
-            $this->db->delete('TransferCourses');
             
             $this->db->where('CourseID', $this->courseID);
             $this->db->delete('Courses');
@@ -514,7 +633,7 @@ class Course_model extends CI_Model
 	 * @param string $courseName The name of the course to find a category for
 	 * @return string The category name for the course or the course name if no category is found
 	 */
-	private static function getCategoryName($courseName)
+	public static function getCategoryName($courseName)
 	{
 		$db = get_instance()->db;
 		
@@ -534,16 +653,68 @@ class Course_model extends CI_Model
 		}
 	}
 	
+	/**
+     * Summary of getAllCourseCategories
+     * Get all of the course categories saved in the database
+     * 
+     * @return An array of all the course categories represented in the database
+     */
+	public static function getAllCourseCategories()
+	{
+		$db = get_instance()->db;
+		
+		$db->order_by('CategoryName', 'asc');
+		
+		$results = $db->get('CourseCategories');
+		
+		if($results->num_rows() > 0)
+		{
+			return $results->result_array();
+		}
+		
+		return array();
+	}
+	
+	/**
+     * Summary of getAllCourseTypes
+     * Get all of the course types saved in the database
+     * 
+     * @return An array of all the course types represented in the database
+     */
+	public static function getAllCourseTypes()
+	{
+		$db = get_instance()->db;
+		
+		$results = $db->get('CourseTypes');
+		
+		if($results->num_rows() > 0)
+		{
+			return $results->result_array();
+		}
+		
+		return array();
+	}
+	
     /**
      * Summary of getAllCourses
      * Get all of the courses saved in the database
      * 
+	 * @param string $courseName A filter to only select courses with the specified course name, leave null for no filter
      * @return An array of all the course models represented in the database
      */
-    public static function getAllCourses()
+    public static function getAllCourses($courseName = null)
     {
         $db = get_instance()->db;
         
+		$db->select('CourseID');
+		
+		if($courseName != null)
+		{
+			$db->where('CourseName', $courseName);
+		}
+		
+		$db->order_by('CourseName, CourseNumber', 'asc');
+		
         $results = $db->get('Courses');
         
         $data_arr = array();
@@ -552,12 +723,8 @@ class Course_model extends CI_Model
         {
             $course = new Course_model;
             
-            $course->courseID = $row['CourseID'];
-            $course->courseName = $row['CourseName'];
-            $course->courseNumber = $row['CourseNumber'];
-            $course->courseDescription = $row['CourseDescription'];
-            
-            array_push($data_arr, $course);
+            if($course->loadPropertiesFromPrimaryKey($row['CourseID']))
+				array_push($data_arr, $course);
         }
         
         return $data_arr;

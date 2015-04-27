@@ -1,5 +1,4 @@
 <?php
-
 /**
  * course_model short summary.
  *
@@ -10,6 +9,7 @@ class Curriculum_course_slot_model extends CI_Model
     // Member variables, use getter / setter functions for access
     private $curriculumCourseSlotID = null;
     private $curriculumID = null;
+	private $curriculumIndex = null;
     private $name = null;
     private $minimumGrade = null;
 	private $recommendedQuarter = null;
@@ -50,6 +50,11 @@ class Curriculum_course_slot_model extends CI_Model
 		if($this->curriculumID != null)
 		{
 			$arr['curriculumID'] = $this->curriculumID;
+		}
+		
+		if($this->curriculumIndex != null)
+		{
+			$arr['curriculumIndex'] = $this->curriculumIndex;
 		}
 		
 		if($this->name != null)
@@ -105,6 +110,11 @@ class Curriculum_course_slot_model extends CI_Model
 			$this->curriculumID = $arr->curriculumID;
 		}
 		
+		if(isset($arr->curriculumIndex))
+		{
+			$this->curriculumIndex = $arr->curriculumIndex;
+		}
+		
 		if(isset($arr->name))
 		{
 			$this->name = $arr->name;
@@ -155,11 +165,13 @@ class Curriculum_course_slot_model extends CI_Model
                 
                 $this->curriculumCourseSlotID = $row['CurriculumCourseSlotID'];
                 $this->curriculumID = $row['CurriculumID'];
+				$this->curriculumIndex = $row['CurriculumIndex'];
                 $this->name = $row['Name'];
                 $this->minimumGrade = $row['MinimumGrade'];
                 $this->recommendedQuarter = $row['RecommendedQuarter'];
 				$this->recommendedYear = $row['RecommendedYear'];
 				$this->notes = $row['Notes'];
+				
                 $this->db->select('CourseID');
                 $this->db->from('CurriculumSlotValidCourses');
                 $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
@@ -236,6 +248,17 @@ class Curriculum_course_slot_model extends CI_Model
         return $this->curriculumID;
     }
     
+	/**
+     * Summary of getCurriculumIndex
+     * Get the curriculum index for the curriculum this model is associated with
+     * 
+     * @return int The index of the curriculum that this model is associated with
+     */
+	public function getCurriculumIndex()
+	{
+		return $this->curriculumIndex;
+	}
+	
     /**
      * Summary of getName
      * Get the name of the curriculum course slot
@@ -281,6 +304,17 @@ class Curriculum_course_slot_model extends CI_Model
     }
     
 	/**
+     * Summary of setCurriculumIndex
+     * Set the curriculum index for this curriculum course slot model to be associated with
+     * 
+     * @param int $curriculum index The curriculum to associate with this model
+     */
+	public function setCurriculumIndex($curriculumIndex)
+	{
+		$this->curriculumIndex = filter_var($curriculumIndex, FILTER_SANITIZE_NUMBER_INT);
+	}
+	
+	/**
      * Summary of setNotes
      * Set the notes associated with this model
      * 
@@ -317,7 +351,7 @@ class Curriculum_course_slot_model extends CI_Model
      * Summary of setCurriculum
      * Set the curriculum for this curriculum course slot model to be associated with
      * 
-     * @param int $curriculum The curriculum to associate with this model
+     * @param Curriculum_model $curriculum The curriculum to associate with this model
      */
     public function setCurriculum($curriculum)
     {
@@ -381,12 +415,13 @@ class Curriculum_course_slot_model extends CI_Model
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
@@ -408,19 +443,19 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
-			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
-				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCourseID']))
+				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
 					array_push($models, $model);
 				}
@@ -440,17 +475,17 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('RequisiteCurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
-			$this->db->where('CurriculumCourseSlotID', $this->courseID);
+			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['RequisiteCurriculumCourseSlotID']))
 				{
@@ -460,13 +495,13 @@ class Curriculum_course_slot_model extends CI_Model
 			
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_COREQUISITE);
-			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
-			$results = $this->db->get('CourseRequisites');
+			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			
 			foreach($results->result_array() as $row)
 			{
-				$model = new Course_model;
+				$model = new Curriculum_course_slot_model;
 				
 				if($model->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
 				{
@@ -489,7 +524,7 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
-			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+			'RequisiteCurriculumCourseSlotID' => intval($curriculumCourseSlot->curriculumCourseSlotID),
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_PREREQUISITE
 		);
 		
@@ -510,6 +545,7 @@ class Curriculum_course_slot_model extends CI_Model
 		$data = array(
 			'CurriculumCourseSlotID' => $this->curriculumCourseSlotID,
 			'RequisiteCurriculumCourseSlotID' => $curriculumCourseSlot->curriculumCourseSlotID,
+
 			'CourseRequisiteTypeID' => self::COURSE_REQUISITE_COREQUISITE
 		);
 		
@@ -528,13 +564,17 @@ class Curriculum_course_slot_model extends CI_Model
 	public function removeCourseSlotRequisite($curriculumCourseSlot)
 	{
 		$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
+
 		$this->db->where('RequisiteCurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		$num = $this->db->affected_rows();
 		
 		$this->db->where('CurriculumCourseSlotID', $curriculumCourseSlot->curriculumCourseSlotID);
+
 		$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
+
 		$this->db->delete('CurriculumCourseSlotRequisites');
 		
 		return ($num + $this->db->affected_rows()) > 0;
@@ -548,11 +588,12 @@ class Curriculum_course_slot_model extends CI_Model
      * @return boolean True if all rows were successfully saved in the database, false otherwise
      */
     public function create()
-    {
-        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->name != null)
+    {		
+        if($this->curriculumID != null && filter_var($this->curriculumID, FILTER_VALIDATE_INT) && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->name != null && $this->minimumGrade != null && $this->recommendedQuarter != null && $this->recommendedYear != null)
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
+				'CurriculumIndex' => $this->curriculumIndex,
 				'Name' => $this->name,
 				'MinimumGrade' => $this->minimumGrade,
 				'RecommendedQuarter' => $this->recommendedQuarter,
@@ -561,24 +602,27 @@ class Curriculum_course_slot_model extends CI_Model
 			);
             
             $this->db->insert('CurriculumCourseSlots', $data);
-            
+			
             if($this->db->affected_rows() > 0)
             {
                 $this->curriculumCourseSlotID = $this->db->insert_id();
                 
-                $data_arr = array();
+				if(count($this->validCourseIDs) > 0)
+				{
+					$data_arr = array();
                 
-                foreach($this->validCourseIDs as $courseID)
-                {
-                    array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
-                }
-                
-                $this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
-                
+					foreach($this->validCourseIDs as $courseID)
+					{
+						array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
+					}
+					
+					$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+				}
+				
                 return true;
             }
         }
-        
+		
         return false;
     }
     
@@ -590,10 +634,11 @@ class Curriculum_course_slot_model extends CI_Model
      */
     public function update()
     {
-        if($this->curriculumCourseSlotID != null)
+        if($this->curriculumCourseSlotID != null && $this->curriculumIndex != null && filter_var($this->curriculumIndex, FILTER_VALIDATE_INT) && $this->minimumGrade != null && $this->recommendedQuarter != null && $this->recommendedYear != null)
         {
             $data = array(
 				'CurriculumID' => $this->curriculumID,
+				'CurriculumIndex' => $this->curriculumIndex,
 				'Name' => $this->name,
 				'MinimumGrade' => $this->minimumGrade,
 				'RecommendedQuarter' => $this->recommendedQuarter,
@@ -609,14 +654,17 @@ class Curriculum_course_slot_model extends CI_Model
             $this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
             $this->db->delete('CurriculumSlotValidCourses');
             
-            $data_arr = array();
-            
-            foreach($this->validCourseIDs as $courseID)
-            {
-                array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
-            }
-            
-            $this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+            if(count($this->validCourseIDs) > 0)
+			{
+				$data_arr = array();
+			
+				foreach($this->validCourseIDs as $courseID)
+				{
+					array_push($data_arr, array('CurriculumCourseSlotID' => $this->curriculumCourseSlotID, 'CourseID' => $courseID));
+				}
+				
+				$this->db->insert_batch('CurriculumSlotValidCourses', $data_arr);
+			}
             
             return $sum > 0;
         }

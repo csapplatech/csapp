@@ -4,6 +4,7 @@
         
         <link href = "<?php echo base_url('css/advising.css'); ?>" rel ="stylesheet" >
         <link rel="stylesheet" href="<?php echo base_url('css/print.css'); ?>" type="text/css" media="print" />
+
         <script type="text/javascript" src="<?php echo base_url('js/jquery.js'); ?>"></script>
         <script type="text/javascript" src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>   
         <script type="text/javascript" src="<?php echo base_url('js/advising.js'); ?>"></script>
@@ -11,69 +12,18 @@
         <title>Advising Page</title>
         <script>
             var rootURL = '<?php echo URL; ?>';
-            </script>
+        </script>
+		<style>
+			
+			.clickme, .toggleMe, .clicky {
+				cursor: pointer;
+			}
+			
+		</style>
     </head>
     <body id="background" ><div id="main">
         <h1 id="head">Advising Page</h1>
         
-        <div id="courses">
-            <h4 class="class_headers" style='margin-top:.5%'>Suggested Classes</h4>
-             <ul>
-                <?php 
-                $id=0;
-                foreach ($recommended->getSubjects() as $sub)
-                {
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $sub->getName(). "-" . $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                                echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). " ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ;
-                                echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                }
-                ?>
-             </ul>    
-            <h4 class="class_headers" style='margin-top:.5%'>Select Subject</h4>
-             <ul>
-                <?php 
-                $id=1000;
-                foreach ($all_courses->getSubjects() as $sub)
-                {
-                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
-                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                    foreach($sub->getCourses() as $cor)
-                    {
-                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
-                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
-                            foreach($cor->getSections() as $sec)
-                            {
-                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
-                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
-                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
-                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
-                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
-                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
-                                     "</div>";
-                                $id++;
-                            }
-                        echo "</ul>";
-                    }
-                    echo "</ul>";
-                }
-                ?>
-             </ul>  
-        </div>
         
         <div id="advise" class="print">
             <table>
@@ -120,6 +70,7 @@
                   <th style="width: 18%">Special Signature</th> 
                   <th style="width: 25%">Class Times</th>
                 </tr>
+
                 </table>
             </div>
             <table ID='sig'>
@@ -138,9 +89,88 @@
             </table>
         </div>
         
+        <div id="courses">
+            <h4 class="class_headers" style='margin-top:.5%'>Suggested Classes</h4>
+             <ul>
+                <?php 
+                $id=0;
+                foreach ($recommended->getSubjects() as $sub)
+                {
+                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
+                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                    foreach($sub->getCourses() as $cor)
+                    {
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
+                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                            foreach($cor->getSections() as $sec)
+                            {
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
+                                     "</div>";
+                               
+                                $id++;
+                            }
+                        echo "</ul>";
+                    }
+                }
+                
+                echo "</ul>";
+                ?>
+             </ul>    
+            <h4 class="class_headers" style='margin-top:.5%'>Select Subject</h4>
+             <ul>
+                <?php 
+                $id=1000;
+                foreach ($all_courses->getSubjects() as $sub)
+                {
+                    echo "<li class='clickMe'>". $sub->getName()." ". $sub->getTitle() ." </li>" ;
+                    echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                    foreach($sub->getCourses() as $cor)
+                    {
+                        echo "<li class='clickMe' style=\"font-size: 90% \"><span title=\"".$cor->getHours()." Credit Hours\">". $cor->getName() . " ". $cor->getTitle(). "</span></li>" ;
+                        echo "<ul class=\"toggleMe\" style=\"display:none\">";
+                            foreach($cor->getSections() as $sec)
+                            {
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                                "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
+                                "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
+                                "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
+                                "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
+                                "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
+                                     "</div>";
+                               if ($form !== false)
+                               {
+                                foreach ($form->getPrefferedCourseSections() as $pref)
+                                {
+                                    if($pref->getCallNumber() === $sec->getCallNumber())
+                                    {
+                                        echo '<script>addMain('.$id.');</script>';
+                                    }
+                                }
+                                foreach ($form->getAlternateCourseSections() as $alt)
+                                {
+                                    if($alt->getCallNumber() === $sec->getCallNumber())
+                                    {
+                                        echo '<script>addALT('.$id.');</script>';
+                                    }
+                                }
+                               }
+                                $id++;
+                            }
+                        echo "</ul>";
+                    }
+                    echo "</ul>";
+                }
+                ?>
+             </ul>  
+        </div>
+        
         <div id="PB">
             <input type="button" value=" Print Advising Form" onclick="window.print();return false;" />
-            <button type="button" id="reset"><strike>Reset</strike></button>
             <button type="button" id="save">Save</button>
             <button><a style="text-decoration: none; color: black"  href="<?php echo site_url('Mainpage/index'); ?>">Home</a></button>
             <button><a style="text-decoration: none; color: black" href="<?php echo site_url('Login/logout'); ?>">Logout</a></button>

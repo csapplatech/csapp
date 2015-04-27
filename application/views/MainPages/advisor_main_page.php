@@ -48,20 +48,14 @@
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
             Activate New Advisee
         </a>
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Changepassword') ;?>">
             Change Password
         </a>
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            View Classes
-        </a>
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Viewadvisees/index') ;?>">
             View Advisees
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('appointment_controller') ;?>">
             Advising Appointment Schedule
-        </a>
-		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Mainpage/loadAllStudents') ;?>">
-            View Students Advising Form
         </a>
         
         <p><img src= "<?php echo IMG."/tech_official_logo.jpg" ?>" alt="Tech Logo" style="width:300px;height:225px"</p>

@@ -3,28 +3,36 @@
 
 <form method="POST">
 <p>Filter: <input id="CurrEditFilter" /></p>
-  <select size='3' id="CourseSlotSelect" name='curriculumCourseSlotID'>
+  <select size='3' id="CourseSlotSelect" name='courseSlot'>
     <?php
       foreach($data['course'] as $row)
-	echo "<option>$row[0]</option>"; 
+	echo "<option value='$row[index]'>$row[name]</option>"; 
     ?>
   </select>
 <br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculumCourseSlot'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculumCourseSlot'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculumCourseSlot'); ?>">Clone</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculumCourseSlot');   ?>">Edit</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculumCourseSlot');    ?>">New</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculumCourseSlot');  ?>">Clone</button>
 <button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculumCourseSlot'); ?>">Delete</button>
 <br />
 <p>Name: <input name='name' value="<?php echo $data['name']; ?>"></p>
-<p>Type:</p>
-<select size='3' name='type' selected="<?php echo $data['type']; ?>">
-  <option>Degree</option>
-  <option>Minor</option>
-  <option>Concentration</option>
-</select>
-<br /><br />
+<p>Type:<br />
+<select size='3' name='type' required>
+	<?php
+	$types = array('Degree', 'Minor', 'Concentration');
+	foreach ($types as $type)
+	{
+		echo '<option';
+		if (isset($data['type'])) 
+		   if (strcmp($data['type'], $type) == 0) 
+		      echo ' selected'; 
+		echo ">$type</option>";
+	}
+	?>
+</select></p>
 <br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum'); ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculum');    ?>">Save</button>
+<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculum'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery

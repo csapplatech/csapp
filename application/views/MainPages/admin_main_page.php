@@ -45,22 +45,22 @@
 
         <h3> Welcome to the Admin Main Page, <?php echo $user->getName(); ?>!</h3>
         
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Bug Reports
-        </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Changepassword') ;?>">
             Change Password
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Managepc') ;?>">
             Manage Program Chair
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Manage Advisors
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/create') ;?>">
+            Create Users
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
-            Manage Students
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
+            Manage Users
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Futurecourses/index') ;?>">
+            Future Courses Update
+        </a>
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Bossimport/index') ;?>">
             Bulk Update
         </a>
         
