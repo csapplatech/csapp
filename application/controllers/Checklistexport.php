@@ -518,9 +518,14 @@ class Checklistexport extends CI_Controller
 			   $style->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			   $style->getFont()->setBold(true);
 			$sheet->getCell("$cols[1]$row")->setValue('Cr');
-		    	$row++;
-			
+		        $row++;
+
+			//Add extra blank for the feels of the beatification
+			$style = $sheet->getStyle("$cols[0]$row:$cols[1]$row")->applyFromArray($this->borderstyle);
+			$row++;
+
 			//Put in all the courses taken
+			$strow = $row+1;
 			$nameCol = $cols[0];
 			$titleCol = ++$cols[0];
 			$creditCol = $cols[1];
@@ -541,9 +546,20 @@ class Checklistexport extends CI_Controller
 				$sheet->getCell("$creditCol$row")->setValue($credit);
 				$row++;
 			}
+
 			//Fill in empty quarter courses lots with correct stlying
-			for (; $row-$startrow < $quartersize+1; $row++)
+			for (; $row-$startrow <= $quartersize+1; $row++)
 				$sheet->getStyle("$nameCol$row:$creditCol$row")->applyFromArray($this->borderstyle);
+			
+			//Added extra blank line to make the spreadsheet look sexy
+			$sheet->getStyle("$nameCol$row:$creditCol$row")->applyFromArray($this->borderstyle);
+	                $row++;
+			
+			//Slot of summing quarter's hours
+			$sheet->getStyle("$nameCol$row:$creditCol$row")->applyFromArray($this->borderstyle);
+			$strow -= 2; $enrow = $row-1;
+			$sheet->getCell("$creditCol$row")->setValue('=SUM('."$creditCol"."$strow".':'."$creditCol"."$enrow".')');
+			$row++;
 		    }
 		    $row++;
 		}
