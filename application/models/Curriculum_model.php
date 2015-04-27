@@ -330,25 +330,49 @@ class Curriculum_model extends CI_Model
     {
         if($this->curriculumID != null && $this->name != null && $this->curriculumType != null && filter_var($this->curriculumType, FILTER_VALIDATE_INT))
         {
+			$arr = array();
+			
+			foreach($this->currriculumCourseSlots as $slot)
+			{
+				array_push($arr, $slot->getCurriculumCourseSlotID());
+			}
+			
             $data = array('Name' => $this->name, 'CurriculumTypeID' => $this->curriculumType);
             
             $this->db->where('CurriculumID', $this->curriculumID);
             $this->db->update('Curriculums', $data);
             
             $results = $this->db->get_where('CurriculumCourseSlots', array('CurriculumID' => $this->curriculumID));
-            
+			
             foreach($results->result_array() as $row)
             {
                 $courseSlot = new Curriculum_course_slot_model;
-                $courseSlot->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']);
-                
-                $courseSlot->delete();
+				
+                if($courseSlot->loadPropertiesFromPrimaryKey($row['CurriculumCourseSlotID']))
+				{
+					if(in_array($courseSlot->getCurriculumCourseSlotID(), $arr))
+					{
+						$index = array_search($courseSlot->getCurriculumCourseSlotID(), $arr);
+						unset($this->curriculumCourseSlots[$index]);
+					}
+					else
+					{
+						$courseSlot->delete();
+					}
+				}
             }
-            
-            foreach($this->curriculumCourseSlots as $course)
-            {
-                $course->create();
-            }
+			
+			foreach($arr as $id)
+			{
+				foreach($this->curriculumCourseSlots as $slot)
+				{
+					if($slot->getCurriculumCourseSlotID() == $id)
+					{
+						$slot->create();
+						break;
+					}
+				}
+			}
             
             return true;
         }
