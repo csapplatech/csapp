@@ -444,7 +444,7 @@ class Curriculum_course_slot_model extends CI_Model
 		
 		if($this->curriculumCourseSlotID != null)
 		{
-			$this->db->select('CurriculumCourseSlotID');
+			$this->db->select('RequisiteCourseID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
 			$this->db->where('CurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
