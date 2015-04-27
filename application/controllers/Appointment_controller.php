@@ -78,7 +78,8 @@ Class appointment_controller extends CI_Controller{
 		$getAdvisor=$User_model->getAdvisor();
 		
 	//print_r ($getAdvisor);
-         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1)){  
+         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1))
+         {  
              
              $All_apps= ($Advising_schedule->getAllAdvisingAppointments());
            // print_r ($Appointment_array);
@@ -87,7 +88,7 @@ Class appointment_controller extends CI_Controller{
             $endTime=0;
              
            foreach ($All_apps as $key) //grabs each object inside array
-                {
+            {
                $startTime = $key->getStartTime();
                
                array_push($app_Times, $startTime);
@@ -95,15 +96,15 @@ Class appointment_controller extends CI_Controller{
                
                 
             }
-            
-            $prefs = array(
-        'all_apps'                  =>$All_apps,
-        'user'                      =>$User_model,
-        'app_Times'                 =>$app_Times,
-        'show_other_days'           => TRUE,
-        'show_next_prev'            => TRUE,
-        'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
-	);
+
+                    $prefs = array(
+                'all_apps'                  =>$All_apps,
+                'user'                      =>$User_model,
+                'app_Times'                 =>$app_Times,
+                'show_other_days'           => TRUE,
+                'show_next_prev'            => TRUE,
+                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+                );
          
              //$app_Times=null;
             $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
@@ -113,6 +114,10 @@ Class appointment_controller extends CI_Controller{
             $this->load->view("appointment_view", $Appointment_array);          //load student calendar view(which as of right now is the same as the advisor calendar view)
          }
          
+         else
+         {
+             redirect('Mainpage/student');
+         }
     }
    
     
@@ -140,18 +145,29 @@ public function fill()
                 $all_Appointments=$Advising_schedule->getAllAdvisingAppointments();
             if(($_POST['student_selection']))
             {
-                
+                  
+                foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
+                {
+                   
+                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID']))
+                     {
+                        $_POST['student_selection']=0;
+                     }
+                     
+                }
                 $aptTime = explode ("-", $_POST['student_selection']); //separate the start and end times
                 
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
-                    if(($selected->getStartTime()==$aptTime[0]))
+                   
+                    if(($selected->getStartTime()==$aptTime[0]) && ($selected->getScheduledStudentUserID() != $_SESSION['UserID']) )
                      {
                         $Advising_appointment->loadPropertiesFromPrimaryKey($selected->getAdvisingAppointmentID());//load the specific appointment from the ID
                         $Advising_appointment->setStudentUserID($_SESSION['UserID']);//set the scheduled student user ID
                         $Advising_appointment->setAdvisingAppointmentState(1);
                         $Advising_appointment->update(); //update the advising appointment with above information it is now marked as shceduled
                      }
+                     
                 }
             }
         }
@@ -192,7 +208,20 @@ public function fill()
                 
                 if(!empty($_POST['student_scheduled']))//if this array is not empty, then the advisor has canceled an appointment
                 {
-                    
+                    foreach($_POST['student_scheduled'] as $slot)
+                    {
+                        $aptTime = explode ("-", $slot); //separate the start and end times
+                        foreach($all_Appointments as $selected)
+                        {
+                            if($selected->getStartTime()==$aptTime[0])
+                            {
+                                $selected->setAdvisingAppointmentID($selected->getAdvisingAppointmentID());
+                                $selected->setAdvisingAppointmentState(4);
+                                $selected->update();
+                                //EMAIL THE STUDENT THAT THE APPOINTMENT WAS CANCELED 
+                            }
+                        }
+                    }
                 }
         }
     
