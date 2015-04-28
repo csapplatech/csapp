@@ -623,6 +623,11 @@ class CI_Calendar {
 
                            if($key->isScheduled())  //if a student has already picked this time slot
                                {
+                                if($key->getScheduledStudentUserID()==$_SESSION['UserID']){
+                                    $out .= "<td id='clickable'><div class='My_Schedule'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                    $existing_Appointment=true;
+                                     break;
+                                    }
                                 $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
                                 $existing_Appointment=true;
                                 break;
@@ -654,9 +659,12 @@ class CI_Calendar {
                                     
                                     if($key->isScheduled())  //if a student has already picked this time slot
                                {
-                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
-                                $existing_Appointment=true;
-                                break;
+                                    $this->user->loadPropertiesFromPrimaryKey($key->getScheduledStudentUserID());
+                                    $student_Name=$this->user->getName();
+                                    $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '".$student_Name."' for='$tempk' id='$tempk-'</label></div></td> ";
+                                    $existing_Appointment=true;
+                                    $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
+                                    break;
 
                                } 
 

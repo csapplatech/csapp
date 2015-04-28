@@ -203,6 +203,44 @@ else
                 visibility: hidden;
             }
             /* creates box size for label to sit in*/
+            .My_Schedule
+            {
+                 
+               
+                width: 40px;
+                height: 20px;
+                
+                position: relative;
+            }
+            
+            /* replaces orginal checkbox for styled checkbox*/
+            .My_Schedule label
+            {
+                display: block;
+                width: 40px;
+                height: 20px;
+                
+                -webkit-transition: all .8s ease;
+                -moz-transition: all .8s ease;
+                -o-transition: all .8s ease;
+                -ms-transition: all .8s ease;
+                transition: all .8s ease;
+                cursor: pointer;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 1;
+                
+                background-color: #ff4a45;
+            }
+            .My_Schedule label:hover {
+                background-color:#fff414 ;
+            }
+            /* Create the checked state*/
+            .My_Schedule input[type=checkbox]:checked + label {
+                    background-color: black;
+            }
+            
             
              .Scheduled
             {
