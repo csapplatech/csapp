@@ -5,6 +5,10 @@ Class appointment_controller extends CI_Controller{
     public function index()
 	{
     $app_Times=array();
+    
+    $Student_List=array();
+    
+    $Uns_Students= array();
        
     $User_model= new User_model;
     
@@ -21,20 +25,28 @@ Class appointment_controller extends CI_Controller{
             
              
             $startTime=0;
-            $endTime=0;
+            
              
            foreach ($All_apps as $key) //grabs each object inside array
                 {
                $startTime = $key->getStartTime();
+               $Students=$key->getScheduledStudentUserID();
+               $User_model->loadPropertiesFromPrimaryKey($Students);
               
-               
                array_push($app_Times, $startTime);
-              
-               
-                
-            }
+               array_push($Student_List,$User_model->getName());
+              }
+             $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
              
+             $advisees=($User_model->getAdvisees());
+             
+             foreach($advisees as $key)
+                 {
+                    array_push($Uns_Students,$key->getName());
+                 }
             $prefs = array(
+                'Unscheduled_Students'      =>$Uns_Students,
+                'Scheduled_Students'        =>$Student_List,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,

@@ -56,6 +56,10 @@ class CI_Calendar {
 	 * @var mixed
 	 */
         
+        public $Unscheduled_Students='';
+        
+        public $Scheduled_Students='';
+    
         public $all_apps='';
     
 	public $template = '';
