@@ -107,10 +107,12 @@ echo '>';
 </form>
 
 <script type="text/javascript"> //Uses jQuery
-// ID of <input> filter
-var Filter = $("#CourseSlotEditFilter");
-// ID of <select> to filter
-var Select = $("#AvailCourseSelect");
+var Filter1 = $("#CourseSlotEditFilter");
+var Select1 = $("#AvailCourseSelect");
+var Filter2 = $("#CourseSlotPreReqsFilter");
+var Select2 = $("#AvailCourseSlotPreReqs");
+var Filter3 = $("#CourseSlotCoReqsFilter");
+var Select3 = $("#AvailCourseSlotCoReqs");
 
 /**
 * Only shows options that contain a given text.
@@ -136,79 +138,19 @@ var FilterSelect = function (select, str)
   $el.empty().append(newOptions);
 };
 
-Filter.on("keyup", function () 
+Filter1.on("keyup", function () 
 {
-  var userInput = Filter.val();
-  FilterSelect(Select, userInput);
+  var userInput = Filter1.val();
+  FilterSelect(Select1, userInput);
 });
-</script>
-
-<script type="text/javascript"> //Uses jQuery
-var Filter = $("#CourseSlotPreReqsFilter");
-var Select = $("#AvailCourseSlotPreReqs");
-
-/**
-* Only shows options that contain a given text.
-* @OriginalAuthor Larry Battle <bateru.com/news>
-* @ModifiedBy     William Keen
-*     Modification: Streamlined functions for our purpose
-*	(Removed unnecessary if statements, variables, made easier to modify)
-*/
-var FilterSelect = function (select, str) 
+Filter2.on("keyup", function () 
 {
-  str = str.toLowerCase();
-  
-  //cache the jQuery object of the element
-  var $el = $(select);
-  
-  //cache all the options inside the element
-  if (!$el.data("options")) 
-    $el.data("options", $el.find("option").clone());
-  
-  //Addeds the new options based on matches
-  var newOptions = $el.data("options").filter(function () 
-    {return $(this).text().toLowerCase().match(str);});
-  $el.empty().append(newOptions);
-};
-
-Filter.on("keyup", function () 
-{
-  var userInput = Filter.val();
-  FilterSelect(Select, userInput);
+  var userInput = Filter2.val();
+  FilterSelect(Select2, userInput);
 });
-</script>
-
-<script type="text/javascript"> //Uses jQuery
-var Filter = $("#CourseSlotCoReqsFilter");
-var Select = $("#AvailCourseSlotCoReqs");
-
-/**
-* Only shows options that contain a given text.
-* @OriginalAuthor Larry Battle <bateru.com/news>
-* @ModifiedBy     William Keen
-*     Modification: Streamlined functions for our purpose
-*	(Removed unnecessary if statements, variables, made easier to modify)
-*/
-var FilterSelect = function (select, str) 
+Filter3.on("keyup", function () 
 {
-  str = str.toLowerCase();
-  
-  //cache the jQuery object of the element
-  var $el = $(select);
-  
-  //cache all the options inside the element
-  if (!$el.data("options")) 
-    $el.data("options", $el.find("option").clone());
-  
-  //Addeds the new options based on matches
-  var newOptions = $el.data("options").filter(function () 
-    {return $(this).text().toLowerCase().match(str);});
-  $el.empty().append(newOptions);
-};
-
-Filter.on("keyup", function () 
-{
-  var userInput = Filter.val();
-  FilterSelect(Select, userInput);
+  var userInput = Filter3.val();
+  FilterSelect(Select3, userInput);
 });
 </script>

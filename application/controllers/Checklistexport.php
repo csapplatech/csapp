@@ -26,9 +26,14 @@ class Checklistexport extends CI_Controller
 	    
 	    $user = new User_Model();
 	    $user->loadPropertiesFromPrimaryKey($userID);
-	    $curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-	   
+	    
+	    $curriculums = $user->getCurriculums();
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+			$curriculum = $c;
+	    $curriculums = array(new Curriculum_Model());
+	    $curriculums[0]->loadPropertiesFromPrimaryKey($curriculumID);
+
 	    //Create excel file
 	    $Excel = new PHPExcel();
 	    $Excel->getProperties()->setCreator("Keen-Hjorth")
@@ -44,7 +49,7 @@ class Checklistexport extends CI_Controller
 	    //Generate course checklist sheet
 	    $checklist = $Excel->getActiveSheet();
 	    $checklist->setTitle("Checklist");
-	    $this->generatechecklist($checklist, $user, $curriculum);
+	    $this->generatechecklist($checklist, $user, $curriculums);
 	    
 	    //Generate advisor checklist sheet
 	    $advcheck = $Excel->createSheet(NULL, 1);
@@ -54,7 +59,7 @@ class Checklistexport extends CI_Controller
 	    //Generate Quarter View
 	    $qview = $Excel->createSheet(NULL, 2);
 	    $qview->setTitle("Quarter View");
-	    $this->generate_quarter_view($qview, $user, $curriculum);
+	    $this->generate_quarter_view($qview, $user, $curriculums);
 
 	    //Download file object (PDF or XLS)
 	    $Excel->setActiveSheetIndex(0);
@@ -157,7 +162,7 @@ class Checklistexport extends CI_Controller
 	}
 
 	//Generate Course Checklist
-	private function generatechecklist($checklist, $user, $curriculum)
+	private function generatechecklist($checklist, $user, $curriculums)
 	{
 	    //Set column widths across the checklist
 	    $checklist->getColumnDimension('A')->setWidth(6.5);
@@ -180,7 +185,7 @@ class Checklistexport extends CI_Controller
 			  $user->getAdvisor()->getName(), "2014-15", $user->getEmailAddress());
 
 	    $coursesTaken = $user->getAllCoursesTaken();
-	    $this->checklistcore($checklist, $coursesTaken, $curriculum);
+	    $this->checklistcore($checklist, $coursesTaken, $curriculums);
 	}
 
 	//Course Checklist Header
@@ -237,7 +242,7 @@ class Checklistexport extends CI_Controller
 	}
 
 	//Course Checklist Core
-	private function checklistcore($checklist, $coursesTaken, $curriculum)
+	private function checklistcore($checklist, $coursesTaken, $curriculums)
 	{
 	    //Set an array for section headers
 	    //Get starting/title row for courses
@@ -253,8 +258,18 @@ class Checklistexport extends CI_Controller
 	    $checklist->getCell("I8")->setValue("*");
 	    $checklist->getCell("J8")->setValue("GRADE");
 
+	    $degree;
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+			$degree = $c;
+	    if (!isset($degree))
+	    {
+	    	echo "ERROR NO CURRICULUM SET FOR USER";
+		$test();
+	    }
+
 	    //for every course in the curriculum
-	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
+	    $requiredCourses = $degree->getCurriculumCourseSlots();
 	    $row = 10;
 	    $prevCType = NULL;
 
@@ -266,10 +281,16 @@ class Checklistexport extends CI_Controller
 		
 	    foreach ($requiredCourses as $reqCourse)
 	    {
+	    	$cType = "cType";
+		$cNum  = "cNum";
 	    	//Grab course name
 		$cName = $reqCourse->getName();
+		$cType = $cName;
 		$cNum  = strpbrk($cName, "0123456789");
-		$cType = substr($cName, 0, strpos($cName, $cNum));
+		if ($cNum == FALSE) //Failed to find numbers in course name
+			$cNum = "";
+		else
+			$cType = substr($cName, 0, strpos($cName, $cNum));
 
 		//Put course name into checklist
 		if (strcmp($cType, $prevCType) != 0)
@@ -438,10 +459,21 @@ class Checklistexport extends CI_Controller
 	}
 		
 	//Quarter View Core
-	private function generate_quarter_view_core($sheet, $user, $curriculum)
+	private function generate_quarter_view_core($sheet, $user, $curriculums)
 	{
+	    $degree;
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+		    $degree = $c;
+	    
+	    if (!isset($degree))
+	    {
+		echo "ERROR USER CURRICULUM DEGREE ISN'T SET";
+		$test();
+	    }
+
 	    //Organize courses by year/quarter in an array $arr[$year][$quarter][$course]
-	    $currcourses = $curriculum->getCurriculumCourseSlots();
+	    $currcourses = $degree->getCurriculumCourseSlots();
 	    $courses = array();
 	    for ($i = 0; $i < 4; $i++)
 		$courses[] = array(array(), array(), array(), array());
