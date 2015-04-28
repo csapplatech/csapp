@@ -13,6 +13,12 @@
 		<script src="<?php echo JS . '/bootstrap.min.js'; ?>"></script>
 		<script src="<?php echo JS . '/dropzone.js'; ?>"></script>
 		<script>
+			
+			function loading()
+			{
+				$("#progress-wrapper").show();
+			}
+		
 			$(document).ready(function() {
 				
 				var upload_files = false;
@@ -22,7 +28,7 @@
 				var dropZone = new Dropzone("#upload-dropzone", {
 					maxFiles: 1,
 					uploadMultiple: false,
-					url: '<?php echo site_url('Bossimport/submit'); ?>',
+					url: '<?php echo site_url('Backuprestore/submit'); ?>',
 					method: 'post',
 					paramName: 'boss_file',
 					clickable: true,
@@ -34,11 +40,8 @@
 					},
 					
 					success: function(file, response) {
-						$("#progress-wrapper").hide();
 						$("#file-upload-progress-bar").attr("aria-valuenow", 0);
-						$("#message-wrapper").append("<div class='alert alert-success alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + response + "</div>");
-						
-						this.removeAllFiles();
+						location.reload();
 					},
 					
 					error: function(file, errorMessage) {
@@ -54,12 +57,6 @@
 						$("#file-upload-progress-bar").attr("aria-valuenow", 0);
 						
 						this.removeAllFiles();
-					},
-					
-					uploadProgress: function(file, progress, bytesSent) {
-						console.log("PROGRESS: " + progress);
-						$("#file-upload-progress-bar").attr("aria-valuenow", progress);
-						$("#file-upload-progress-bar").html(progress + "%");
 					}
 					
 				});
@@ -90,7 +87,7 @@
 						success: function(data, textStatus, jqXHR) {
 							$("#progress-wrapper").hide();
 							$("#file-upload-progress-bar").attr("aria-valuenow", 0);
-							$("#message-wrapper").append("<div class='alert alert-success alert-dismissible' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>" + data + "</div>");
+							location.reload();
 						},
 						error: function(jqXHR, textStatus, errorThrown) {
 							$("#progress-wrapper").hide();
@@ -143,19 +140,22 @@
 				height: 100%;
 			}
 			
+			.btn
+			{
+				width: auto !important;
+				display: inline-block;
+				color: white !important;
+			}
+			
 		</style>
     </head>
-    <body style="padding-top: 60px">
+    <body style="padding: 60px 0px;">
 		<div id="progress-wrapper">
 			<div id="progress-wrapper-table">
 				<div id="progress-wrapper-container-wrapper">
 					<div class="container">
-						<div id="progress-dialog" class="col-sm-10 col-sm-offset-1 alert alert-info" style="padding: 12px;">
-							<h3>File upload progress</h3>
-							<div class="progress" role="alert">
-								<div id="file-upload-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-value="100" style="width: 100%; color: #FFF;">
-								</div>
-							</div>
+						<div id="progress-dialog" class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+							<img src="<?php echo IMG . "/loading.gif"; ?>" class="img-responsive center-block"></img>
 						</div>
 					</div>
 				</div>
@@ -164,10 +164,42 @@
         <?php include_once('application/views/Templates/navbar.php'); ?>
 		<div id="body" class="container">
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
+					
+					<div class="row">
+						<div class="col-xs-8">
+							<h3 style='text-align: left;'>Backup files on Server</h3>
+						</div>
+						<div class="col-xs-4">
+							<a onclick='loading()' class='btn btn-success' href='<?php echo site_url('Backuprestore/backup'); ?>'>Create Backup</a>
+						</div>
+					</div>
+					<hr />
+					<ul class="list-group">
+						<?php
+							
+							foreach($files as $file)
+							{
+								$title = $file['title'];
+								$path = $file['file'];
+								
+								$restoreUrl = site_url('Backuprestore/restore/' . $path);
+								
+								$downloadUrl = site_url('Backuprestore/download/' . $path);
+								
+								$deleteUrl = site_url('Backuprestore/delete/' . $path);
+								
+								echo "<li style='text-align: left;'class='list-group-item'><h4 style='text-align: left; display: inline-block;'>$title</h4><div class='pull-right'><a onclick='loading()' href='$restoreUrl' class='btn btn-primary' style='color: white;'>Restore</a> <a onclick='loading()' href='$downloadUrl' class='btn btn-info'>Download</a> <a onclick='loading()' href='$deleteUrl' class='btn btn-danger'>Delete</a></div></li>";
+							}
+							
+						?>
+					</ul>
+					
+				</div>
+				<div class="col-md-6">
 					<div class="row">
 						<div class="col-md-10 col-md-offset-1">
-							<h2 style="text-align: left;">Please upload the BOSS Data file</h2>
+							<h2 style="text-align: left;">Upload a Backup Data file</h2>
 							<div class="row">
 								<div id="message-wrapper" class="col-xs-12">
 									
@@ -186,7 +218,7 @@
 					<br />
 					<div class="row">
 						<div class="col-md-10 col-md-offset-1">
-							<form id="fallback-upload" action="<?php echo site_url('Bossimport/submit'); ?>">
+							<form id="fallback-upload" action="<?php echo site_url('Backuprestore/submit'); ?>">
 								<div class="form-group" style="text-align: left;">
 									<label>If the above form doesn't work, try uploading here</label>
 									<input class="input" type="file" name="boss_file" />
