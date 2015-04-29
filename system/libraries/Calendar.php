@@ -633,11 +633,11 @@ class CI_Calendar {
                            if($key->isScheduled())  //if a student has already picked this time slot
                                {
                                 if($key->getScheduledStudentUserID()==$_SESSION['UserID']){
-                                    $out .= "<td id='clickable'><div class='My_Schedule'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                    $out .= "<td id='clickable'><div class='My_Schedule'><input type='checkbox' id='$tempk' class='row$k' name='My_Schedule' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
                                     $existing_Appointment=true;
                                      break;
                                     }
-                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' disabled id='$tempk' class='row$k' name='won't_be_posted value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
+                                $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' disabled id='$tempk' class='row$k' name='blah' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> ";
                                 $existing_Appointment=true;
                                 break;
 
@@ -681,7 +681,7 @@ class CI_Calendar {
 
                            else   //if not scheduled load the cell that the advisor marked as open
                                {
-                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='Open[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
+                                $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='Open[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'onmouseover='selectAll(event, this)'></label></div></td> "; //creates a row of $l columns $k times
                                 $existing_Appointment=true;
                                 break;
                                }

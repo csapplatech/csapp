@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>--> 
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>--> 
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
 
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-        <title>CSAPP Main Page</title>
+       <title>CSAPP Main Page</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-         <!--The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags--> 
+         The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags 
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
@@ -21,6 +21,8 @@
           $(function() {
     $( "#tabs" ).tabs();
   });
+  
+  
         </script>
     </head>
     <body onload = "hideTables()">
@@ -101,7 +103,7 @@ else
             
             thead tr th { 
                 /* text-align: left; */
-                width: 50px;
+                width: 41px;
                 border: 1px transparent solid;
             }
             thead #col {
@@ -117,6 +119,7 @@ else
             }
         </style>
         <style>
+       
             #calwrap {
                 height: 500px;
                 width: 425px;
@@ -128,6 +131,9 @@ else
             }
             body {
                 background-color: white;
+                zoom:85%;
+                zoom:100%;
+                
             }
             table th{
                 text-align: center
@@ -239,10 +245,10 @@ else
                 left: 0px;
                 z-index: 1;
                 
-                background-color: #ff4a45;
+                background-color: #ff610b;
             }
             .My_Schedule label:hover {
-                background-color:#fff414 ;
+                background-color:#ff2f07 ;
             }
             /* Create the checked state*/
             .My_Schedule input[type=checkbox]:checked + label {
@@ -610,6 +616,9 @@ else
                             table.style.visibility = "hidden";
                         }
                     }
+                   // document.body.style.zoom="85%";
+                    //document.body.style.zoom="100%";
+                   
             }
             function nextOrPrev(inp) {
                 var table;

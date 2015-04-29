@@ -143,13 +143,13 @@ public function fill()
                 
                 $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the scedule that corresponds to the students advisor and the acedemic quarter
                 $all_Appointments=$Advising_schedule->getAllAdvisingAppointments();
-            if(($_POST['student_selection']))
+            if((!empty($_POST['student_selection']))) //if a student scheduled an appointment
             {
                   
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
                    
-                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID'])&&($selected->isScheduled()))
+                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID'])&&($selected->isScheduled())) //doesn't let the student take another students slot
                      {
                       
                         $_POST['student_selection']=0;
@@ -170,6 +170,12 @@ public function fill()
                      }
                      
                 }
+            }
+            
+            elseif(!empty($_POST['My_Schedule']))
+            {
+                
+                redirect('Appointment_controller/Student_Cancel');
             }
         }
 	else if($User_model->isAdvisor())
@@ -238,11 +244,24 @@ public function Student_Cancel()
 
     $Advising_schedule= new Advising_schedule_model();
     $Advising_appointment= new Advising_appointment_model;
+    $advisor=$User_model->getAdvisor();
+    $advisor=$advisor->getUserID();
+    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($advisor), 1);
     
-    $Advising_appointment->loadPropertiesFromPrimaryKey($User_model->getUserID());
-    $Advising_appointment->setStudentUserID(NULL);
-    $Advising_appointment->setAdvisingAppointmentState(3);
-    $Advising_appointment->update();
+    $app_array=$Advising_schedule->getAllAdvisingAppointments();
+    
+    foreach ($app_array as $key)
+    {
+        if($key->getScheduledStudentUserID()==$_SESSION['UserID']&& $key->isScheduled())
+        {
+          
+            $Advising_appointment->loadPropertiesFromPrimaryKey($key->getAdvisingAppointmentID());
+            $Advising_appointment->setAdvisingAppointmentState(3);
+            $Advising_appointment->update();
+            break;
+        }
+    }
+    
     
     //SEND Optional Email
     
