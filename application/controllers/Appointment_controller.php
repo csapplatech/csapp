@@ -228,8 +228,28 @@ public function fill()
     
    redirect('appointment_controller');
     }
+
+    
+    
+public function Student_Cancel()
+    {
+    $User_model= new User_model;              
+    $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
+
+    $Advising_schedule= new Advising_schedule_model();
+    $Advising_appointment= new Advising_appointment_model;
+    
+    $Advising_appointment->loadPropertiesFromPrimaryKey($User_model->getUserID());
+    $Advising_appointment->setStudentUserID(NULL);
+    $Advising_appointment->setAdvisingAppointmentState(3);
+    $Advising_appointment->update();
+    
+    //SEND Optional Email
+    
+    redirect('appointment_controller');
+    }    
 }                
-              
+          
                 
                
         
