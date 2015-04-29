@@ -37,16 +37,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<p><b>Please select a curriculum.</b></p><br/>
 			<form action="<?php echo site_url('User/submitStudentInfoForm/'.$uID); ?>" method="POST"> 
 				
-				<select name="curriculumID" >
 					<?php
+                                        $student = new User_model;
+                                        $student->loadPropertiesFromPrimaryKey($uID);
+                                        $studentCurriculms = $student->getCurriculums();
 					$Curriculums = $this->Curriculum_model->getAllCurriculums();
 					foreach ($Curriculums as $Curriculum) {
 						$id = $Curriculum->getCurriculumID();
 						$name = $Curriculum->getName();
-						echo '<option value="' . $id . '">' . $name . '</option>';
-					}
+						echo '<input type="checkbox" value="true" name="Curriculum' . $id . '"';
+                                                        if(in_array($Curriculum, $studentCurriculms)) { echo 'checked'; }
+                                                        echo '/> '.$name.'</br>';
+                                                }
 					?>
-				</select>
 				<p><b>Please select an advisor.</b></p><br/>
 				<select name="advisorID">
 					<?php

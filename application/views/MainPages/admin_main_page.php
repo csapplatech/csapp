@@ -51,10 +51,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Managepc') ;?>">
             Manage Program Chair
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/create') ;?>">
-            Create Users
-        </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index') ;?>">
             Manage Users
         </a>
 		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Futurecourses/index') ;?>">

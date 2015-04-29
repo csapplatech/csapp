@@ -16,29 +16,88 @@ class User extends CI_Controller {
      * @param type $action The action to be performed.
      * @param int  $userID The ID of user that will be acted upon.
      */
-    public function index($action = 'create', $userID = NULL) {
+    public function index($action = NULL, $userID = NULL) {
+        $this->checkSec(); //Performs security check
 
-        $user = new User_model;
+        $data = array(
+            'allUsers' => $this->User_model->getAllUsers(20000, 0)
+        );
 
-        if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
-            redirect('Login/logout');
-        
-        $this->checkSec();
         $validActions = array('create', 'modify', 'remove');
+        //Should just load Management view if no valid action is selected.
         if (!in_array($action, $validActions)) {
-            show_error('Invalid Action Selected');
+            return $this->load->view('user_mgmt_list', $data);
         }
+        //Establish action to perform.
+        echo 'setting action: ' . $action;
         $_SESSION['action'] = $action;
-
-        if (!isset($userID) && $action != 'create') {
-            $this->load->view('select_user_form', array('user' => $user));
+        //Action is modify or create with null ID
+        if ($action != 'create' && $userID == NULL) {
+//            $_SESSION['userActionMsg'] = '';
+            return $this->load->view('user_mgmt_list', $data);
+        }
+        //At this point we have a valid action saved in the session,
+        //and if the action is modify/remove there is some userID provided.
+        // Need to see if userID can be related to an actual users.
+        $user = new User_model;
+        $userExists = $user->loadPropertiesFromPrimaryKey($userID);
+        //Error attempting to create with an existing user.
+        if ($action == 'create' && $userExists) {
+            $_SESSION['userActionMsg'] = 'Cannot create user with existing ID.';
+            $this->load->view('user_mgmt_list', $data);
+        } else if ($action != 'create' && !$userExists) {
+            $_SESSION['userActionMsg'] = 'Cannot modify/remove user who does not exist.';
+            $this->load->view('user_mgmt_list', $data);
         } else {
+            //At this point there should only be 3 possible cases:
+            // 1 $action == create and the user does not exist.
+            // 2-3 $action == modify or remove and the user exists.
             $userData = $this->loadUserData($userID);
             $userData['user'] = $user;
             $this->load->view('user_form', $userData);
         }
     }
 
+    public function submitUserListQuery() {
+        $searchStr = $this->input->post('searchStr');
+        $filteredList = array();
+        $unfilteredList = $this->User_model->getAllUsers();
+        foreach($unfilteredList as $listUser){
+            if(substr_count($listUser->getName(),$searchStr)>0){
+                array_push($filteredList, $listUser);
+            }
+        }
+        $data['allUsers'] = $filteredList;
+        return $this->load->view('user_mgmt_list', $data);
+        
+        
+    }     
+    
+    
+    public function submitCourseListQuery(){
+        $searchStr = $this->input->post('searchStr');
+        $sID = $this->input->post('studentID');
+        $student = new User_model;
+        $student->loadPropertiesFromPrimaryKey($sID);
+        $studentCurriculumList = $student->getCurriculums();
+        $studentData=array(
+            'sID'=> $sID,
+            'courseData' => array()    
+        );
+        
+        $filteredList = array();
+        $unfilteredList = array();
+        foreach($studentCurriculumList as $curriculum) {
+            $unfilteredList = array_merge($unfilteredList, $this->collectCourseData($curriculum->getCurriculumID()));
+        }
+        foreach($unfilteredList as $listCourse){
+            if(strpbrk($listCourse['courseName'], $searchStr)){
+                array_push($studentData['courseData'], $listCourse);
+            }
+        }
+        return $this->load->view('student_courses_form', $studentData);
+    }
+    
     //check for valid user session before performing actions.
     private function checkSec() {
         //todo change this to false to enable security.
@@ -62,7 +121,6 @@ class User extends CI_Controller {
      * @return Returns Filled userData if user is loaded successfully.
      */
     private function loadUserData($uID) {
-
         $userData = array(
             'uID' => $uID,
             'email' => NULL,
@@ -81,6 +139,7 @@ class User extends CI_Controller {
             $userData['roles'] = $this->loadUserRoles($user);
             $userData['user'] = $user;
         }
+
         return $userData;
     }
 
@@ -151,7 +210,9 @@ class User extends CI_Controller {
     private function createUserData($data) {
         $this->checkSec();
         $user = new User_model;
-
+        if ($data['uID'] != 0) {
+            $user->setUserID($data['uID']);
+        }
         $user->setEmailAddress($data['email']);
         $user->setName($data['lName'] . ',' . $data['fName']);
         //todo Ensure there is a password and a name here.
@@ -161,10 +222,11 @@ class User extends CI_Controller {
 
         $user->setState(1);
         $user->setLastLogin(0);
-        $user->create();
-
+        $isCreated = $user->create();
+        if (!$isCreated && $data['uID'] != 0) {
+            redirect('User/index/modify/' . $user->getUserID());
+        }
         $this->addUserRoles($data, $user);
-
         return $user->getUserID();
     }
 
@@ -203,7 +265,7 @@ class User extends CI_Controller {
             redirect('Login/logout');
 
         $userData = array();
-        $userData['uID'] = $uID;
+        $userData['uID'] = $this->input->post('userID');
         $userData['email'] = $this->input->post('email');
         $userData['fName'] = $this->input->post('fName');
         $userData['mName'] = $this->input->post('mName');
@@ -239,6 +301,7 @@ class User extends CI_Controller {
         $selectedUser = new User_model;
         $selectedUser->loadPropertiesFromPrimaryKey($userData['uID']);
         if ($selectedUser->isStudent()) {
+            $userData['studentCurriculums'] = array();
             $this->load->view('student_info_form', $userData);
         } else {
             redirect('Mainpage/index');
@@ -246,11 +309,23 @@ class User extends CI_Controller {
     }
 
     public function submitStudentInfoForm($studentID) {
-        $curriculumID = $this->input->post('curriculumID');
-        $advisorID = $this->input->post('advisorID');
+
+        $allCurriculums = $this->Curriculum_model->getAllCurriculums();
 
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($studentID);
+
+        foreach ($allCurriculums as $curriculum) {
+            $cID = $curriculum->getCurriculumID();
+            if ($this->input->post('Curriculum' . $cID)) {
+                if (!in_array($curriculum, $student->getCurriculums())) {
+                    $student->addCurriculum($curriculum);
+                }
+            } else {
+                $student->removeCurriculum($curriculum);
+            }
+        }
+        $advisorID = $this->input->post('advisorID');
 
         $advisor = new User_model();
         $advisor->loadPropertiesFromPrimaryKey($advisorID);
@@ -259,29 +334,21 @@ class User extends CI_Controller {
         $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
 
         $student->setAdvisor($advisor);
-        $student->addCurriculum($curriculum);
+
         $student->update();
 
         redirect('User/prepareAddCourses/' . $studentID);
     }
 
     public function prepareAddCourses($sID) {
-        $user = new User_model;
-
-        if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
-            redirect('Login/logout');
-
-        if (!$user->isAdmin())
-            redirect('Login/logout');
-
+        $this->checkSec();
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
-//        $curriculums = $student->getCurriculums();
-        $curriculums = $this->Curriculum_model->getAllCurriculums();
+        $curriculums = $student->getCurriculums();
+//        $curriculums = $this->Curriculum_model->getAllCurriculums();
         $studentData = array(
             'sID' => $sID,
-            'courseData' => array(),
-            'user' => $user
+            'courseData' => array()
         );
         $allCourseData = array();
         foreach ($curriculums as $curriculum) {

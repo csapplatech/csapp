@@ -33,6 +33,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <body>
 	<?php include_once('application/views/Templates/navbar.php'); ?>
 	<div class="container">
+        
+            <form action="<?php echo site_url('User/submitCourseListQuery'); ?>" method="POST" >
+            <input type="hidden" name="studentID" value="<?php echo $sID; ?>" />
+            <input type="text" name="searchStr" class="form-control" placeholder="Search by Name..." style="margin-bottom:5px" autofocus /> 
+            <input type="submit" value="Search" />
+        </form> 
+        
         <form action="<?php echo site_url('User/addCourseSections'); ?>" method="POST">
             <input type="hidden" name="studentID" value="<?php echo $sID; ?>" />
            

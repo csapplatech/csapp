@@ -148,7 +148,8 @@ class User_model extends CI_Model
 			
 			$results = $this->db->get();
 			
-			if($this->db->num_rows() == 0)
+//			if($this->db->num_rows() == 0)
+                        if($results->num_rows() == 0)
 			{
 				$this->userID = $userID;
 				return true;
@@ -301,8 +302,10 @@ class User_model extends CI_Model
 	{
 		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
+                        echo 'this uID: '.$this->getUserID();
+                        echo 'this cID: '.$curriculum->getCurriculumID();
 			$data = array(
-				"UserID" => $this->userID,
+				"UserID" => $this->getUserID(),
 				"CurriculumID" => $curriculum->getCurriculumID()
 			);
 			
