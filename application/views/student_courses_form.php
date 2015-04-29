@@ -54,8 +54,72 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             foreach ($userTakenCourses as $section) {
                 array_push($coursesTakenIDs, $section[0]->getCourseSectionID());
             }
-               
+            $displayNameList =  array();   
             foreach ($courseData as $course) {
+                if(substr_count($course['courseName'],$displayNameList)==0){
+                    array_push($displayNameList,$course['courseName']);
+                }
+            }
+            foreach ($displayNameList as $className){
+                echo $className.' ';
+                echo '<select name="quarterYear">';
+                    foreach($courseData as $course){
+                        if($course['courseName']==$className){
+                            echo '<option>';
+                            echo  $course['quarterName'].$course['quarterYear'];                            
+                            echo '</option>';
+                        }
+                    }
+ 
+                    echo '<select name=';
+                    echo $course['sectionNum'].'>';
+                    foreach($courseData as $course){
+                        if($course['courseName']==$className && $course[].$course[] == ){
+                            echo '<option>';
+                            echo  $course['quarterName'].$course['quarterYear'];                            
+                            echo '</option>';
+                        }
+                    }
+ 
+                echo '</select>';
+            
+                
+            }
+                //grade selection block
+//          foreach ($courseData as $course) {
+//                echo '<select name="' . $course['sectionID'] . 'grade">';
+//                if ($grade < 5 && $grade >= 0) {
+//                    if($grade == 4){
+//                        echo '<option value="4" selected>A</option>';
+//                    }   else {
+//                        echo '<option value="4">A</option>';
+//                    }
+//                    if($grade == 3){
+//                        echo '<option value="3" selected>B</option>';
+//                    }   else {
+//                        echo '<option value="3">B</option>';
+//                    }
+//                    if($grade == 2){
+//                        echo '<option value="2" selected>C</option>';
+//                    }   else {
+//                        echo '<option value="2">C</option>';
+//                    }
+//                    if($grade == 1){
+//                        echo '<option value="1" selected>D</option>';
+//                    }   else {
+//                        echo '<option value="1">D</option>';
+//                    }
+//                    if($grade == 0){
+//                        echo '<option value="0" selected>F</option>';
+//                    }   else {
+//                        echo '<option value="0">F</option>';
+//                    }
+//                }
+//                echo '</select>';
+                
+                echo '  Quarter: ' . $course['quarterName'] . ' ' . $course['quarterYear'];
+                echo '  Section: ' . $course['sectionNum'];
+                //change checkbox name according to Q/Y && Section#
                 echo '<input type="checkbox" name="'.$course['sectionID'].'" value="1"';
                 $grade = 4;
                 if (in_array($course['sectionID'], $coursesTakenIDs)) {
@@ -65,37 +129,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $grade = $student->getGradeForCourseSection($courseModel);                   
                 }
                 echo '/>' . $course['courseName'] . ' ';
-                echo '<select name="' . $course['sectionID'] . 'grade">';
-                if ($grade < 5 && $grade >= 0) {
-                    if($grade == 4){
-                        echo '<option value="4" selected>A</option>';
-                    }   else {
-                        echo '<option value="4">A</option>';
-                    }
-                    if($grade == 3){
-                        echo '<option value="3" selected>B</option>';
-                    }   else {
-                        echo '<option value="3">B</option>';
-                    }
-                    if($grade == 2){
-                        echo '<option value="2" selected>C</option>';
-                    }   else {
-                        echo '<option value="2">C</option>';
-                    }
-                    if($grade == 1){
-                        echo '<option value="1" selected>D</option>';
-                    }   else {
-                        echo '<option value="1">D</option>';
-                    }
-                    if($grade == 0){
-                        echo '<option value="0" selected>F</option>';
-                    }   else {
-                        echo '<option value="0">F</option>';
-                    }
-                }
-                echo '</select>';
-                echo '  Quarter: ' . $course['quarterName'] . ' ' . $course['quarterYear'];
-                echo '  Section: ' . $course['sectionNum'];
                 echo '</br>';
             }
             ?>
