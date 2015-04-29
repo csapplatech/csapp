@@ -148,14 +148,22 @@ class Backuprestore extends CI_Controller
 						
 						$value = $row[$index];
 						
-						if($column_type == "varchar" || $column_type == "char")
+						if($value === null)
 						{
-							$content .="'$value'";
+							$content .= "NULL";
 						}
 						else
 						{
-							$content .= "$value";
+							if($column_type == "varchar" || $column_type == "char" || $column_type == 'datetime')
+							{
+								$content .="'$value'";
+							}
+							else
+							{
+								$content .= "$value";
+							}
 						}
+						
 						
 						$index++;
 					}
@@ -281,11 +289,39 @@ class Backuprestore extends CI_Controller
 		set_time_limit(0);
 		ignore_user_abort(1);
 		
-		mysqli_query($conn, "SET foreign_key_checks = 0");
+		if(!mysqli_autocommit($conn, false))
+		{
+			echo "Failed to turn off MySQL Autocommit";
+			return;
+		}
+		
+		if(!mysqli_begin_transaction($conn))
+		{
+			echo "Failed to create MySQL Transaction";
+			return;
+		}
+		
+		if(!mysqli_query($conn, "SET foreign_key_checks = 0"))
+		{
+			echo "Error from query: SET foreign_key_checks = 0\n";
+			echo mysqli_error($conn) . "\n";
+			
+			mysqli_rollback($conn);
+			mysqli_autocommit($conn, true);
+			return;
+		}
 		
 		$query = "SELECT table_name FROM information_schema.tables WHERE table_schema = '$dbname'";
 		
-		$results = mysqli_query($conn, $query);
+		if(!$results = mysqli_query($conn, $query))
+		{
+			echo "Error from query: SELECT table_name FROM information_schema.tables WHERE table_schema = '$dbname'\n";
+			echo mysqli_error($conn) . "\n";
+			
+			mysqli_rollback($conn);
+			mysqli_autocommit($conn, true);
+			return;
+		}
 		
 		$table_names = array();
 		
@@ -320,9 +356,25 @@ class Backuprestore extends CI_Controller
 				{
 					$current_table = $table_name;
 					
-					mysqli_query($conn, "TRUNCATE TABLE `$current_table`;");
+					if(!mysqli_query($conn, "TRUNCATE TABLE `$current_table`;"))
+					{
+						echo "Error from query: " . "TRUNCATE TABLE `$current_table`;\n";
+						echo mysqli_error($conn) . "\n";
+						
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						return;
+					}
 					
-					mysqli_query($conn, "OPTIMIZE TABLE `$current_table`;");
+					if(!mysqli_query($conn, "OPTIMIZE TABLE `$current_table`;"))
+					{
+						echo "Error from query: " . "OPTIMIZE TABLE `$current_table`;\n";
+						echo mysqli_error($conn) . "\n";
+						
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						return;
+					}
 					
 					$table_name_prev_line = true;
 				}
@@ -341,14 +393,41 @@ class Backuprestore extends CI_Controller
 			// reading rows for the table
 			else
 			{
-				if(strlen($current_table) > 0 && strlen($query_start) > 0)
+				if(strlen($current_table) > 0 && strlen($query_start) > 0 && strlen(trim($line)) > 0)
 				{
-					mysqli_query($conn, "$query_start ($line);");
+					if(!mysqli_query($conn, "$query_start ($line);"))
+					{
+						echo "Error from query: " . "$query_start ($line);\n";
+						echo mysqli_error($conn) . "\n";
+						
+						mysqli_rollback($conn);
+						mysqli_autocommit($conn, true);
+						return;
+					}
 				}
 			}
 		} 
 		
-		mysqli_query($conn, "SET foreign_key_checks = 1");
+		if(!mysqli_query($conn, "SET foreign_key_checks = 1"))
+		{
+			echo "Error from query: SET foreign_key_checks = 1\n";
+			echo mysqli_error($conn) . "\n";
+			
+			mysqli_rollback($conn);
+			mysqli_autocommit($conn, true);
+			return;
+		}
+		
+		if(!mysqli_commit($conn))
+		{
+			echo "Failed to commit MySQL Transaction";
+			
+			mysqli_rollback($conn);
+			mysqli_autocommit($conn, true);
+			return;
+		}
+		
+		mysqli_autocommit($conn, true);
 		
 		redirect('Backuprestore/index');
 	}
