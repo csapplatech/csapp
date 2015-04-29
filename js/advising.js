@@ -9,6 +9,8 @@ $(document).ready(function() {
    }); 
    $(".button").on("click", function(){
         var butID=$(this).attr('id');
+        if (typeof(butID) == 'number')
+            butID = butID.toString();
         if (butID[0] == "s")
             butID = butID.substring(3);
         if($('#'+butID).text()=="Add")
@@ -23,10 +25,15 @@ $(document).ready(function() {
             cellCid="#c"+butID;
             cellC =$(cellCid).text(); //cell C is call number
             //push both to arrays
-            save_id.push(butID);
-            save_callnum.push(cellC);
-            save_type.push("norm");
-            cellDid="#d"+butID;
+            if (save_id.indexOf(butID) == -1)
+            {
+                save_id.push(butID);
+                save_callnum.push(butID);
+                save_type.push("norm");
+            }
+            else
+                save_type[save_id.indexOf(butID)]="norm";
+                    cellDid="#d"+butID;
             cellD =$(cellDid).text();
             cellEid="#e"+butID;
             cellE =$(cellEid).text();
@@ -34,7 +41,16 @@ $(document).ready(function() {
        }
         else if($('#'+butID).text()=="Add Alt")
         {
-            save_type[save_id.indexOf(butID)]="alt";
+            
+            if (save_id.indexOf(butID) == -1)
+            {
+                save_id.push(butID);
+                save_callnum.push(butID);
+                save_type.push("alt");
+            }
+            else
+                save_type[save_id.indexOf(butID)]="alt";
+            
             var removeID ="#row"+butID;
             $(removeID).remove();
             $('#'+butID).text("Remove");
@@ -99,6 +115,7 @@ $(document).ready(function() {
                     Type: save_type[i] 
                 });
         }
+        console.log(SendInfo);
         $.ajax({
            url: rootURL + 'index.php/Advisingform/save',
            type: 'POST',
@@ -122,16 +139,21 @@ $(document).ready(function() {
             remove(butID);
             
         else
+        {
             addALT(butID);
+        }
             
    });
    
 });
 
 function addMain(Mid) {
+    
     $("#" + Mid).text("Add Alt");
     $("#sug" + Mid).text("Add Alt");
         var butID =Mid;
+        if (typeof(butID) == 'number')
+            butID = butID.toString();
         var tableID="row"+butID;
         cellAid="#a"+butID;
         cellA =$(cellAid).text();
@@ -140,9 +162,14 @@ function addMain(Mid) {
         cellCid="#c"+butID;
         cellC =$(cellCid).text(); //cell C is call number
         //push both to arrays
-        save_id.push(butID);
-        save_callnum.push(cellC);
-        save_type.push("norm");
+        if (save_id.indexOf(butID) == -1)
+        {
+            save_id.push(butID);
+            save_callnum.push(butID);
+            save_type.push("norm");
+        }
+        else
+            save_type[save_id.indexOf(butID)]="norm";
         cellDid="#d"+butID;
         cellD =$(cellDid).text();
         cellEid="#e"+butID;
@@ -152,14 +179,25 @@ function addMain(Mid) {
 
 function addALT(Aid) {
     var butID =Aid;
+    if (typeof(butID) == 'number')
+            butID = butID.toString();
     if (butID[0] == "s")
         butID = butID.substring(3);
-    save_type[save_id.indexOf(butID)]="alt";
+    var tableID = "row"+butID;
+    if (save_id.indexOf(butID) == -1)
+    {
+        save_id.push(butID);
+        save_callnum.push(butID);
+        save_type.push("alt");
+    }
+    else
+        save_type[save_id.indexOf(butID)]="alt";
     var removeID ="#row"+butID;
     $(removeID).remove();
-    $("#"+Aid).text("Remove");
-    $("#sug"+Aid).text("Remove");
+    $("#"+butID).text("Remove");
+    $("#sug"+butID).text("Remove");
     var tableID="row"+butID;
+    cellAid="#a"+butID;
     cellA =$(cellAid).text();
     cellBid="#b"+butID;
     cellB =$(cellBid).text();

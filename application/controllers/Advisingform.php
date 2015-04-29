@@ -460,19 +460,21 @@ class AdvisingForm extends CI_Controller
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
+            var_dump($section);
             $callNum = $section->CallNumber;
             
             
             $sections = $currentquarter->getAllCourseSections();
             $target = new course_section_model();
-            foreach($sections as $sec)
+            /*foreach($sections as $sec)
             {
                 if ($sec->getCallNumber() === $callNum)
                 {
                     $target->loadPropertiesFromPrimaryKey($sec->getCourseSectionID());
                     break;
                 }
-            }
+            }*/
+            $target->loadPropertiesFromPrimaryKey($callNum);
            $state = ($section->Type == "norm") ? advising_form_model::COURSE_SECTION_STATE_PREFERRED
                    : advising_form_model::COURSE_SECTION_STATE_ALTERNATE;
            $mod->addCourseSection($target, $state);
