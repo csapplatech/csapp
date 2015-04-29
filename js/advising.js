@@ -115,7 +115,6 @@ $(document).ready(function() {
                     Type: save_type[i] 
                 });
         }
-        console.log(SendInfo);
         $.ajax({
            url: rootURL + 'index.php/Advisingform/save',
            type: 'POST',
