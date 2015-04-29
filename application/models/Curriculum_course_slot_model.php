@@ -401,6 +401,15 @@ class Curriculum_course_slot_model extends CI_Model
     }
     
 	/**
+     * Summary of removeAllValidCourseIDs
+     * Remove all course ids from the set of valid courses for this curriculum course slot model
+     */
+	public function removeAllValidCourseIDs()
+	{
+		$this->validCourseIDs = array();
+	}
+	
+	/**
 	 * Summary of getCourseSlotsPrerequisiteTo
 	 * Get all of the curriculum course slots that this curriculum course slot is a prerequisite for
 	 *
