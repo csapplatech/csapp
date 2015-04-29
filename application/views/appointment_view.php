@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+        <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>--> 
+        <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>--> 
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
+
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <title>CSAPP Main Page</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,6 +17,11 @@
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+        <script>
+          $(function() {
+    $( "#tabs" ).tabs();
+  });
+        </script>
     </head>
     <body onload = "hideTables()">
          <nav class="navbar navbar-default navbar-fixed-top">
@@ -110,7 +118,7 @@ else
         </style>
         <style>
             #calwrap {
-                height: 550px;
+                height: 500px;
                 width: 425px;
                 margin: 0 auto;
             }
@@ -514,61 +522,34 @@ else
             }
         </style>
         <style>
-		.container{
-			width: 800px;
-			margin: 0 auto;
-                        color: black;
-		}
-
-
-
-		ul.tabs{
-			margin: 0px;
-			padding: 0px;
-			list-style: none;
-                        color: green;
-                        
-		}
-		ul.tabs li{
-			background: none;
-			color: #222;
-			display: inline-block;
-			padding: 10px 15px;
-			cursor: pointer;
-		}
-
-		ul.tabs li.current{
-			background: #ededed;
-			color: #222;
-		}
-
-		.tab-content{
-			display: none;
-			background: #ededed;
-			padding: 15px;
-                        color: red;
-		}
-
-		.tab-content.current{
-			display: inherit;
-                        color: blue;
-		}
+            #tabs {
+                background-color: red;
+                width: 425px; /* should be same width as (#tabs ul) */
+                margin: 0 auto;
+                
+                
+            }
+            #tabs ul {
+                display: absolute;
+                width: 425px; /* should be same width as (#tabs) */
+                height: 25px;
+                font-size: 17px;
+                border-bottom: 1px solid black;
+                list-style: none;
+                
+            }
+            #tabs ul a {
+                color: black;        
+            }
+            #tabs ul li {
+                width: 100px;
+                background-color: yellow;
+                float: left;
+            }
+            #tabs p {
+                background-color: gray;
+            }
         </style>
-        <script>
-            $(document).ready(function(){
-
-                    $('ul.tabs li').click(function(){
-                            var tab_id = $(this).attr('data-tab');
-
-                            $('ul.tabs li').removeClass('current');
-                            $('.tab-content').removeClass('current');
-
-                            $(this).addClass('current');
-                            $("#"+tab_id).addClass('current');
-                    })
-
-            }) 
-        </script>
         <script>
             // Change the selector if needed
             var $table = $('table.scroll'),

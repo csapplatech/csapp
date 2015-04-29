@@ -748,33 +748,32 @@ class CI_Calendar {
                 
                 //ONCE THE ADVISOR'S STUDENTS ARE SORTED IN THEIR PROPER ARRAYS, CREATE SIDE BAR
                 $sidebar .="
-                    <div id='tabs-container'>
-                        <ul class='tabs-menu'>
-                            <li class='current'><a href='#tab-1'>Scheduled</a></li>
-                            <li><a href='#tab-2'>Unscheduled</a></li>
-                            <li><a href='#tab-3'>Mapping Key</a></li>
+                    <div id='tabs'>
+                        <ul>
+                            <li class='current'><a href='#tabs-1'>Scheduled</a></li>
+                            <li><a href='#tabs-2'>Unscheduled</a></li>
+                            <li><a href='#tabs-3'>Mapping Key</a></li>
                         </ul>
-                        <div class='tab'>";
+                        ";
                         
-                $sidebar .="<div id='tab-1' class='tab-content'>"; //beginning of first tab of data (Scheduled Students)
+                $sidebar .="<div id='tabs-1'>"; //beginning of first tab of data (Scheduled Students)
                           //$sidebar.="<p>".."</p>";
                         foreach($this->Scheduled_Info as $key)
                         {
                             $sidebar.="<p>".$key."</p>";
                         }
                 $sidebar .="</div>"; //end of first tab of data
-                $sidebar .="<div id='tab-2' class='tab-content'>"; //beginning of second tab of data (Unscheduled Students)
+                $sidebar .="<div id='tabs-2'>"; //beginning of second tab of data (Unscheduled Students)
                         foreach($this->Unscheduled_Students as $key)
                         {
                             $sidebar.="<p>".$key->getName()."</p>";
                         }
                 $sidebar .="</div>"; //end of first tab of data
-                $sidebar .="<div id='tab-3' class='tab-content'>"; //beginning of third tab of data (Mapping Key)
+                $sidebar .="<div id='tabs-3'>"; //beginning of third tab of data (Mapping Key)
                                     
                 $sidebar .="</div>"; //end of first tab of data
-                $sidebar .="            
-                        </div>
-                    </div>"; //end of sidebar
+                
+                $sidebar .="</div>"; //end of sidebar
                 
             }
             return $out .= "\n".$this->replacements['table_close'].$sidebar;
