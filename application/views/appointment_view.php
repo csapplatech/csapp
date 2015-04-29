@@ -101,7 +101,7 @@ else
             
             thead tr th { 
                 /* text-align: left; */
-                width: 50px;
+                width: 41px;
                 border: 1px transparent solid;
             }
             thead #col {
@@ -609,7 +609,10 @@ else
                             table.className = "scroll animated fadeOutDown";
                             table.style.visibility = "hidden";
                         }
+                        document.body.style.zoom="85%";
+                        document.body.style.zoom="100%"
                     }
+                    
             }
             function nextOrPrev(inp) {
                 var table;
