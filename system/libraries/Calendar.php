@@ -747,7 +747,25 @@ class CI_Calendar {
                 $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);  
                 
                 //ONCE THE ADVISOR'S STUDENTS ARE SORTED IN THEIR PROPER ARRAYS, CREATE SIDE BAR
-                
+                $sidebar .="
+                    <div id='tabs-container'>
+                        <ul class='tabs-menu'>
+                            <li class='current'><a href='#tab-1'>Scheduled</a></li>
+                            <li><a href='#tab-2'>Unscheduled</a></li>
+                            <li><a href='#tab-3'>Mapping Key</a></li>
+                        </ul>
+                        <div class='tab'>
+                            <div id='tab-1' class='tab-content'>
+
+                            </div>
+                            <div id='tab-2' class='tab-content'>
+
+                            </div>
+                            <div id='tab-3' class='tab-content'>
+
+                            </div>
+                        </div>
+                    </div>";
                 
             }
             return $out .= "\n".$this->replacements['table_close'];
