@@ -19,16 +19,33 @@ class Checklistexport extends CI_Controller
 	//Main Function
 	public function index($userID = NULL, $curriculumID = 1, $type = "xls")
 	{	    
-	    //Assuming a user with classes is passed and curriculum
-	    //	Must be valid!
 	    $this->load->model('User_model', 'Curriculum_model');
 	    
+	    //Loader user from passed ID and advisor from session ID
+	    // If the session id isn't the passed user or an advisor for the user, immediantly fail.
 	    $user = new User_Model();
 	    $user->loadPropertiesFromPrimaryKey($userID);
+	    $advisor = new User_Model();
+	    if (!isset($_SESSION["UserID"]))
+	    {
+	    	echo "YOU AREN'T LOGGED IN";
+		exit;
+	    }
+	    $advisor->loadPropertiesFromPrimaryKey($_SESSION["UserID"]);
 	    
+	    $flag = TRUE;
+	    foreach ($advisor->getAdvisees() as $student)
+	    	if ($student->getUserID() == $userID)
+		    $flag = FALSE;
+	    if ($advisor->getUserID() == $user->getUserID())
+	    	$flag == FALSE;
+	    if ($flag == TRUE)
+	    {
+	    	echo "YOU DON'T HAVE PERMISSION TO ACCESS THIS USER'S INFORMATION";
+		exit;
+	    }
+
 	    $curriculums = $user->getCurriculums();
-	    $curriculums = array(new Curriculum_Model());
-	    $curriculums[0]->loadPropertiesFromPrimaryKey($curriculumID);
 	    
 	    $degree = FALSE;
 	    foreach ($curriculums as $c)
@@ -431,7 +448,7 @@ class Checklistexport extends CI_Controller
 	    	$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    }
 	    $irow++;
-	    foreach ($courses as $key=>$taken)
+	    foreach ($coursesTaken as $key=>$taken)
 	    {
 	    	foreach ($cols as $col)
 	    	{
@@ -439,7 +456,6 @@ class Checklistexport extends CI_Controller
 	    		$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    	}
 	    	$checklist->getStyle("M$irow:P$irow")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-	    	$course = $taken[0]->getCourse();
 	    	$checklist->getCell("L$irow")->setValue($key);
 	    	$checklist->getCell("O$irow")->setValue($taken[0]->getAcademicQuarter()->getYear());
 	    			

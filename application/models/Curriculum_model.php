@@ -223,6 +223,12 @@ class Curriculum_model extends CI_Model
 			$mCourseSlot->setRecommendedQuarter($courseSlot->getRecommendedQuarter());
 			$mCourseSlot->setRecommendedYear($courseSlot->getRecommendedYear());
 			$mCourseSlot->setNotes($courseSlot->getNotes());
+			$mCourseSlot->removeAllValidCourseIDs();
+			
+			foreach($courseSlot->getValidCourseIDs() as $courseID)
+			{
+				$mCourseSlot->addValidCourseID($courseID);
+			}
 			
 			return true;
 		}
