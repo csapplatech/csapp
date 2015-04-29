@@ -1,9 +1,34 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<head>
+    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
+    <style>
+        p
+        {
+            color: black;
+        }
+        h1
+        {
+            color: black;
+        }
+        body
+        {
+            padding-top: 60px;
+            padding-bottom: 100px;
+        }
+        form
+		{
+			font-family: Courier;
+		}
+    </style>
+</head>
+<body>
+    <?php include_once('application/views/Templates/navbar.php'); ?>
+    <div class="container">
 <h1>Course Slot Edit</h1>
 
 <form method="POST">
 <p>Valid Classes:</p>
-<p>Filter: <input id="CourseSlotEditFilter" /></p>
+<input id="CourseSlotEditFilter" class='form-control' placeholder="Filter" style="margin-bottom:10px"/>
   <select multiple size='5' id="AvailCourseSelect" name='validCourseIDs[]'>
     <?php
       foreach($data['courses'] as $row)
@@ -17,8 +42,9 @@
     ?>
   </select>
 <br /><br />
-<p>Name: <input name='name' value="<?php echo $data['name']; ?>" /></p>
-<p>Title: <input name='notes' value="<?php if (isset($data['notes'])) echo $data['notes']; ?>" /></p>
+<p>Name:</p>
+<input name='name' class='form-control' value="<?php echo $data['name'];?>" style="margin-bottom:10px"/>
+<p>Title: <input name='notes' class='form-control' value="<?php if (isset($data['notes'])) echo $data['notes']; ?>" /></p>
 
 <p>Recommended Quarter: </p>
 <select size=4 name='recommendedQuarter'>
@@ -70,40 +96,40 @@ if (isset($data['index']))
 echo '>';
 ?>
 
-<!-- TEST CODE -->
 <p>Prerequisites: </p>
-<p>Filter: <input id="CourseSlotPreReqsFilter" /></p>
+<input class='form-control' id="CourseSlotPreReqsFilter" placeholder="Filter" style="margin-bottom:10px" />
 <select multiple size='5' id="AvailCourseSlotPreReqs" name='prereqIDs[]'>
 	<?php
 	foreach($data['prereqs'] as $row)
-		echo "<option value='$row[index]'>$row[name]</option>"; 
+	{
+		echo "<option value='$row[index]'"; 
 		if (isset($row['selected']))
 		   if ($row['selected'] == TRUE)
 			  echo " selected";
+		echo ">$row[name]</option>";
+	}
 	?>
 </select>
 <br /><br />
 
 <p>Corequisites: </p>
-<p>Filter: <input id="CourseSlotCoReqsFilter" /></p>
+<input class='form-control' id="CourseSlotCoReqsFilter" placeholder="Filter" style="margin-bottom:10px" />
 <select multiple size='5' id="AvailCourseSlotCoReqs" name='coreqIDs[]'>
 	<?php
 	foreach($data['coreqs'] as $row)
-		echo "<option value='$row[index]'>$row[name]</option>"; 
+	{
+		echo "<option value='$row[index]'"; 
 		if (isset($row['selected']))
 		   if ($row['selected'] == TRUE)
 			  echo " selected";
+		echo ">$row[name]</option>";
+	}
 	?>
 </select>
 <br /><br />
 
-
-
-<!-- TEST CODE -->
-
-
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
+<button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cancelCurriculumCourseSlot'); ?>">Cancel</button>
 </form>
 
 <script type="text/javascript"> //Uses jQuery
@@ -154,3 +180,6 @@ Filter3.on("keyup", function ()
   FilterSelect(Select3, userInput);
 });
 </script>
+</div>
+		<?php include_once('application/views/Templates/footer.php');?>
+</body>
