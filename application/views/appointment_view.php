@@ -517,6 +517,7 @@ else
 		.container{
 			width: 800px;
 			margin: 0 auto;
+                        color: black;
 		}
 
 
@@ -525,6 +526,8 @@ else
 			margin: 0px;
 			padding: 0px;
 			list-style: none;
+                        color: green;
+                        
 		}
 		ul.tabs li{
 			background: none;
@@ -543,10 +546,12 @@ else
 			display: none;
 			background: #ededed;
 			padding: 15px;
+                        color: red;
 		}
 
 		.tab-content.current{
 			display: inherit;
+                        color: blue;
 		}
         </style>
         <script>
