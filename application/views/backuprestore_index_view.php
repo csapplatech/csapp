@@ -189,7 +189,7 @@
 								
 								$deleteUrl = site_url('Backuprestore/delete/' . $path);
 								
-								echo "<li style='text-align: left;'class='list-group-item'><h4 style='text-align: left; display: inline-block;'>$title</h4><div class='pull-right'><a onclick='loading()' href='$restoreUrl' class='btn btn-primary' style='color: white;'>Restore</a> <a onclick='loading()' href='$downloadUrl' class='btn btn-info'>Download</a> <a onclick='loading()' href='$deleteUrl' class='btn btn-danger'>Delete</a></div></li>";
+								echo "<li style='text-align: left;'class='list-group-item'><h4 style='text-align: left; display: inline-block;'>$title</h4><div class='pull-right'><a onclick='loading()' href='$restoreUrl' class='btn btn-primary' style='color: white;'>Restore</a> <a href='$downloadUrl' class='btn btn-info'>Download</a> <a onclick='loading()' href='$deleteUrl' class='btn btn-danger'>Delete</a></div></li>";
 							}
 							
 						?>
