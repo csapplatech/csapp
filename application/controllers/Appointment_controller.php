@@ -20,20 +20,24 @@ Class appointment_controller extends CI_Controller{
            $All_apps= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
             $All_Advisees=($User_model->getAdvisees());
              
-            $startTime=0;
-            
+           $startTime=0;
+      ;
              
            foreach ($All_apps as $key) //grabs each object inside array
-                {
+            {
                $startTime = $key->getStartTime();
                array_push($app_Times, $startTime);
-               }
+               
+               
+                
+            }
             
-             
+           
              
              
              
             $prefs = array(
+                
                 'all_advisees'              =>$All_Advisees,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
@@ -59,8 +63,10 @@ Class appointment_controller extends CI_Controller{
             $Advising_schedule->create();                                     //CREATE the new advising schedule
             
             $All_apps= ($Advising_schedule->getAllAdvisingAppointments()); //for the sake o defining all_apps. It will be null
+             $All_Advisees=($User_model->getAdvisees());
             
              $prefs = array(
+                'all_advisees'              =>$All_Advisees,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
@@ -90,7 +96,7 @@ Class appointment_controller extends CI_Controller{
            foreach ($All_apps as $key) //grabs each object inside array
             {
                $startTime = $key->getStartTime();
-               
+              
                array_push($app_Times, $startTime);
                
                
@@ -98,6 +104,7 @@ Class appointment_controller extends CI_Controller{
             }
 
                     $prefs = array(
+                
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,

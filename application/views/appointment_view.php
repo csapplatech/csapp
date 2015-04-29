@@ -7,11 +7,11 @@
 
   <script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-       <title>CSAPP Main Page</title>
+      <title>CSAPP Main Page</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-         The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags 
+        
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
@@ -362,6 +362,11 @@ else
             .cboxwrapper input[type=checkbox]:checked + label {
                     background-color: #9fec37;
             }
+            
+            
+            
+            
+            
             #tabletop {
                 margin-left: 40px;
             }
@@ -528,14 +533,14 @@ else
         <style>
             #tabs {
                 background-color: red;
-                width: 425px; /* should be same width as (#tabs ul) */
+                width: 425px; // should be same width as (#tabs ul) 
                 margin: 0 auto;
                 
                 
             }
             #tabs ul {
                 display: absolute;
-                width: 425px; /* should be same width as (#tabs) */
+                width: 425px; // should be same width as (#tabs) 
                 height: 25px;
                 font-size: 17px;
                 border-bottom: 1px solid black;
@@ -553,6 +558,8 @@ else
             #tabs p {
                 background-color: gray;
             }
+          
+            
         </style>
         <script>
             // Change the selector if needed
@@ -687,6 +694,8 @@ else
                 else{}
             }
         </script>
+        
+
         <p> <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:300px;height:225px"> </p>
         <footer>
             <font color ="white"</font>
