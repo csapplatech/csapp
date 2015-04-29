@@ -131,8 +131,6 @@ else
             }
             body {
                 background-color: white;
-                zoom:85%;
-                zoom:100%;
                 
             }
             table th{
@@ -616,8 +614,7 @@ else
                             table.style.visibility = "hidden";
                         }
                     }
-                   // document.body.style.zoom="85%";
-                    //document.body.style.zoom="100%";
+                  
                    
             }
             function nextOrPrev(inp) {
