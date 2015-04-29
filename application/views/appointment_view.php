@@ -4,16 +4,16 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
-       <!-- <title>CSAPP Main Page</title>
+        <title>CSAPP Main Page</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-         The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags 
+         <!--The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags--> 
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
-        <script src="../../assets/js/ie-emulation-modes-warning.js"></script>-->
+        <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
     </head>
     <body onload = "hideTables()">
          <nav class="navbar navbar-default navbar-fixed-top">
@@ -110,7 +110,7 @@ else
         </style>
         <style>
             #calwrap {
-                height: 450px;
+                height: 550px;
                 width: 425px;
                 margin: 0 auto;
             }
@@ -513,72 +513,6 @@ else
               animation-name: bounceInUp;
             }
         </style>
-        <style>
-            .tabs-menu {
-                height: 30px;
-                float: left;
-                clear: both;
-            }
-
-            .tabs-menu li {
-                height: 30px;
-                line-height: 30px;
-                float: left;
-                margin-right: 1px;
-                background-color: #ccc;
-                border-top: 1px solid #d4d4d1;
-                border-right: 1px solid #d4d4d1;
-                border-left: 1px solid #d4d4d1;
-            }
-
-            .tabs-menu li.current {
-                position: relative;
-                background-color: #fff;
-                border-bottom: 1px solid #fff;
-                z-index: 5;
-            }
-
-            .tabs-menu li a {
-                padding: 10px;
-                text-transform: uppercase;
-                color: #fff;
-                text-decoration: none; 
-            }
-
-            .tabs-menu .current a {
-                color: #2e7da3;
-            }
-
-            .tab {
-                border: 1px solid #d4d4d1;
-                background-color: #fff;
-                float: left;
-                margin-bottom: 20px;
-                width: auto;
-            }
-
-            .tab-content {
-                width: 400px;
-                padding: 20px;
-                display: none;
-            }
-
-            #tab-1 {
-             display: block;   
-            }
-        </style>
-        <script>
-            $(document).ready(function() {
-                $(".tabs-menu a").click(function(event) {
-                    event.preventDefault();
-                    $(this).parent().addClass("current");
-                    $(this).parent().siblings().removeClass("current");
-                    var tab = $(this).attr("href");
-                    $(".tab-content").not(tab).css("display", "none");
-                    $(tab).fadeIn();
-                });
-            });
-        </script>
         <script>
             // Change the selector if needed
             var $table = $('table.scroll'),

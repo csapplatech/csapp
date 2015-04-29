@@ -742,7 +742,7 @@ class CI_Calendar {
                 }
                 foreach($this->all_advisees as $key) //stores unscheduled students in the array Unscheduled_Students
                 {
-                    push_array($this->Unscheduled_Students,$key);
+                    array_push($this->Unscheduled_Students,$key);
                 }
                 $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);  
                 
@@ -754,21 +754,30 @@ class CI_Calendar {
                             <li><a href='#tab-2'>Unscheduled</a></li>
                             <li><a href='#tab-3'>Mapping Key</a></li>
                         </ul>
-                        <div class='tab'>
-                            <div id='tab-1' class='tab-content'>
-
-                            </div>
-                            <div id='tab-2' class='tab-content'>
-
-                            </div>
-                            <div id='tab-3' class='tab-content'>
-
-                            </div>
+                        <div class='tab'>";
+                        
+                $sidebar .="<div id='tab-1' class='tab-content'>"; //beginning of first tab of data (Scheduled Students)
+                          //$sidebar.="<p>".."</p>";
+                        foreach($this->Scheduled_Info as $key)
+                        {
+                            $sidebar.="<p>".$key."</p>";
+                        }
+                $sidebar .="</div>"; //end of first tab of data
+                $sidebar .="<div id='tab-2' class='tab-content'>"; //beginning of second tab of data (Unscheduled Students)
+                        foreach($this->Unscheduled_Students as $key)
+                        {
+                            $sidebar.="<p>".$key->getName()."</p>";
+                        }
+                $sidebar .="</div>"; //end of first tab of data
+                $sidebar .="<div id='tab-3' class='tab-content'>"; //beginning of third tab of data (Mapping Key)
+                                    
+                $sidebar .="</div>"; //end of first tab of data
+                $sidebar .="            
                         </div>
-                    </div>";
+                    </div>"; //end of sidebar
                 
             }
-            return $out .= "\n".$this->replacements['table_close'];
+            return $out .= "\n".$this->replacements['table_close'].$sidebar;
                
 	}//end of generator
 
