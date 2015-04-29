@@ -134,8 +134,26 @@ class AdvisingForm extends CI_Controller
                     if (!empty($value[0]->getCourse()->getAllCurriculumCourseSlots()))
                     {
                         $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
-                       
-                        if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
+                        switch($min_grade)
+                        {
+                            case 4:
+                                $min_grade = 'A';
+                                break;
+                            case 3:
+                                $min_grade = 'B';
+                                break;
+                            case 2:
+                                $min_grade = 'C';
+                                break;
+                            case 1:
+                                $min_grade = 'D';
+                                break;
+                            default:
+                                $min_grade = 'ZZZZZZ';
+                                break;
+                        }
+                        
+                        if ($usermod->getGradeForCourseSection($value[0]) <= $min_grade)
                         {
                             array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
                         }

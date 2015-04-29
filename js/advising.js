@@ -9,9 +9,12 @@ $(document).ready(function() {
    }); 
    $(".button").on("click", function(){
         var butID=$(this).attr('id');
-        if($(this).text()=="Add")
+        if (butID[0] == "s")
+            butID = butID.substring(3);
+        if($('#'+butID).text()=="Add")
         {
-            $(this).text("Add Alt");
+            $('#'+butID).text("Add Alt");
+            $('#sug'+butID).text("Add Alt");
             var tableID="row"+butID;
             cellAid="#a"+butID;
             cellA =$(cellAid).text();
@@ -29,12 +32,13 @@ $(document).ready(function() {
             cellE =$(cellEid).text();
             $('#target').append("<tr id='"+tableID+"' class='clicky'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
        }
-        else if($(this).text()=="Add Alt")
+        else if($('#'+butID).text()=="Add Alt")
         {
             save_type[save_id.indexOf(butID)]="alt";
             var removeID ="#row"+butID;
             $(removeID).remove();
-            $(this).text("Remove");
+            $('#'+butID).text("Remove");
+            $('#sug'+butID).text("Remove");
             var tableID="row"+butID;
             cellA =$(cellAid).text();
             cellBid="#b"+butID;
@@ -52,7 +56,8 @@ $(document).ready(function() {
             save_callnum.splice(index,1);
             save_type.splice(index,1);
             var removeID ="#row"+butID;
-            $(this).text("Add");
+            $('#'+butID).text("Add");
+            $('#sug'+butID).text("Add");
             $(removeID).remove();
         }
     });
@@ -125,6 +130,7 @@ $(document).ready(function() {
 
 function addMain(Mid) {
     $("#" + Mid).text("Add Alt");
+    $("#sug" + Mid).text("Add Alt");
         var butID =Mid;
         var tableID="row"+butID;
         cellAid="#a"+butID;
@@ -146,10 +152,13 @@ function addMain(Mid) {
 
 function addALT(Aid) {
     var butID =Aid;
+    if (butID[0] == "s")
+        butID = butID.substring(3);
     save_type[save_id.indexOf(butID)]="alt";
     var removeID ="#row"+butID;
     $(removeID).remove();
     $("#"+Aid).text("Remove");
+    $("#sug"+Aid).text("Remove");
     var tableID="row"+butID;
     cellA =$(cellAid).text();
     cellBid="#b"+butID;
@@ -162,10 +171,13 @@ function addALT(Aid) {
     cellE =$(cellEid).text();
     $('#altTable').append("<tr id='"+tableID+"' class='clicky'> <td>"+cellA+"</td><td>"+cellB+"</td><td>"+cellC+"</td><td>"+cellD+"</td><td></td><td style=\"font-size: 90% \">"+cellE+"</td></tr>");
     $('#'+butID).text("Remove");
+    $('#sug'+butID).text("Remove");
 } 
 
 function remove(Rid) {
     var butID = Rid;
+    if (butID[0] == "s")
+        butID = butID.substring(3);
     var index = save_id.indexOf(butID);
     save_id.splice(index,1);
     save_callnum.splice(index,1);
@@ -174,4 +186,5 @@ function remove(Rid) {
     //$(this).text("Add");
     $(removeID).remove();
     $('#'+butID).text("Add");
+    $('#sug'+butID).text("Add");
 }
