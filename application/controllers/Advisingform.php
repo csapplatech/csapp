@@ -134,8 +134,26 @@ class AdvisingForm extends CI_Controller
                     if (!empty($value[0]->getCourse()->getAllCurriculumCourseSlots()))
                     {
                         $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
-                       
-                        if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
+                        switch($min_grade)
+                        {
+                            case 4:
+                                $min_grade = 'A';
+                                break;
+                            case 3:
+                                $min_grade = 'B';
+                                break;
+                            case 2:
+                                $min_grade = 'C';
+                                break;
+                            case 1:
+                                $min_grade = 'D';
+                                break;
+                            default:
+                                $min_grade = 'ZZZZZZ';
+                                break;
+                        }
+                        
+                        if ($usermod->getGradeForCourseSection($value[0]) <= $min_grade)
                         {
                             array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
                         }
@@ -442,19 +460,21 @@ class AdvisingForm extends CI_Controller
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
+            var_dump($section);
             $callNum = $section->CallNumber;
             
             
             $sections = $currentquarter->getAllCourseSections();
             $target = new course_section_model();
-            foreach($sections as $sec)
+            /*foreach($sections as $sec)
             {
                 if ($sec->getCallNumber() === $callNum)
                 {
                     $target->loadPropertiesFromPrimaryKey($sec->getCourseSectionID());
                     break;
                 }
-            }
+            }*/
+            $target->loadPropertiesFromPrimaryKey($callNum);
            $state = ($section->Type == "norm") ? advising_form_model::COURSE_SECTION_STATE_PREFERRED
                    : advising_form_model::COURSE_SECTION_STATE_ALTERNATE;
            $mod->addCourseSection($target, $state);
