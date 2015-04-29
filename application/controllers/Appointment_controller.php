@@ -63,10 +63,12 @@ Class appointment_controller extends CI_Controller{
             $Advising_schedule->setAdvisorUserID($User_model->getUserID());   //use this to create a new advising shedule
             $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
+            $All_Advisees=($User_model->getAdvisees());
             
             $All_apps= ($Advising_schedule->getAllAdvisingAppointments()); //for the sake o defining all_apps. It will be null
             
              $prefs = array(
+                'all_advisees'              =>$All_Advisees,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
