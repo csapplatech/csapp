@@ -56,10 +56,12 @@ class CI_Calendar {
 	 * @var mixed
 	 */
         
-        public $Unscheduled_Students='';
+        public $Unscheduled_Students=array();
         
-        public $Scheduled_Students='';
+        public $Scheduled_Students=array();
     
+        public $all_advisees='';
+        
         public $all_apps='';
     
 	public $template = '';
@@ -660,11 +662,12 @@ class CI_Calendar {
                         {
                             if($key->getStartTime()==$timestamp1)
                                 {
-                                    
                                     if($key->isScheduled())  //if a student has already picked this time slot
-                               {
+                                {
                                     $this->user->loadPropertiesFromPrimaryKey($key->getScheduledStudentUserID());
                                     $student_Name=$this->user->getName();
+                                    $student_ID=$this->user->getUserID();
+                                    array_push($this->Scheduled_Students, $student_ID);
                                     $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '".$student_Name."' for='$tempk' id='$tempk-'</label></div></td> ";
                                     $existing_Appointment=true;
                                     $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
@@ -672,7 +675,7 @@ class CI_Calendar {
 
                                } 
 
-                           else
+                           else   //if not scheduled load the cell that the advisor marked as open
                                {
                                 $out .= "<td id='clickable'><div class='Open'><input type='checkbox' id='$tempk' class='row$k' name='Open[]' value='$timestamp1-$timestamp2' ><label title = '$actualdate' for='$tempk' id='$tempk-'</label></div></td> "; //creates a row of $l columns $k times
                                 $existing_Appointment=true;
@@ -713,8 +716,32 @@ class CI_Calendar {
 			$out .= "\n".$this->replacements['cal_row_end']."\n"; //end of the week, but also end of individual week table
                         $tablenum++;
 		}       
-                //print_r($myday);
+                
+                
+                
+               $X=0;
+                foreach($this->all_advisees as $key)
+                {   
+                  
+                    if(!empty($this->Scheduled_Students))
+                    {
+                        foreach($this->Scheduled_Students as $SS)
+                        { $this->user->loadPropertiesFromPrimaryKey($SS);
+                       
+                            if($key->getUserID() == $this->user->getUserID())
+                            {
+                               
+                                array_splice($this->all_advisees,$X, 1); //if $SS userID == $key UserID then remove $key from $all_advisees and smush the array back together
+                            }
+                        }
+                
+                    }
+                   $X++;
+                }
+                
+                $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
 		return $out .= "\n".$this->replacements['table_close'];
+               
 	}//end of generator
 
 	// --------------------------------------------------------------------
@@ -853,7 +880,7 @@ class CI_Calendar {
 	{
 		if($this->user->isAdvisor()){
                 return array(
-			'table_open'				=> ' <br><script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
+			'table_open'				=> '<script>function setGetParameter(paramName, paramValue){var url = window.location.href;if (url.indexOf(paramName + "=") >= 0){var prefix = url.substring(0, url.indexOf(paramName));var suffix = url.substring(url.indexOf(paramName));suffix = suffix.substring(suffix.indexOf("=") + 1);suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";url = prefix + paramName + "=" + paramValue + suffix;}else{if (url.indexOf("?") < 0)url += "?" + paramName + "=" + paramValue;else url += "&" + paramName + "=" + paramValue;}window.location.href = url;}</script><div id="calwrap"><form action="appointment_controller/fill" method="post">',//<table border="0" cellpadding="4" cellspacing="0"></table>
 			'heading_row_start'			=> '<table id="top" class="animated fadeInUp"><tr><td><input id= "startT" type="text" value=""></td><td colspan="2"></td><td colspan="3"> <select id="intervals" name="intervals" onchange="setGetParameter(\'interval\',document.getElementById(\'intervals\').options[document.getElementById(\'intervals\').selectedIndex].value)"><option>Intervals</option><option value="10">10 min.</option><option value="15">15 min.</option><option value="20">20 min.</option><option value="30">30 min.</option></select> </td><td></td><td id ="submitwrap" rowspan="2"><input id="submit" name="submit" type="submit" value="Add"></td></tr><tr>',//<th>
 			'heading_previous_cell'		=> '<td id="pad"><input id="endT" type="text" value=""></td><td><a id="prevweek" href ="javascript:void(0);" onclick="nextOrPrev(this)"><div>&lt;</div></a></td><td><a id="previousnext" href="{previous_url}"><div>&lt;&lt;</div></a></td>',
 			'heading_title_cell'		=> '<td>{heading}</td>',
