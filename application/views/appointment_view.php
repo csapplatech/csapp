@@ -101,7 +101,7 @@ else
             
             thead tr th { 
                 /* text-align: left; */
-                width: 41px;
+                width: 50px;
                 border: 1px transparent solid;
             }
             thead #col {
