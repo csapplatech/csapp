@@ -91,7 +91,7 @@ class User extends CI_Controller {
             $unfilteredList = array_merge($unfilteredList, $this->collectCourseData($curriculum->getCurriculumID()));
         }
         foreach($unfilteredList as $listCourse){
-            if(substr_count($listCourse['courseName'], $searchStr) > 0){
+            if(strpbrk($listCourse['courseName'], $searchStr)){
                 array_push($studentData['courseData'], $listCourse);
             }
         }
