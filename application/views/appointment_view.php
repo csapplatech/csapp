@@ -243,10 +243,10 @@ else
                 left: 0px;
                 z-index: 1;
                 
-                background-color: #ff610b;
+                background-color: #002f8b;
             }
             .My_Schedule label:hover {
-                background-color:#ff2f07 ;
+                background-color:#02032d ;
             }
             /* Create the checked state*/
             .My_Schedule input[type=checkbox]:checked + label {
@@ -279,7 +279,7 @@ else
                 left: 0px;
                 z-index: 1;
                 
-                background-color: #ff482b;
+                background-color: #e31b23;
             }
             .Scheduled label:hover {
                 background-color: #ff2522;
@@ -322,7 +322,7 @@ else
             }
             /* Create the checked state*/
             .Open input[type=checkbox]:checked + label {
-                    background-color: black;
+                background-color:#f15b0f ;
             }
             
             
@@ -527,15 +527,19 @@ else
         </style>
         <style>
             #tabs {
-                background-color: red;
-                width: 425px; /* should be same width as (#tabs ul) */
+                background-color: white;
+                width: 450px; /* should be same width as (#tabs ul) */
                 margin: 0 auto;
                 
                 
             }
+            #tabs nav ul{
+                border:4px solid transparent;
+            }
             #tabs ul {
+                
                 display: absolute;
-                width: 425px; /* should be same width as (#tabs) */
+                width: 450px; /* should be same width as (#tabs) */
                 height: 25px;
                 font-size: 17px;
                 border-bottom: 1px solid black;
@@ -547,11 +551,11 @@ else
             }
             #tabs ul li {
                 width: 100px;
-                background-color: yellow;
+                background-color: white;
                 float: left;
             }
             #tabs p {
-                background-color: gray;
+               
             }
         </style>
         <script>

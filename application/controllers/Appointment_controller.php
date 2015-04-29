@@ -14,9 +14,15 @@ Class appointment_controller extends CI_Controller{
     
     $Advising_appointment= new Advising_appointment_model;
     
+    $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
+    
     
     if($User_model->isAdvisor()){           //If it is an advisor
-        if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), 1)){ //if there are appointments registered to this info
+        
+        
+        
+        if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), $quarter)){ //if there are appointments registered to this info
            $All_apps= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
             $All_Advisees=($User_model->getAdvisees());
              
@@ -78,7 +84,7 @@ Class appointment_controller extends CI_Controller{
 		$getAdvisor=$User_model->getAdvisor();
 		
 	//print_r ($getAdvisor);
-         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1))
+         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), $quarter))
          {  
              
              $All_apps= ($Advising_schedule->getAllAdvisingAppointments());
@@ -135,13 +141,16 @@ public function fill()
      
      $Advising_schedule= new Advising_schedule_model();
      $Advising_appointment= new Advising_appointment_model;
+     
+      $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
 	
 	if($User_model->isStudent())
 	{
 		$getAdvisor=$User_model->getAdvisor();
 		$getAdvisor=$getAdvisor->getUserID();
                 
-                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the scedule that corresponds to the students advisor and the acedemic quarter
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), $quarter); //load the scedule that corresponds to the students advisor and the acedemic quarter
                 $all_Appointments=$Advising_schedule->getAllAdvisingAppointments();
             if((!empty($_POST['student_selection']))) //if a student scheduled an appointment
             {
@@ -180,7 +189,7 @@ public function fill()
         }
 	else if($User_model->isAdvisor())
 	{
-            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), 1); //load the schedule that corresponds to this advisor and this academic quarter
+            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), $quarter); //load the schedule that corresponds to this advisor and this academic quarter
             $all_Appointments=$Advising_schedule->getAllAdvisingAppointments(); 
            
                 if(!empty($_POST['appointments']))// this will handle the cells that the advisor marked as available
@@ -241,12 +250,15 @@ public function Student_Cancel()
     {
     $User_model= new User_model;              
     $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
+    
+     $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
 
     $Advising_schedule= new Advising_schedule_model();
     $Advising_appointment= new Advising_appointment_model;
     $advisor=$User_model->getAdvisor();
     $advisor=$advisor->getUserID();
-    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($advisor), 1);
+    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($advisor), $quarter);
     
     $app_array=$Advising_schedule->getAllAdvisingAppointments();
     
