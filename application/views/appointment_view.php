@@ -513,6 +513,57 @@ else
               animation-name: bounceInUp;
             }
         </style>
+        <style>
+		.container{
+			width: 800px;
+			margin: 0 auto;
+		}
+
+
+
+		ul.tabs{
+			margin: 0px;
+			padding: 0px;
+			list-style: none;
+		}
+		ul.tabs li{
+			background: none;
+			color: #222;
+			display: inline-block;
+			padding: 10px 15px;
+			cursor: pointer;
+		}
+
+		ul.tabs li.current{
+			background: #ededed;
+			color: #222;
+		}
+
+		.tab-content{
+			display: none;
+			background: #ededed;
+			padding: 15px;
+		}
+
+		.tab-content.current{
+			display: inherit;
+		}
+        </style>
+        <script>
+            $(document).ready(function(){
+
+                    $('ul.tabs li').click(function(){
+                            var tab_id = $(this).attr('data-tab');
+
+                            $('ul.tabs li').removeClass('current');
+                            $('.tab-content').removeClass('current');
+
+                            $(this).addClass('current');
+                            $("#"+tab_id).addClass('current');
+                    })
+
+            }) 
+        </script>
         <script>
             // Change the selector if needed
             var $table = $('table.scroll'),
