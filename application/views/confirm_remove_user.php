@@ -20,6 +20,7 @@ and open the template in the editor.
 	
 			body {
 				padding-top: 60px;
+                                padding-bottom: 20px;
 			}
 	
 			.container {
@@ -37,10 +38,10 @@ and open the template in the editor.
 		<?php include_once('application/views/Templates/navbar.php'); ?>
 		<div class="container">
 			<form action="<?php echo site_url('User/removeUser/'.$uID) ?>" method="POST">
-				<input type="submit" Value="Remove" />
+                                <button class="btn btn-primary btn-sm" type="submit" Value="Remove" style="margin-bottom:5px">Remove</button> 
 			</form>
 			<form action="<?php redirect('User/index/'.$_SESSION['action']); ?>" >
-				<input type="submit" value="Cancel" />
+                            <button class="btn btn-primary btn-sm" type="submit" Value="Cancel" style="margin-bottom:5px">Cancel</button>
 			</form>
 		</div>
 		<?php include_once('application/views/Templates/footer.php'); ?>

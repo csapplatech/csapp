@@ -43,11 +43,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			<form action="<?php echo site_url('User/submitUserForm/' . $uID); ?>" method="POST" >
 				<p><b>Please fill out user info.</b></p><br/>
 				<table>
-                                        <tr><p><input type="text" id="username" name="email" value="<?= $email ?>" class="form-control" placeholder="Email Address" style="margin-bottom:5px" required autofocus></tr></p>
-                                        <tr><p><input type="text" name="pass" class="form-control" placeholder="Password" style="margin-bottom:5px" required autofocus></tr></p
-                                        <tr><p><input type="text" name="confPass" class="form-control" placeholder="Confirm New Password" style="margin-bottom:5px" required autofocus></tr></p>
-                                        <tr><p><input type="text" name="fName" class="form-control" placeholder="First Name (Middle Name Optional)" value="<?= $fName ?>" style="margin-bottom:5px" required autofocus></tr></p>
-                                        <tr><p><input type="text" name="lName" class="form-control" placeholder="Last Name" value="<?= $lName ?>" style="margin-bottom:5px" required autofocus></tr></p>
+                                        <tr><p><input type="text" id="username" name="email" value="<?= $email ?>" class="form-control" placeholder="Email Address" style="margin-bottom:5px"></tr></p>
+                                        <tr><p><input type="text" name="pass" class="form-control" placeholder="Password" style="margin-bottom:5px"></tr></p
+                                        <tr><p><input type="text" name="confPass" class="form-control" placeholder="Confirm New Password" style="margin-bottom:5px"></tr></p>
+                                        <tr><p><input type="text" name="fName" class="form-control" placeholder="First Name (Middle Name Optional)" value="<?= $fName ?>" style="margin-bottom:5px"></tr></p>
+                                        <tr><p><input type="text" name="lName" class="form-control" placeholder="Last Name" value="<?= $lName ?>" style="margin-bottom:5px"></tr></p>
 				</table>
 				<p2><b>Please select user Roles.</b></p2><br/>
 				<?php

@@ -183,7 +183,7 @@ else
                 color: #8f8f8f;
                 text-align: center;
                 border-radius: 30%;
-                -webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41));
+                -webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
                 -moz-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
                 box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
             }
@@ -607,11 +607,6 @@ else
             }
         </script>
         <p> <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:300px;height:225px"> </p>
-        <footer>
-            <font color ="white"</font>
-            <p>Ruston, LA 2015</p> 
-            <p>Louisiana Tech University</p>
-            <p>Created by: Louisiana Tech's CSC 404 Class</p>
-        </footer>
+       <?php include_once('application/views/Templates/footer.php'); ?>
     </body>
 </html>

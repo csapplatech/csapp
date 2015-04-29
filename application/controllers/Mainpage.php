@@ -13,14 +13,14 @@ class Mainpage extends CI_Controller
             redirect('Login/logout');
         
         //Load the appropriate mainpage
-        if ($user->isStudent())
-            $this->load->view('MainPages/student_main_page', array('user'=>$user));
+        if ($user->isAdmin())
+            $this->load->view('MainPages/admin_main_page', array('user'=>$user));
         elseif ($user->isProgramChair())
             $this->load->view('MainPages/pc_main_page', array('user'=>$user));
         elseif ($user->isAdvisor())
             $this->load->view('MainPages/advisor_main_page', array('user'=>$user));
-        elseif ($user->isAdmin())
-            $this->load->view('MainPages/admin_main_page', array('user'=>$user));
+        elseif ($user->isStudent())
+            $this->load->view('MainPages/student_main_page', array('user'=>$user));
         else
             $this->load->view('MainPages/guest_main_page', array('user'=>$user));
     }
