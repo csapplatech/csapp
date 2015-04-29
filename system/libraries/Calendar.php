@@ -56,6 +56,8 @@ class CI_Calendar {
 	 * @var mixed
 	 */
         
+         public $Scheduled_Info=array();
+    
         public $Unscheduled_Students=array();
         
         public $Scheduled_Students=array();
@@ -241,6 +243,7 @@ class CI_Calendar {
                 $eo = "class='tableodd'";
                 $switch = 0;
                 $actualdate =0; //goes in the title attribute for each appointment;
+                $sidebar = ''; //box of data on side of calendar
                
 		$local_time = time();
 
@@ -668,6 +671,7 @@ class CI_Calendar {
                                     $student_Name=$this->user->getName();
                                     $student_ID=$this->user->getUserID();
                                     array_push($this->Scheduled_Students, $student_ID);
+                                    array_push($this->Scheduled_Info, $student_Name."-".$timestamp1."-".$timestamp2);
                                     $out .= "<td id='clickable'><div class='Scheduled'><input type='checkbox' id='$tempk' class='row$k' name='student_scheduled[]' value='$timestamp1-$timestamp2' ><label title = '".$student_Name."' for='$tempk' id='$tempk-'</label></div></td> ";
                                     $existing_Appointment=true;
                                     $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
@@ -718,29 +722,35 @@ class CI_Calendar {
 		}       
                 
                 
-                
+            if($this->user->isAdvisor())
+            {  
                $X=0;
-                foreach($this->all_advisees as $key)
+                foreach($this->all_advisees as $key) 
                 {   
-                  
-                    if(!empty($this->Scheduled_Students))
+                    if(!empty($this->Scheduled_Students))//if at least one person is scheduled
                     {
                         foreach($this->Scheduled_Students as $SS)
-                        { $this->user->loadPropertiesFromPrimaryKey($SS);
-                       
-                            if($key->getUserID() == $this->user->getUserID())
-                            {
-                               
+                        { 
+                            $this->user->loadPropertiesFromPrimaryKey($SS);  
+                            if($key->getUserID() == $this->user->getUserID()) //if statement that removes scheduled students from array
+                            {        
                                 array_splice($this->all_advisees,$X, 1); //if $SS userID == $key UserID then remove $key from $all_advisees and smush the array back together
                             }
                         }
-                
                     }
-                   $X++;
+                    $X++;
                 }
+                foreach($this->all_advisees as $key) //stores unscheduled students in the array Unscheduled_Students
+                {
+                    push_array($this->Unscheduled_Students,$key);
+                }
+                $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);  
                 
-                $this->user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
-		return $out .= "\n".$this->replacements['table_close'];
+                //ONCE THE ADVISOR'S STUDENTS ARE SORTED IN THEIR PROPER ARRAYS, CREATE SIDE BAR
+                
+                
+            }
+            return $out .= "\n".$this->replacements['table_close'];
                
 	}//end of generator
 
