@@ -460,7 +460,6 @@ class AdvisingForm extends CI_Controller
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
-            var_dump($section);
             $callNum = $section->CallNumber;
             
             
