@@ -132,6 +132,10 @@ class FutureCourses extends CI_Controller
 			return "Failed to connect to database";
 		}
 		
+		mysqli_autocommit($conn, false);
+		
+		mysqli_begin_transaction($conn);
+		
 		$file = fopen($file_path, "r");
 		
 		if($file)
@@ -159,7 +163,63 @@ class FutureCourses extends CI_Controller
 				
 				$startTime = trim($split[7]);
 				
+				if(strlen($startTime) > 0)
+				{
+					if(strpos($startTime, "AM") !== false)
+					{
+						$startTimePM = false;
+						
+						$startTime = str_replace("AM", "", $startTime);
+					}
+					else if(strpos($startTime, "PM") !== false)
+					{
+						$startTimePM = true;
+						
+						$startTime = str_replace("PM", "", $startTime);
+					}
+					
+					$startTimeSplit = explode(":", $startTime);
+					
+					$startTimeHour = intval($startTimeSplit[0]);
+					$startTimeMinute = intval($startTimeSplit[1]);
+					
+					if($startTimePM && $startTimeHour < 12)
+					{
+						$startTimeHour += 12;
+					}
+				}
+				
 				$endTime = trim($split[8]);
+				
+				if(strlen($endTime) > 0)
+				{
+					if(strpos($endTime, "AM") !== false)
+					{
+						$endTimePM = false;
+						
+						$endTime = str_replace("AM", "", $endTime);
+					}
+					else if(strpos($endTime, "PM") !== false)
+					{
+						$endTimePM = true;
+						
+						$endTime = str_replace("PM", "", $endTime);
+					}
+				
+					$endTimeSplit = explode(":", $endTime);
+					
+					$endTimeHour = intval($endTimeSplit[0]);
+					$endTimeMinute = intval($endTimeSplit[1]);
+					
+					if($endTimePM && $endTimeHour < 12)
+					{
+						$endTimeHour += 12;
+					}
+				}
+				
+				$startTime = $startTimeHour * 100 + $startTimeMinute;
+				
+				$endTime = $endTimeHour * 100 + $endTimeMinute;
 				
 				$roomName = trim($split[9]);
 				
@@ -178,10 +238,53 @@ class FutureCourses extends CI_Controller
 					$insertQuery = "INSERT INTO `CourseSections` (`CourseID`, `SectionName`, `Hours`, `InstructorName`, `CallNumber`, `AcademicQuarterID`) VALUES ($courseID, '$courseSectionName', $creditHours, '$instructor', $callNumber, $academicQuarterID)";
 					
 					mysqli_query($conn, $insertQuery);
+					
+					$id = mysqli_insert_id($conn);
+					
+					for($i=0;$i<strlen($days);$i++)
+					{
+						$dayOfWeekLetter = $days[$i];
+						
+						if($dayOfWeekLetter == 'M' || $dayOfWeekLetter == 'm')
+						{
+							$dayOfWeek = Course_section_time_model::DAY_MONDAY;
+						}
+						else if($dayOfWeekLetter == 'T' || $dayOfWeekLetter == 't')
+						{
+							$dayOfWeek = Course_section_time_model::DAY_TUESDAY;
+						}
+						else if($dayOfWeekLetter == 'W' || $dayOfWeekLetter == 'w')
+						{
+							$dayOfWeek = Course_section_time_model::DAY_WEDNESDAY;
+						}
+						else if($dayOfWeekLetter == 'R' || $dayOfWeekLetter == 'r')
+						{
+							$dayOfWeek = Course_section_time_model::DAY_THURSDAY;
+						}
+						else if($dayOfWeekLetter == 'F' || $dayOfWeekLetter == 'f')
+						{
+							$dayOfWeek = Course_section_time_model::DAY_FRIDAY;
+						}
+						else
+						{
+							$dayOfWeek = "";
+						}
+						
+						if(strlen($dayOfWeek) > 0)
+						{
+							$insertQuery = "INSERT INTO `CourseSectionTimes` (`CourseSectionID`, `DayOfWeek`, `StartTime`, `EndTime`) VALUES ($id, '$dayOfWeek', $startTime, $endTime)";
+							
+							mysqli_query($conn, $insertQuery);
+						}
+					}
 				}
 			}
 			
 			fclose($file);
+			
+			mysqli_commit($conn);
+			
+			mysqli_autocommit($conn, true);
 			
 			return null;
 		}
