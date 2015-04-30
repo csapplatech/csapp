@@ -35,7 +35,7 @@
                 }
             ?>
             
-            <form class="form-signin" action="<?php echo site_url('ChangePassword/change'); ?>" method="POST">
+            <form class="form-signin" action="<?php echo site_url('Changepassword/change'); ?>" method="POST">
                   <h2 class="form-signin-heading" style="margin-bottom:15px">Enter your old password and what you want to change it to.</h2>
                   <label for="inputPassword" class="sr-only">Current Password</label>
                   <input type="password" id="oldpw" name="oldpw" class="form-control" placeholder="Current Password" style="margin-bottom:5px" required autofocus>
