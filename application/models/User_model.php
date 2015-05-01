@@ -667,7 +667,7 @@ class User_model extends CI_Model
 		{
 			$this->db->select('StudentTransferCourseID');
 			$this->db->from('StudentTransferCourses');
-			$this->db->where('StudentUserID');
+			$this->db->where('StudentUserID', $this->userID);
 			
 			$results = $this->db->get();
 			
