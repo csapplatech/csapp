@@ -62,42 +62,39 @@ class User extends CI_Controller {
         $searchStr = $this->input->post('searchStr');
         $filteredList = array();
         $unfilteredList = $this->User_model->getAllUsers();
-        foreach($unfilteredList as $listUser){
-            if(substr_count($listUser->getName(),$searchStr)>0){
+        foreach ($unfilteredList as $listUser) {
+            if (substr_count($listUser->getName(), $searchStr) > 0) {
                 array_push($filteredList, $listUser);
             }
         }
         $data['allUsers'] = $filteredList;
         return $this->load->view('user_mgmt_list', $data);
-        
-        
-    }     
-    
-    
-    public function submitCourseListQuery(){
+    }
+
+    public function submitCourseListQuery() {
         $searchStr = $this->input->post('searchStr');
         $sID = $this->input->post('studentID');
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
         $studentCurriculumList = $student->getCurriculums();
-        $studentData=array(
-            'sID'=> $sID,
-            'courseData' => array()    
+        $studentData = array(
+            'sID' => $sID,
+            'courseData' => array()
         );
-        
+
         $filteredList = array();
         $unfilteredList = array();
-        foreach($studentCurriculumList as $curriculum) {
+        foreach ($studentCurriculumList as $curriculum) {
             $unfilteredList = array_merge($unfilteredList, $this->collectCourseData($curriculum->getCurriculumID()));
         }
-        foreach($unfilteredList as $listCourse){
-            if(strpbrk($listCourse['courseName'], $searchStr)){
+        foreach ($unfilteredList as $listCourse) {
+            if (strpbrk($listCourse['courseName'], $searchStr)) {
                 array_push($studentData['courseData'], $listCourse);
             }
         }
         return $this->load->view('student_courses_form', $studentData);
     }
-    
+
     //check for valid user session before performing actions.
     private function checkSec() {
         //todo change this to false to enable security.
@@ -342,23 +339,115 @@ class User extends CI_Controller {
 
     public function prepareAddCourses($sID) {
         $this->checkSec();
+        $studentData = array(
+            'sID' => $sID,
+            'curriculumSlots' => NULL,
+            'filledSlots' => array()
+        );
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
         $curriculums = $student->getCurriculums();
-//        $curriculums = $this->Curriculum_model->getAllCurriculums();
-        $studentData = array(
-            'sID' => $sID,
-            'courseData' => array()
-        );
-        $allCourseData = array();
+        $allCurriculumSlots = array();
         foreach ($curriculums as $curriculum) {
-//            $courseData = $this->getCurriculumCourseData($curriculum);
-            $courseData = $this->collectCourseData($curriculum->getCurriculumID());
-            $allCourseData = array_merge($allCourseData, $courseData);
+            $cSlots = $curriculum->getCurriculumCourseSlots();
+            $allCurriculumSlots = array_merge($allCurriculumSlots, $cSlots);
+            
         }
-//        $studentData['courseData'] = array_unique($allCourseData);
-        $studentData['courseData'] = $allCourseData;
+        $studentData['curriculumSlots'] = $allCurriculumSlots;
+        $sectionsTaken = $student->getAllCoursesTaken();
+        $coursesTaken = array();
+        foreach ($sectionsTaken as $section) {
+            array_push($coursesTaken, $section[0]->getCourse());
+        }
+        $selectedCourses = $this->getSelectedCourses($coursesTaken, $allCurriculumSlots);
+        $filledSlots = array();
+        foreach ($selectedCourses as $selCourse) {
+            $course = $selCourse[0];
+            $slotName = $selCourse[1];
+            $filledSlots[$slotName] = $this->getSectionForCourse($course);
+        }
+        $studentData['filledSlots'] = $filledSlots;
+        
         $this->load->view('student_courses_form', $studentData);
+    }
+
+    private function getSelectedCourses($courses, $slots) {
+        $selectedCourses = array();
+        foreach ($slots as $slot) {
+            $course = $this->getSelectedCourse($courses, $slot);
+            if ($course) {
+                $name = $slot->getName();
+                array_push($selectedCourses, array($course, $name));
+            }
+        }
+        return $selectedCourses;
+    }
+
+    private function getSelectedCourse($courses, $slot) {
+        foreach ($courses as $course) {
+            if (in_array($slot, $course->getAllCurriculumCourseSlots())) {
+                return $course;
+            }
+        }
+        return false;
+    }
+
+    private function getSectionForCourse($course) {
+        $sections = $this->Course_section_model->getAllCourseSections();
+        foreach ($sections as $section) {
+            if ($section->getCourse() == $course) {
+                return $section->getCourseSectionID();
+            }
+        }
+        return false;
+    }
+
+    public function prepareAddCourseSection($slotID) {
+        $sID = $this->input->post('sID');
+        $student = new User_model;
+        $student->loadPropertiesFromPrimaryKey($sID);
+
+        $currSlot = new Curriculum_course_slot_model();
+        $currSlot->loadPropertiesFromPrimaryKey($slotID);
+        $name = $currSlot->getName();
+
+        $data = array(
+            'sID' => $sID,
+            'action' => 'add',
+            'slotName' => $name,
+            'sections' => array()
+        );
+
+        $allSections = $this->Course_section_model->getAllCourseSections();
+        $validSections = array();
+        foreach ($allSections as $section) {
+            $course = $section->getCourse();
+            $courseName = $course->getCourseName();
+            $courseNumber = $course->getCourseNumber();
+            if ($name == $courseName . ' ' . $courseNumber) {
+                array_push($validSections, $section);
+            }
+        }
+        $data['sections'] = $validSections;
+        $this->load->view('course_section_form', $data);
+    }
+
+    public function prepareRemoveCourseSection($sectionID) {
+        $sID = $this->input->post('sID');
+        $student = new User_model;
+        $student->loadPropertiesFromPrimaryKey($sID);
+        $section = new Course_section_model;
+        $section->loadPropertiesFromPrimaryKey($sectionID);
+        $grade = $student->getGradeForCourseSection($section);
+        $data = array(
+            'sID' => $sID,
+            'action' => 'remove',
+            'section' => $section,
+            'quarter' => $section->getAcademicQuarter(),
+            'grade' => $grade
+        );
+
+        $this->load->view('course_section_form', $data);
     }
 
     //method to remove the selected user after confirmation
@@ -450,42 +539,37 @@ class User extends CI_Controller {
         return $allCourseData;
     }
 
-//    //method to add courses to new user
-    public function addCourseSections() {
+    public function removeCourseSection() {
         $this->checkSec();
-        $selectStudent = new User_model();
-        $sID = $this->input->post('studentID');
-        $selectStudent->loadPropertiesFromPrimaryKey($sID);
-//        $curriculumID = $this->input->post('curriculumID');
-        $allCourseData = $this->Course_section_model->getAllCourseSections();
+        $sID = $this->input->post('sID');
 
-        foreach ($allCourseData as $courseData) {
-//            echo 'boxName: '.$courseData['sectionID'].'</br>';
+        $student = new User_model;
+        $student->loadPropertiesFromPrimaryKey($sID);
+        $section = new Course_section_model;
+        $section->loadPropertiesFromPrimaryKey($this->input->post('sectionID'));
 
+        $student->removeCourseSection($section);
 
-            $csID = $courseData->getCourseSectionID();
-            $courseSection = new Course_section_model();
-            $courseSection->loadPropertiesFromPrimaryKey($csID);
+        redirect('User/prepareAddCourses/' . $sID);
+    }
 
-
-            $isSelected = $this->input->post($csID);
-            $grade = $this->input->post($csID . 'grade');
-
-            if (!isset($isSelected)) {
-//                if ($selectStudent->getGradeForCourseSection($courseSection)) {
-//                    echo 'removing course with sectionID:' . $courseSection->getCourseSectionID() . '</br>';
-                $selectStudent->removeCourseSection($courseSection);
-//                }
-            } else {
-                $selectStudent->removeCourseSection($courseSection);
-//                echo 'adding course with sectionID:' . $courseSection->getCourseSectionID() . ' with grade ' . $grade . '</br>';
-                $selectStudent->addCourseSection($courseSection, $grade);
-                //if($selectStudent->addCourseSection($courseSection, $grade)){echo 'success!!</br>';}
-                //else{echo 'faildit.</br>';}
-            }
+//    //method to add courses to new user
+    public function addCourseSection() {
+        $this->checkSec();
+        $sID = $this->input->post('sID');
+        $sectionID = $this->input->post('sectionID');
+        $grade = $this->input->post('grade');
+        if(!isset($grade)) {
+            redirect('User/prepareAddCourses/'.$sID);
         }
-        $selectStudent->update();
-        redirect('Mainpage/index');
+        
+        $student = new User_model();
+        $student->loadPropertiesFromPrimaryKey($sID);
+        $section = new Course_section_model;
+        $section->loadPropertiesFromPrimaryKey($sectionID);
+        $student->addCourseSection($section, $grade);
+        
+        redirect('User/prepareAddCourses/'.$sID);
     }
 
 }

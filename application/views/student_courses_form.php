@@ -4,140 +4,93 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
     <head>
         <title>Modify Student Courses</title>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="">
-		<meta name="author" content="">
-		<link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
-		<link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-		<script src="<?php echo JS . '/bootstrap.min.js'; ?>"></script>
-		<style>
-	
-			body {
-				padding-top: 60px;
-			}
-	
-			.container {
-				color: black;
-				text-align: left;
-			}
-			
-			.container * {
-				text-align: left;
-			}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="<?php echo IMG . '/icon.ico'; ?>">
+        <link rel="stylesheet" href="<?php echo CSS . '/magic-bootstrapV2_1.css'; ?>" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="<?php echo JS . '/bootstrap.min.js'; ?>"></script>
 
-		</style>
+        <style>
+
+            body {
+                padding-top: 60px;
+            }
+
+            .container {
+                color: black;
+                text-align: center;
+            }
+
+            .container * {
+                text-align: center;
+            }
+
+            br{
+                text-align: center;
+                padding-top: 5px;
+            }
+
+        </style>
     </head>
     <body>
-	<?php include_once('application/views/Templates/navbar.php'); ?>
-	<div class="container">
-        
-            <form action="<?php echo site_url('User/submitCourseListQuery'); ?>" method="POST" >
-            <input type="hidden" name="studentID" value="<?php echo $sID; ?>" />
-            <input type="text" name="searchStr" class="form-control" placeholder="Search by Name..." style="margin-bottom:5px" autofocus /> 
-            <input type="submit" value="Search" />
-        </form> 
-        
-        <form action="<?php echo site_url('User/addCourseSections'); ?>" method="POST">
-            <input type="hidden" name="studentID" value="<?php echo $sID; ?>" />
-           
+        <?php include_once('application/views/Templates/navbar.php'); ?>
+        <div class="container">
+<!--            <form action="<?php echo site_url('User/submitCourseListQuery'); ?>" method="POST" >
+                <input type="text" name="searchStr" class="form-control" placeholder="Search by Name..." style="margin-bottom:5px" autofocus /> 
+                <input type="submit" value="Search" />
+            </form> -->
             <?php
-            $student = new User_model();
-            $student->loadPropertiesFromPrimaryKey($sID);
-            $userTakenCourses = $student->getAllCoursesTaken();
-
-
-            $coursesTakenIDs = array();
-
-            foreach ($userTakenCourses as $section) {
-                array_push($coursesTakenIDs, $section[0]->getCourseSectionID());
-            }
-            $displayNameList =  array();   
-            foreach ($courseData as $course) {
-                if(substr_count($course['courseName'],$displayNameList)==0){
-                    array_push($displayNameList,$course['courseName']);
-                }
-            }
-            foreach ($displayNameList as $className){
-                echo $className.' ';
-                echo '<select name="quarterYear">';
-                    foreach($courseData as $course){
-                        if($course['courseName']==$className){
-                            echo '<option>';
-                            echo  $course['quarterName'].$course['quarterYear'];                            
-                            echo '</option>';
-                        }
-                    }
- 
-                    echo '<select name=';
-                    echo $course['sectionNum'].'>';
-                    foreach($courseData as $course){
-                        if($course['courseName']==$className && $course[].$course[] == ){
-                            echo '<option>';
-                            echo  $course['quarterName'].$course['quarterYear'];                            
-                            echo '</option>';
-                        }
-                    }
- 
-                echo '</select>';
-            
-                
-            }
-                //grade selection block
-//          foreach ($courseData as $course) {
-//                echo '<select name="' . $course['sectionID'] . 'grade">';
-//                if ($grade < 5 && $grade >= 0) {
-//                    if($grade == 4){
-//                        echo '<option value="4" selected>A</option>';
-//                    }   else {
-//                        echo '<option value="4">A</option>';
-//                    }
-//                    if($grade == 3){
-//                        echo '<option value="3" selected>B</option>';
-//                    }   else {
-//                        echo '<option value="3">B</option>';
-//                    }
-//                    if($grade == 2){
-//                        echo '<option value="2" selected>C</option>';
-//                    }   else {
-//                        echo '<option value="2">C</option>';
-//                    }
-//                    if($grade == 1){
-//                        echo '<option value="1" selected>D</option>';
-//                    }   else {
-//                        echo '<option value="1">D</option>';
-//                    }
-//                    if($grade == 0){
-//                        echo '<option value="0" selected>F</option>';
-//                    }   else {
-//                        echo '<option value="0">F</option>';
-//                    }
-//                }
-//                echo '</select>';
-                
-                echo '  Quarter: ' . $course['quarterName'] . ' ' . $course['quarterYear'];
-                echo '  Section: ' . $course['sectionNum'];
-                //change checkbox name according to Q/Y && Section#
-                echo '<input type="checkbox" name="'.$course['sectionID'].'" value="1"';
-                $grade = 4;
-                if (in_array($course['sectionID'], $coursesTakenIDs)) {
-                    echo 'checked';
-                    $courseModel = new Course_section_model();
-                    $courseModel->loadPropertiesFromPrimaryKey($course['sectionID']);
-                    $grade = $student->getGradeForCourseSection($courseModel);                   
-                }
-                echo '/>' . $course['courseName'] . ' ';
-                echo '</br>';
-            }
             ?>
-            <input type='submit' name='Submit' />
-        </form>
-		</div>
-		<?php include_once('application/views/Templates/footer.php'); ?>
+            <br/><br/>
+
+            <table cellPadding="50" border="3" >
+                <tr><th>Action</th><th>Name</th><th>Quarter</th><th>Section</th><th>Grade</th></tr>
+                <?php
+                $unassigned = 'N/A';
+                foreach ($curriculumSlots as $currSlot) {
+                    $name = $currSlot->getName();
+                    $sectionID = 0;
+                    if (isset($filledSlots[$name])) {
+                        $sectionID = $filledSlots[$name];
+                    }
+                    $slotID = $currSlot->getCurriculumCourseSlotID();
+                    if ($sectionID > 0) {
+                        $submitAction = site_url('User/prepareRemoveCourseSection/' . $sectionID);
+                    } else {
+                        $submitAction = site_url('User/prepareAddCourseSection/' . $slotID);
+                    }
+                    echo '<form action="' . $submitAction . '" method="POST">';
+                    echo '<input type="hidden" name="sID" value="' . $sID . '" />';
+                    echo '<tr><td><input type="submit"';
+                    if ($sectionID > 0) {
+                        echo 'value="Remove Course" /></tc></td>';
+                        $student = new User_model;
+                        $student->loadPropertiesFromPrimaryKey($sID);
+                        $section = new Course_section_model;
+                        $section->loadPropertiesFromPrimaryKey($sectionID);
+                        $quarterName = $section->getAcademicQuarter()->getName();
+                        $quarterYear = $section->getAcademicQuarter()->getYear();
+                        echo '<td>' . $currSlot->getName() . '</td>'
+                        . '<td>' . $quarterName . $quarterYear . '</td>'
+                        . '<td>' . $section->getSectionName() . '</td>'
+                        . '<td>' . $student->getGradeForCourseSection($section) . '</td>';
+                    } else {
+                        echo 'value="   Add Course   " /></tc></td>'; // Need Curriculum Slot
+                        echo '<td>' . $name . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>';
+                    }
+                    echo '</tr></form>';
+                }
+                ?>
+            </table>
+            <br/>
+            <button type="button">';
+                <a href="<?php echo site_url('User/index'); ?>">User Management</a>";
+            </button>';
+        </div>
+        <?php include_once('application/views/Templates/footer.php'); ?>
     </body>
 </html>
-
-
-

@@ -9,6 +9,8 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <title>User Management List</title>
     </head>
+    
+    
     <body>
         <form action="<?php echo site_url('User/submitUserListQuery') ?>" method="POST" >
             <input type="text" name="searchStr" class="form-control" placeholder="Search by Name..." style="margin-bottom:5px" autofocus /> 

@@ -183,8 +183,8 @@ else
                 color: #8f8f8f;
                 text-align: center;
                 border-radius: 30%;
-                -webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41));
-                -moz-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
+                //webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41));
+                //moz-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
                 box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
             }
             #nextprevious div:hover,#previousnext div:hover,#nextweek div:hover,#prevweek div:hover{

@@ -165,7 +165,7 @@ class Curriculum_course_slot_model extends CI_Model
                 
                 $this->curriculumCourseSlotID = $row['CurriculumCourseSlotID'];
                 $this->curriculumID = $row['CurriculumID'];
-				$this->curriculumIndex = $row['CurriculumIndex'];
+//				$this->curriculumIndex = $row['CurriculumIndex'];
                 $this->name = $row['Name'];
                 $this->minimumGrade = $row['MinimumGrade'];
                 $this->recommendedQuarter = $row['RecommendedQuarter'];
