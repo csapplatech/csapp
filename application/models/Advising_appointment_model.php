@@ -162,7 +162,38 @@ class Advising_appointment_model extends CI_Model
 				{
 					$this->db->insert('ScheduledAdvisingAppointments', $data);
 					
-					return $this->db->affected_rows() > 0;
+					if($this->db->affected_rows() > 0)
+					{
+						$entry = new Advising_log_entry_model;
+						
+						$student = new User_model;
+							
+						$student->loadPropertiesFromPrimaryKey($this->studentUserID);
+						
+						$entry->setStudentUser($student);
+						$entry->setAdvisorUser($student->getAdvisor());
+						
+						if($this->isCanceledByAdvisor())
+						{
+							$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_ADVISOR);
+						}
+						else if($this->isCanceledByStudent())
+						{
+							$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_STUDENT);
+						}
+						else if($this->isScheduled())
+						{
+							$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_SIGNED_UP_BY_STUDENT);
+						}
+						else if($this->isCompleted())
+						{
+							$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_COMPLETE);
+						}
+						
+						$entry->create();
+						
+						return true;
+					}
 				}
             }
         }
@@ -197,7 +228,38 @@ class Advising_appointment_model extends CI_Model
 					{
 						$this->db->insert('ScheduledAdvisingAppointments', $data);
 						
-						return $this->db->affected_rows() > 0;
+						if($this->db->affected_rows() > 0)
+						{
+							$entry = new Advising_log_entry_model;
+							
+							$student = new User_model;
+							
+							$student->loadPropertiesFromPrimaryKey($this->studentUserID);
+							
+							$entry->setStudentUser($student);
+							$entry->setAdvisorUser($student->getAdvisor());
+							
+							if($this->isCanceledByAdvisor())
+							{
+								$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_ADVISOR);
+							}
+							else if($this->isCanceledByStudent())
+							{
+								$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_STUDENT);
+							}
+							else if($this->isScheduled())
+							{
+								$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_SIGNED_UP_BY_STUDENT);
+							}
+							else if($this->isCompleted())
+							{
+								$entry->setAdvisingLogEntryType(Advising_log_entry_model::ENTRY_TYPE_ADVISING_APPOINTMENT_COMPLETE);
+							}
+							
+							$entry->create();
+							
+							return true;
+						}
 					}
 				}
                 return true;

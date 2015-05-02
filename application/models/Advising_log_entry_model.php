@@ -17,8 +17,9 @@ class Advising_log_entry_model extends CI_Model
 	const ENTRY_TYPE_ADVISING_APPOINTMENT_COMPLETE = 1;
 	const ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_STUDENT = 2;
 	const ENTRY_TYPE_ADVISING_APPOINTMENT_CANCELED_BY_ADVISOR = 3;
-	const ENTRY_TYPE_ADVISING_APPOINTMENT_SAVED_BY_STUDENT = 4;
-	const ENTRY_TYPE_ADVISING_APPOINTMENT_SAVED_BY_ADVISOR = 5;
+	const ENTRY_TYPE_ADVISING_FORM_SAVED_BY_STUDENT = 4;
+	const ENTRY_TYPE_ADVISING_FORM_SAVED_BY_ADVISOR = 5;
+	const ENTRY_TYPE_ADVISING_APPOINTMENT_SIGNED_UP_BY_STUDENT = 6;
 	
 	/**
      * Main Constructor 
@@ -104,7 +105,7 @@ class Advising_log_entry_model extends CI_Model
 	
 	public function getAdvisingLogEntryType()
 	{
-		return $this->getAdvisingLogEntryTypeID();
+		return $this->advisingLogEntryTypeID;
 	}
 	
 	public function getTimestamp()
@@ -114,13 +115,13 @@ class Advising_log_entry_model extends CI_Model
 	
 	public function create()
 	{
-		if($this->studentUserID != null && $this->advisorUserID != null && $this->advisingLogEntryTypeID != null && $this->timestamp != null)
+		if($this->studentUserID != null && $this->advisorUserID != null && $this->advisingLogEntryTypeID != null)
 		{
 			$data = array(
 				'StudentUserID' => $this->studentUserID,
 				'AdvisorUserID' => $this->advisorUserID,
 				'AdvisingLogEntryTypeID' => $this->advisingLogEntryTypeID,
-				'Timestamp' => "NOW()"
+				'Timestamp' => date('Y-m-d H:i:s')
 			);
 			
 			$this->db->insert('AdvisingLogEntries', $data);
@@ -138,13 +139,13 @@ class Advising_log_entry_model extends CI_Model
 	
 	public function update()
 	{
-		if($this->advisingLogEntryID != null && $this->studentUserID != null && $this->advisorUserID != null && $this->advisingLogEntryTypeID != null && $this->timestamp != null)
+		if($this->advisingLogEntryID != null && $this->studentUserID != null && $this->advisorUserID != null && $this->advisingLogEntryTypeID != null)
 		{
 			$data = array(
 				'StudentUserID' => $this->studentUserID,
 				'AdvisorUserID' => $this->advisorUserID,
 				'AdvisingLogEntryTypeID' => $this->advisingLogEntryTypeID,
-				'Timestamp' => "NOW()"
+				'Timestamp' => date('Y-m-d H:i:s')
 			);
 			
 			$this->db->where('AdvisingLogEntryID', $this->advisingLogEntryID);
@@ -167,5 +168,60 @@ class Advising_log_entry_model extends CI_Model
 		}
 		
 		return false;
+	}
+	
+	public static function getAllAdvisingLogEntryTypes()
+	{
+		$db = get_instance()->db;
+		
+		$results = $db->get('AdvisingLogEntryTypes');
+		
+		$results = $results->result_array();
+		
+		return $results;
+	}
+	
+	public static function getAllAdvisingLogEntries($advisorUserID = null, $studentUserID = null, $advisingLogEntryTypeID = null)
+	{
+		$db = get_instance()->db;
+		
+		$db->select('AdvisingLogEntryID');
+		$db->from('AdvisingLogEntries');
+		
+		if($advisorUserID != null)
+		{
+			$db->where('AdvisorUserID', $advisorUserID);
+		}
+		
+		if($studentUserID != null)
+		{
+			$db->where('StudentUserID', $studentUserID);
+		}
+		
+		if($advisingLogEntryTypeID != null)
+		{
+			$db->where('AdvisingLogEntryTypeID', $advisingLogEntryTypeID);
+		}
+		
+		$db->order_by('Timestamp', 'desc');
+		
+		$models = array();
+		
+		$results = $db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new Advising_log_entry_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['AdvisingLogEntryID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
 	}
 }
