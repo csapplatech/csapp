@@ -656,68 +656,68 @@ class User_model extends CI_Model
         
         return $models;
     }
-    
-    /**
-     * Summary of getGradeForCourseSection
-     * Get the grade the student user model got for a particular course section
-     *
-     * @param Course_section_model The course section model to look up a grade for
-     * @return string Returns the grade a student got for that course section or false if no grade was found
-     */
-    public function getGradeForCourseSection($courseSection)
-    {
-        $this->db->select('Grade');
-        $this->db->from('StudentCourseSections');
-        $this->db->where('StudentUserID', $this->userID);
-        $this->db->where('CourseSectionID', $courseSection->getCourseSectionID());
-        
-        $results = $this->db->get();
-        
-        if($results->num_rows() > 0)
-        {
-            return $results->row_array()["Grade"];
-        }
-        else
-        {
-            return false;
-        }
-    }
-    
-    /**
-     * Summary of getAllTransferCourses
-     * Get all of the student transfer course models associated with this user
-     *
-     * @return Array An array containing all the student transfer course models associated with this user model
-     */
-    public function getAllTransferCourses()
-    {
-        $models = array();
-        
-        if($this->userID != null)
-        {
-            $this->db->select('StudentTransferCourseID');
-            $this->db->from('StudentTransferCourses');
-            $this->db->where('StudentUserID');
-            
-            $results = $this->db->get();
-            
-            if($results->num_rows() > 0)
-            {
-                foreach($results->result_array() as $row)
-                {
-                    $model = new Student_transfer_course_model;
-                    
-                    if($model->loadPropertiesFromPrimaryKey($row['StudentTransferCourseID']))
-                    {
-                        array_push($models, $model);
-                    }
-                }
-            }
-        }
-        
-        return $models;
-    }
-    
+	
+	/**
+	 * Summary of getGradeForCourseSection
+	 * Get the grade the student user model got for a particular course section
+	 *
+	 * @param Course_section_model The course section model to look up a grade for
+	 * @return string Returns the grade a student got for that course section or false if no grade was found
+	 */
+	public function getGradeForCourseSection($courseSection)
+	{
+		$this->db->select('Grade');
+		$this->db->from('StudentCourseSections');
+		$this->db->where('StudentUserID', $this->userID);
+		$this->db->where('CourseSectionID', $courseSection->getCourseSectionID());
+		
+		$results = $this->db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			return $results->row_array()["Grade"];
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Summary of getAllTransferCourses
+	 * Get all of the student transfer course models associated with this user
+	 *
+	 * @return Array An array containing all the student transfer course models associated with this user model
+	 */
+	public function getAllTransferCourses()
+	{
+		$models = array();
+		
+		if($this->userID != null)
+		{
+			$this->db->select('StudentTransferCourseID');
+			$this->db->from('StudentTransferCourses');
+			$this->db->where('StudentUserID', $this->userID);
+			
+			$results = $this->db->get();
+			
+			if($results->num_rows() > 0)
+			{
+				foreach($results->result_array() as $row)
+				{
+					$model = new Student_transfer_course_model;
+					
+					if($model->loadPropertiesFromPrimaryKey($row['StudentTransferCourseID']))
+					{
+						array_push($models, $model);
+					}
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
     /**
      * Summary of update
      * Update existing rows in the database associated with this user model with newly modified information

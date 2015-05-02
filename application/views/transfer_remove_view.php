@@ -5,16 +5,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 ?><!DOCTYPE html>
 <html lang ="en">
     <head>
-        <title>Transfer Credit Mapping</title>
+        <title>Adding a Transfer Credit</title>
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
 	<link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="<?php echo JS . '/bootstrap.min.js'; ?>"></script>
         <style>
+            
             body{
                 padding-top: 50px;
                 padding-bottom: 50px;
-                color: black;
             }
         </style>
     </head>
@@ -22,36 +22,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <body>
     	<?php include_once('application/views/Templates/navbar.php'); ?>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<h1>Transfer Mapping for 
-<?php
-    echo($t_user->getName());
-?>
-
- <a class="btn btn-sm btn-primary" href="<?php echo site_url('Transfer_controller/index') ;?>">
-    Change User
-        </a></h1>
+<h1>View a Transfer Mapping</h1>
 
 <form method="POST">
     <div class="container">
 <p><input type="currfilter" id="CurrFilter" class="form-control" placeholder="Filter" /></p>
   <select multiple size='5' id="AvailCourseSelect" name='transferCourseID'>
     <?php
-    for($i = 0; $i < count($t_courses); $i++)
+    for($i = 0; $i < count($courses); $i++)
     {
-      $string2 = $t_courses[$i]->getStudentTransferCourseID();
-      $string = $t_courses[$i]->getCourseName();
-      if ($t_courses[$i]->getAllEquivilentCourses())
-        echo("<option style= \"color:blue\" value=\"$string2\">$string</option>");
-      else
-        echo("<option value=\"$string2\">$string</option>");
+      $string2 = $tcourse.','. $courses[$i]->getCourseID();
+      $string = $courses[$i]->getCourseName().'&nbsp;'.$courses[$i]->getCourseNumber();
+      echo("<option value=\"$string2\">$string</option>");
     }
 ?>
   </select>
 <br /><br />
 
-<button type="submit" class="btn btn-primary btn-sm" formaction="<?php echo site_url('Transfer_controller/addTransferCredit'); ?>">Add Mapping</button>
-<button type="submit" class="btn btn-primary btn-sm" formaction="<?php echo site_url('Transfer_controller/remove'); ?>">View Mapping</button>
-
+<button type="submit" class="btn btn-primary btn-sm" formaction="<?php echo site_url('Transfer_controller/confirm_remove'); ?>">Remove Mapping</button>
 
 </form>
 
@@ -66,7 +54,7 @@ var Select = $("#AvailCourseSelect");
 * @OriginalAuthor Larry Battle <bateru.com/news>
 * @ModifiedBy     William Keen
 *     Modification: Streamlined functions for our purpose
-*	(Removed unnecessary if statements, variables, made easier to modify)
+* (Removed unnecessary if statements, variables, made easier to modify)
 */
 var FilterSelect = function (select, str) 
 {
@@ -91,6 +79,7 @@ Filter.on("keyup", function ()
   FilterSelect(Select, userInput);
 });
 </script>
+
 </div>
         <?php include_once('application/views/Templates/footer.php'); ?>
     </body>

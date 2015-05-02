@@ -31,15 +31,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <?php
     for($i = 0; $i < count($courses); $i++)
     {
-      $string2 = $t_course .','. $courses[$i];
-      $string = $t_courses[$i]->getCourseName();
+      $string2 = $tcourse.','. $courses[$i]->getCourseID();
+      $string = $courses[$i]->getCourseName().'&nbsp;'.$courses[$i]->getCourseNumber();
       echo("<option value=\"$string2\">$string</option>");
     }
 ?>
   </select>
 <br /><br />
 
-<button type="submit" class="btn btn-primary btn-sm" formaction="<?php echo site_url('Transfer_controller/addTransferCredit'); ?>">Confirm Mapping</button>
+<button type="submit" class="btn btn-primary btn-sm" formaction="<?php echo site_url('Transfer_controller/confirm'); ?>">Confirm Mapping</button>
 
 </form>
 

@@ -17,6 +17,15 @@ class ModelTest extends CI_Controller
         echo "THIS IS A TEST";
     }
     
+	public function transferCredits()
+	{
+		$user = new User_model;
+		
+		$user->loadPropertiesFromPrimaryKey(1);
+		
+		var_dump($user->getAllTransferCourses());
+	}
+	
 	public function serialize()
 	{
 		$c = new Curriculum_model;
