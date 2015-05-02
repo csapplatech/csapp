@@ -62,8 +62,13 @@ class User extends CI_Controller {
         $searchStr = $this->input->post('searchStr');
         $filteredList = array();
         $unfilteredList = $this->User_model->getAllUsers();
+        if ($searchStr == '') {
+            $data['allUsers'] = $unfilteredList;
+            return $this->load->view('user_mgmt_list', $data);
+        }
         foreach ($unfilteredList as $listUser) {
-            if (substr_count($listUser->getName(), $searchStr) > 0) {
+            
+            if (substr_count(strtoupper($listUser->getName()), strtoupper($searchStr)) > 0) {
                 array_push($filteredList, $listUser);
             }
         }
@@ -340,37 +345,46 @@ class User extends CI_Controller {
     public function prepareAddCourses($sID) {
         $this->checkSec();
         $studentData = array(
-            'sID' => $sID,
-            'curriculumSlots' => NULL,
-            'filledSlots' => array()
+            'sID' => $sID, //ID of student
+            'curriculumSlots' => NULL, // Need a table entry for each of these on the page
+            'filledSlots' => array() // Indicates which course sections fill a slot.
         );
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
-        $curriculums = $student->getCurriculums();
+        $curriculums = $student->getCurriculums();  
         $allCurriculumSlots = array();
         foreach ($curriculums as $curriculum) {
             $cSlots = $curriculum->getCurriculumCourseSlots();
             $allCurriculumSlots = array_merge($allCurriculumSlots, $cSlots);
-            
         }
+        //All of the curriculum course slots for the selected student.
         $studentData['curriculumSlots'] = $allCurriculumSlots;
+        //All course sections taken by the student.
         $sectionsTaken = $student->getAllCoursesTaken();
+        //The courses for related to the taken course sections.
         $coursesTaken = array();
         foreach ($sectionsTaken as $section) {
             array_push($coursesTaken, $section[0]->getCourse());
         }
+        //Selected courses will be an array in which
+        // selectedCourse[0] = the course taken
+        // selectedCourse[1] = the slot for that course
         $selectedCourses = $this->getSelectedCourses($coursesTaken, $allCurriculumSlots);
         $filledSlots = array();
         foreach ($selectedCourses as $selCourse) {
             $course = $selCourse[0];
             $slotName = $selCourse[1];
+            //If a course section is found its ID is stored
+            // in the filledSlots array referenced by the slot name.
             $filledSlots[$slotName] = $this->getSectionForCourse($course);
         }
         $studentData['filledSlots'] = $filledSlots;
-        
         $this->load->view('student_courses_form', $studentData);
     }
 
+    /*
+     * Returns an array with each selected course and corresponding slot name.
+     */
     private function getSelectedCourses($courses, $slots) {
         $selectedCourses = array();
         foreach ($slots as $slot) {
@@ -383,6 +397,9 @@ class User extends CI_Controller {
         return $selectedCourses;
     }
 
+    /*
+     * Returns the first course found in courses that can fill the selected slot.
+     */
     private function getSelectedCourse($courses, $slot) {
         foreach ($courses as $course) {
             if (in_array($slot, $course->getAllCurriculumCourseSlots())) {
@@ -392,6 +409,9 @@ class User extends CI_Controller {
         return false;
     }
 
+    /*
+     * Gets a course section when given a course.
+     */
     private function getSectionForCourse($course) {
         $sections = $this->Course_section_model->getAllCourseSections();
         foreach ($sections as $section) {
@@ -401,7 +421,7 @@ class User extends CI_Controller {
         }
         return false;
     }
-
+    
     public function prepareAddCourseSection($slotID) {
         $sID = $this->input->post('sID');
         $student = new User_model;
@@ -559,17 +579,17 @@ class User extends CI_Controller {
         $sID = $this->input->post('sID');
         $sectionID = $this->input->post('sectionID');
         $grade = $this->input->post('grade');
-        if(!isset($grade)) {
-            redirect('User/prepareAddCourses/'.$sID);
+        if (!isset($grade)) {
+            redirect('User/prepareAddCourses/' . $sID);
         }
-        
+
         $student = new User_model();
         $student->loadPropertiesFromPrimaryKey($sID);
         $section = new Course_section_model;
         $section->loadPropertiesFromPrimaryKey($sectionID);
         $student->addCourseSection($section, $grade);
-        
-        redirect('User/prepareAddCourses/'.$sID);
+
+        redirect('User/prepareAddCourses/' . $sID);
     }
 
 }

@@ -15,9 +15,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <script src="<?php echo JS . '/bootstrap.min.js'; ?>"></script>
 
         <style>
-
             body {
                 padding-top: 60px;
+                color: black;
             }
 
             .container {
@@ -50,14 +50,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <table cellPadding="50" border="3" >
                 <tr><th>Action</th><th>Name</th><th>Quarter</th><th>Section</th><th>Grade</th></tr>
                 <?php
-                $unassigned = 'N/A';
+                //Character to display when there is no section for a course slot.
+                $unassigned = '-';
                 foreach ($curriculumSlots as $currSlot) {
-                    $name = $currSlot->getName();
+                    $slotName = $currSlot->getName();
                     $sectionID = 0;
-                    if (isset($filledSlots[$name])) {
-                        $sectionID = $filledSlots[$name];
+                    //getting wrong values
+                    if (isset($filledSlots[$slotName])) {
+                        //ID of course section that fills the current curriculum slot.
+                        $sectionID = $filledSlots[$slotName];
                     }
                     $slotID = $currSlot->getCurriculumCourseSlotID();
+                    //Setup action for button next to currriculum slot info.
                     if ($sectionID > 0) {
                         $submitAction = site_url('User/prepareRemoveCourseSection/' . $sectionID);
                     } else {
@@ -80,16 +84,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         . '<td>' . $student->getGradeForCourseSection($section) . '</td>';
                     } else {
                         echo 'value="   Add Course   " /></tc></td>'; // Need Curriculum Slot
-                        echo '<td>' . $name . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>';
+                        echo '<td>' . $slotName . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>';
                     }
-                    echo '</tr></form>';
+                    echo '</tr>';
                 }
                 ?>
             </table>
             <br/>
-            <button type="button">';
-                <a href="<?php echo site_url('User/index'); ?>">User Management</a>";
-            </button>';
+            <button type="button">
+                <a href="<?php echo site_url('User/index'); ?>">User Management</a>
+            </button>   
         </div>
         <?php include_once('application/views/Templates/footer.php'); ?>
     </body>

@@ -7,10 +7,11 @@ and open the template in the editor.
 <html>
     <head>
         <meta charset="UTF-8">
-        <title><?=$action ?> Course Section</title>
+        <title><?=  ucfirst($action) ?> Course Section</title>
         <link rel="icon" href="<?php echo IMG . '/icon.ico'; ?>">
     </head>
     <body>
+        <?php include_once('application/views/Templates/navbar.php'); ?>
         <form action="<?php echo site_url('User/' . $action . 'CourseSection/'); ?>" method="POST" >
             <input type="hidden" name="sID" value="<?=$sID ?>" />
             <?php if ($action == 'add') { ?>
@@ -55,7 +56,6 @@ and open the template in the editor.
                 <?php
             }
             ?>
-
         </form>
     </body>
 </html>

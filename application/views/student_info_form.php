@@ -44,10 +44,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					$Curriculums = $this->Curriculum_model->getAllCurriculums();
 					foreach ($Curriculums as $Curriculum) {
 						$id = $Curriculum->getCurriculumID();
-						$name = $Curriculum->getName();
+						$slotName = $Curriculum->getName();
 						echo '<input type="checkbox" value="true" name="Curriculum' . $id . '"';
                                                         if(in_array($Curriculum, $studentCurriculms)) { echo 'checked'; }
-                                                        echo '/> '.$name.'</br>';
+                                                        echo '/> '.$slotName.'</br>';
                                                 }
 					?>
 				<p><b>Please select an advisor.</b></p><br/>
@@ -56,8 +56,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					$Advisors = $this->User_model->getAllAdvisors();
 					foreach($Advisors as $Advisor) {
 						$id = $Advisor->getUserID();
-						$name = $Advisor->getName();
-						echo '<option value="' . $id . '">' . $name .'</option>';
+						$slotName = $Advisor->getName();
+						echo '<option value="' . $id . '">' . $slotName .'</option>';
 					}
 					?>
 				</select>
