@@ -154,7 +154,7 @@
 			<div id="progress-wrapper-table">
 				<div id="progress-wrapper-container-wrapper">
 					<div class="container">
-						<div id="progress-dialog" class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+						<div id="progress-dialog" class="col-xs-6 col-xs-offset-3 col-sm-4 col-sm-offset-4 col-md-2 col-md-offset-5">
 							<img src="<?php echo IMG . "/loading.gif"; ?>" class="img-responsive center-block"></img>
 						</div>
 					</div>
