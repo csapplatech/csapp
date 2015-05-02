@@ -97,19 +97,19 @@ function ParseFile($filePath){
 	//=============================================================================
 
 	// Disable MySQL autocommit
-	//mysqli_autocommit($conn, false);
+	mysqli_autocommit($conn, false);
 	
 	// Begin a MySQL transaction
-	//mysqli_begin_transaction($conn);
+	mysqli_begin_transaction($conn);
 	
 	$lines = file($filePath, FILE_IGNORE_NEW_LINES + FILE_SKIP_EMPTY_LINES);
 
 	if ($lines == false) {
 		
-		//mysqli_rollback($conn);
+		mysqli_rollback($conn);
 		
-		//mysqli_autocommit($conn, true);
-		
+		mysqli_autocommit($conn, true);
+	
 		return "file(): Error reading lines from file.";
 	}
 	//
@@ -281,11 +281,11 @@ function ParseFile($filePath){
 	mysqli_close($conn);
 	fclose($file);
 	
-	//mysqli_commit($conn);
+	mysqli_commit($conn);
 	
-	//mysqli_autocommit($conn, true);
+	mysqli_autocommit($conn, true);
 	
-	//return null;
+	return null;
 	//=============================================================================
 }
 //mainprogram();
