@@ -60,6 +60,9 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Curriculumcreator/index') ;?>">
             Manage Curriculum
         </a>
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Advisinglog/index') ;?>">
+            Advising Log
+        </a>
         
         <p><img src= "<?php echo IMG."/tech_official_logo.jpg" ?>" alt="Tech Logo" style="width:300px;height:225px"</p>
         

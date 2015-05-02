@@ -758,6 +758,10 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
             
+			$this->db->where('StudentUserID', $this->userID);
+			$this->db->or_where('AdvisorUsrID', $this->userID);
+			$this->db->delete('AdvisingLogEntries');
+			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
             
@@ -809,6 +813,41 @@ class User_model extends CI_Model
         
         return $finalFlag;
     }
+	
+	/**
+	 * Summary of getAllStudents
+	 * Get all of the users in the database with a student role
+	 *
+	 * @return Array An array containing all users who have a student role
+	 */
+	public static function getAllStudents()
+	{
+		$db = get_instance()->db;
+		
+		$models = array();
+		
+		$db->select('Users.UserID');
+		$db->from('Users');
+		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
+		$db->where('UserRoles.RoleID', self::ROLE_STUDENT);
+		
+		$results = $db->get();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
 	
 	/**
 	 * Summary of getAllAdvisors

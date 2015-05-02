@@ -42,6 +42,8 @@ class AdvisingForm extends CI_Controller
 			redirect('Login');
 		}
         
+		$_SESSION['StudCWID'] = $this->uid;
+		
        // $uid = 10210078;
         //$year = 2015;
          $prev_form = $this->loadAdvisingForm($this->uid);
@@ -457,6 +459,22 @@ class AdvisingForm extends CI_Controller
         $mod->setStudentUserID(intval($this->uid));
         $mod->setAcademicQuarterID($currentquarter->getAcademicQuarterID());
         $mod->create();
+		
+		$entry = new Advising_log_entry_model;
+				
+		$student = new User_model;
+		
+		if($student->loadPropertiesFromPrimaryKey($this->uid))
+		{
+			$createdByAdvisor = ($this->uid != $_SESSION['UserID']);
+		
+			$entry->setStudentUser($student);
+			$entry->setAdvisorUser($student->getAdvisor());
+			$entry->setAdvisingLogEntryType(($createdByAdvisor) ? Advising_log_entry_model::ENTRY_TYPE_ADVISING_FORM_SAVED_BY_ADVISOR : Advising_log_entry_model::ENTRY_TYPE_ADVISING_FORM_SAVED_BY_STUDENT);
+			
+			$entry->create();
+		}
+		
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
