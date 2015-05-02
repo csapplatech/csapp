@@ -361,7 +361,14 @@ class Curriculum_model extends CI_Model
 						$index = array_search($courseSlot->getCurriculumCourseSlotID(), $arr);
 						unset($arr[$index]);
 						
-						$courseSlot->update();
+						foreach($this->curriculumCourseSlots as $_courseSlot)
+						{
+							if($_courseSlot->getCurriculumCourseSlotID() == $courseSlot->getCurriculumCourseSlotID())
+							{
+								$_courseSlot->update();
+								break;
+							}
+						}
 					}
 					else
 					{

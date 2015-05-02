@@ -132,11 +132,13 @@ class Curriculumcreator extends CI_Controller {
 			if ($_SESSION['curriculumCreationMethod'] == "edit")
 				$curriculum->update(); //update current curriculum for edit
 			else
-				$curriculum->create(); //create a new entry for clone/new	
+				$curriculum->create(); //create a new entry for clone/new
 		}
 					
+		//find all current pre/coreqs and 			
+					
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
-
+		
 		//find and delete old reqs and save new ones
 		if (isset($_SESSION['reqs']))
 		{
@@ -150,21 +152,22 @@ class Curriculumcreator extends CI_Controller {
 				{
 					//find the right course slot
 					if ($slot->getCurriculumIndex() == $reqSlotIndex) 
-					{	
+					{
 						$previousPrereqSlots = $slot->getPrequisiteCourseSlots();
 						$previousCoreqSlots  = $slot->getCorequisiteCourseSlots();	
 							
-						//find old reqs and delete any that should no longer exist
-						if (!empty($previousPrereqSlots) and !empty($reqs['prereqs']))
+						//find and delete old prereqs
+						if (!empty($previousPrereqSlots))// and !empty($reqs['prereqs']))
 							foreach ($previousPrereqSlots as $previousSlot)
 								$slot->removeCourseSlotRequisite($previousSlot);
-								
-						if (!empty($previousCoreqSlots) and !empty($reqs['coreqs']))
+						
+						//delete any old corequisites		
+						if (!empty($previousCoreqSlots))// and !empty($reqs['coreqs']))
 							foreach ($previousCoreqSlots as $previousSlot)
 								$slot->removeCourseSlotRequisite($previousSlot);
-						
+								
 						//save new coreqs
-						if (isset($reqs['coreqs']))
+						if (!empty($reqs['coreqs']))
 						{
 							$co = new Curriculum_course_slot_model();
 							foreach ($reqs['coreqs'] as $r)
@@ -176,19 +179,16 @@ class Curriculumcreator extends CI_Controller {
 						
 						//save new prereqs
 						//need to make sure you can't make one slot a co and pre
-						if (isset($reqs['prereqs']))
+						if (!empty($reqs['prereqs']))
 						{
-							$pre = new Curriculum_course_slot_model();
-							//~ $newCoreqs = new Curriculum_course_slot_model();
-							//~ $newCoreqs = $slot->getCorequisiteCourseSlots();
-							
+							$pre = new Curriculum_course_slot_model();							
 							foreach ($reqs['prereqs'] as $r)
 							{
 								$pre->fromSerializedString($r);
 								$slot->addCourseSlotPrerequisite($pre);
 							}
 						}						
-											
+										
 						break;
 					}
 				}	
@@ -224,6 +224,8 @@ class Curriculumcreator extends CI_Controller {
     public function cloneCurriculumCourseSlot() 
     {
 		$_SESSION['curriculumCourseSlotMethod'] = "clone";
+		var_dump($_SESSION['curriculumCourseSlotMethod']);		
+		echo "<br><br>";
 		$this->loadCurriculumCourseSlotEdit();
 	}
 	
@@ -339,8 +341,8 @@ class Curriculumcreator extends CI_Controller {
 				if(($key = array_search($pre, $coreqIDs)) !== false) 
 					unset($prereqIDs[$key]);
 		
-		$largestIndex = 0;
-		//Handle non-unique indeces
+		$largestIndex = 1;
+		//Handle non-unique curriculum indexes
 		foreach ($courseSlots as $slot)
 		{
 			$currentIndex = $slot->getCurriculumIndex();
@@ -353,77 +355,79 @@ class Curriculumcreator extends CI_Controller {
 					if ($currentIndex == $p)
 						array_push($prerequisites, $slot);
 			
+			//grab coreq course slots
 			if (isset($coreqIDs))
 				foreach ($coreqIDs as $c)
 					if ($currentIndex == $c)
 						array_push($corequisites, $slot);
 		}
 				
-		if ($largestIndex > 0)
-			$_SESSION['maxCurriculumIndex'] = $largestIndex + 1;
+		if ($largestIndex > 1)
+			$_SESSION['maxCurriculumIndex'] = $largestIndex;
 		
 		//remove previous valid courses
 		$previousValidCourseIDs = $courseSlot->getValidCourseIDs();
+		
 		if (isset($previousValidCourseIDs))
 			foreach ($previousValidCourseIDs as $prevID)
 				$courseSlot->removeValidCourseID($prevID);
-
+		
 		//populate course slot with the new valid course ids
 		if (isset($validCourseIDs))
 			foreach ($validCourseIDs as $validCourse)
 				$courseSlot->addValidCourseID($validCourse);
-					
-		if (strcmp($_SESSION['curriculumCourseSlotMethod'], 'edit') == 0)
+				
+		//add course slot to the curriculum based on its creation method			
+		if (strcmp($_SESSION['curriculumCourseSlotMethod'], "edit") == 0)
 			$curriculum->updateCurriculumCourseSlot($courseSlot);
 		else 
 		{
-			$courseSlot->setCurriculumIndex($_SESSION['maxCurriculumIndex']++);
+			$courseSlot->setCurriculumIndex(++$_SESSION['maxCurriculumIndex']);
 			$curriculum->addCurriculumCourseSlot($courseSlot);
-		}
+		}		
 		
-		if (!empty($prerequisites) or !empty($corequisites))
+		//add pro/coreqs to session 
+		//be sure to delete old reqs that were altered this session
+		if (!empty($_SESSION['reqs']))
 		{
-			//be sure to delete old reqs that were altered this session
-			if (isset($_SESSION['reqs']))
-			{
-				$tempReqs = $_SESSION['reqs'];
+			$tempReqs = $_SESSION['reqs'];
 
-				$currIndex = $courseSlot->getCurriculumIndex();
-				foreach ($tempReqs as $reqs)
-				{
-					$reqsSlot = new Curriculum_course_slot_model();
-					$reqsSlot->fromSerializedString($reqs['slot']);
-					if ($reqsSlot->getCurriculumIndex() == $currIndex)
-						if(($key = array_search($reqs, $tempReqs)) !== false) 
-							unset($tempReqs[$key]);
-				}
-				
-				$_SESSION['reqs'] = $tempReqs;
+			$currIndex = $courseSlot->getCurriculumIndex();
+			foreach ($tempReqs as $reqs)
+			{
+				$reqsSlot = new Curriculum_course_slot_model();
+				$reqsSlot->fromSerializedString($reqs['slot']);
+				if ($reqsSlot->getCurriculumIndex() == $currIndex)
+					if(($key = array_search($reqs, $tempReqs)) !== false) 
+						unset($tempReqs[$key]);
 			}
-					
-			$arr = [
-				'slot'    => $courseSlot->toSerializedString(),
-				'prereqs' => array(),
-				'coreqs'  => array() 
-			];
 			
-			if (isset($prerequisites))
-				foreach ($prerequisites as $p)
-					array_push($arr['prereqs'], $p->toSerializedString());
-					
-			if (isset($corequisites))
-				foreach ($corequisites as $c)
-					array_push($arr['coreqs'], $c->toSerializedString());
-					
-			if (!isset($_SESSION['reqs']))
-				$_SESSION['reqs'] = array();
-				
-			array_push($_SESSION['reqs'], $arr);
-			
-			var_dump($_SESSION['reqs']);
-			echo "<br><br>";
+			$_SESSION['reqs'] = $tempReqs;
 		}
+				
+		$arr = [
+			'slot'    => $courseSlot->toSerializedString(),
+			'prereqs' => array(),
+			'coreqs'  => array() 
+		];
 		
+		//add any new prereqs
+		if (!empty($prerequisites))
+			foreach ($prerequisites as $p)
+				array_push($arr['prereqs'], $p->toSerializedString());
+		
+		//add any new coreqs		
+		if (!empty($corequisites))
+			foreach ($corequisites as $c)
+				array_push($arr['coreqs'], $c->toSerializedString());
+				
+		//need to make sure reqs is set so the push doesn't error		
+		if (!isset($_SESSION['reqs']))
+			$_SESSION['reqs'] = array();
+			
+		array_push($_SESSION['reqs'], $arr);
+		
+		//set session variables after serializing
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$_SESSION['curriculum'] = $curriculum->toSerializedString();
 		
@@ -442,32 +446,50 @@ class Curriculumcreator extends CI_Controller {
 		$courseSlots = $curriculum->getCurriculumCourseSlots();
 		$courseSlot = new Curriculum_course_slot_model();
 		
-		//match indeces
+		//find selected course slot
 		foreach ($courseSlots as $slot)
 		{
 			$index = $slot->getCurriculumIndex();
 			if ($index == $courseSlotIndex)
 			{	
-				$courseSlot = $slot;
+				//set values manually for clone so it doesn't copy courseSlotID 
+				if (strcmp($_SESSION['curriculumCourseSlotMethod'], "clone") == 0)
+				{
+					$courseSlot->setMinimumGrade($slot->getMinimumGrade());
+					$courseSlot->setName($slot->getName());
+					$courseSlot->setRecommendedQuarter($slot->getRecommendedQuarter());
+					$courseSlot->setRecommendedYear($slot->getRecommendedYear());
+					$courseSlot->setNotes($slot->getNotes());
+					$courseSlot->setCurriculum($curriculum);
+					$courseSlot->setCurriculumIndex($slot->getCurriculumIndex());
+					
+					$slotValids = $slot->getValidCourseIDs();
+					foreach ($slotValids as $valid)
+						$courseSlot->addValidCourseID($valid);
+				}	
+				else //copy entire slot for edit
+					$courseSlot = $slot;
 				break;
 			}
 		}
 		
+		//set the name to 
 		if ($courseSlot->getName() == NULL)
 			$courseSlot->setName("New Curriculum Course Slot");
 		
 		$courses = new Course_model();
-						
+		
+		//set default values for data array if it's a new slot				
 		if (strcmp($_SESSION['curriculumCourseSlotMethod'], "new") == 0)
 		{
 			$courseSlot = new Curriculum_course_slot_model();
 			$data = array(
 				'name'               => "New Curriculum Course Slot",
 				'courses'            => array(),
-				'recommendedQuarter' => $courseSlot->getRecommendedQuarter(),
-				'recommendedYear'    => $courseSlot->getRecommendedYear(),
-				'minimumGrade'       => $courseSlot->getMinimumGrade(),
-				'notes'              => $courseSlot->getNotes(),
+				'recommendedQuarter' => "Fall",
+				'recommendedYear'    => "Freshman",
+				'minimumGrade'       => "F",
+				'notes'              => " ",
 				'index'				 => $courseSlotIndex,
 				'prereqs'            => array(),
 				'coreqs'             => array(), 
@@ -492,7 +514,7 @@ class Curriculumcreator extends CI_Controller {
 		$prereqsEdited = FALSE;
 		$coreqsEdited  = FALSE;
 		
-		if (isset($_SESSION['reqs']))
+		if (!empty($_SESSION['reqs']))
 		{
 			foreach ($_SESSION['reqs'] as $reqs)
 			{
@@ -502,11 +524,9 @@ class Curriculumcreator extends CI_Controller {
 					$reqsSlot->fromSerializedString($reqs['slot']);
 					//find the right course slot
 					if ($slot->getCurriculumIndex() == $reqsSlot->getCurriculumIndex()) 
-					{			
-						if (isset($reqs['prereqs']))
-							$prereqsEdited = TRUE;
-						if (isset($reqs['coreqs']))
-							$coreqsEdited = TRUE;
+					{	
+						$prereqsEdited = TRUE;
+						$coreqsEdited = TRUE;
 					}
 				}
 			}
@@ -514,7 +534,9 @@ class Curriculumcreator extends CI_Controller {
 		
 		//Pass possible and chosen prereq slots
 		$currentIndex = $courseSlot->getCurriculumIndex();
-		
+		$courseSlotIndex = $courseSlot->getCurriculumIndex();
+		$slotPrereqs = $courseSlot->getPrequisiteCourseSlots();
+
 		foreach ($courseSlots as $slot)
 		{
 			$arr = [ 
@@ -526,7 +548,6 @@ class Curriculumcreator extends CI_Controller {
 			
 			if (!$prereqsEdited)
 			{	//normal prereq functionality
-				$slotPrereqs = $slot->getPrequisiteCourseSlots();
 				if (!empty($slotPrereqs))
 					foreach ($slotPrereqs as $prereq)
 						if ($prereq->getCurriculumIndex() == $arr['index'])
@@ -549,8 +570,10 @@ class Curriculumcreator extends CI_Controller {
 			if ($currentIndex != $arr['index'])
 					array_push($data['prereqs'], $arr);
 		}
-				
+		
 		//Pass possible and chosen coreq slots
+		$slotCoreqs = $courseSlot->getCorequisiteCourseSlots();	
+		
 		foreach ($courseSlots as $slot)
 		{
 			$arr = [ 
@@ -561,15 +584,14 @@ class Curriculumcreator extends CI_Controller {
 			];
 			
 			if (!$prereqsEdited)
-			{	//normal prereq functionality
-				$slotCoreqs = $slot->getCorequisiteCourseSlots();
+			{	//normal coreq functionality
 				if (isset($slotCoreqs))
 					foreach ($slotCoreqs as $coreq)
 						if ($coreq->getCurriculumIndex() == $arr['index'])
 							$arr['selected'] = TRUE;
 			}
 			else
-			{	//grabbing prereqs from session
+			{	//grabbing coreqs from session
 				$currReq = new Curriculum_course_slot_model();
 				foreach ($_SESSION['reqs'] as $reqs)
 				{
@@ -606,7 +628,7 @@ class Curriculumcreator extends CI_Controller {
 			
 			array_push($data['courses'], $arr);
 		}
-
+		
 		$_SESSION['courseSlot'] = $courseSlot->toSerializedString();
 		$this->load->view('course_slot_edit', array('data'=>$data));
 	}
