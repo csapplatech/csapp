@@ -53,7 +53,7 @@ function checkinsertdatabase($conn, $sql, $insertquery){
 	$primaryID = '';
 	
 	//if one result is returned then the record already exists
-	if (mysqli_num_rows($result) == 1){
+	if (mysqli_num_rows($result) >= 1){
 		$row = mysqli_fetch_row($result);
 		$primaryID = (string)$row[0];
 	}
@@ -67,7 +67,6 @@ function checkinsertdatabase($conn, $sql, $insertquery){
 }
 
 function ParseFile($filePath){
-	//$filePath = "/Users/None/Desktop/data/counrpt.txt";
 	
 	//=============================================================================
 	// Open file
@@ -98,18 +97,18 @@ function ParseFile($filePath){
 	//=============================================================================
 
 	// Disable MySQL autocommit
-	mysqli_autocommit($conn, false);
+	//mysqli_autocommit($conn, false);
 	
 	// Begin a MySQL transaction
-	mysqli_begin_transaction($conn);
+	//mysqli_begin_transaction($conn);
 	
 	$lines = file($filePath, FILE_IGNORE_NEW_LINES + FILE_SKIP_EMPTY_LINES);
 
 	if ($lines == false) {
 		
-		mysqli_rollback($conn);
+		//mysqli_rollback($conn);
 		
-		mysqli_autocommit($conn, true);
+		//mysqli_autocommit($conn, true);
 		
 		return "file(): Error reading lines from file.";
 	}
@@ -219,86 +218,59 @@ function ParseFile($filePath){
 
 			}
 			else{//this section parse the transfer courses as those lines have a different format
-				//also section data is spoofed with '000' as the section number and 'S' for the grade
-				if($student_courses_line[1]!=""){
-					$course_name=str_replace(" ", "", substr($student_courses_line[1], 0, 4));
-					$course_number = str_replace(" ", "", substr($student_courses_line[1], 5, 4));
-					$section_name = '';
-					$course_title = $student_courses_line[2];
-					$hours = (int)(array_slice($student_courses_line, -4, 1) [0]);
-					$grade = "S";
+                if($student_courses_line[1]!=""){
+                    $course_name=str_replace(" ", "", substr($student_courses_line[1], 0, 4));
+                    $course_number = str_replace(" ", "", substr($student_courses_line[1], 5, 4));
+                    $course_title = rtrim($student_courses_line[2]);
+                    $hours = (int)(array_slice($student_courses_line, -4, 1) [0]);
+                    //Each array created for each line is of variable length
+                    //in order to fix this a filter is used and then a call to the remaining values.
+                    $student_courses_line=array_values(array_filter($student_courses_line));
+                    $schoolnumber = (int)(substr($student_courses_line[3],-7,7));
+                    
+                    //Course
+                    //these next three lines are to determine whether the course is undergrad or graduate level
+                    $level = 1;
+                    if ((int)$course_number>500)
+                        $level=2;
+                    $selectquery="SELECT CourseID,CourseName,CourseNumber FROM Courses WHERE CourseName='"
+                        .$course_name."' AND CourseNumber='".$course_number."';";
+                    $insertquery="INSERT INTO Courses ( CourseTypeID, CourseTitle, CourseName, CourseNumber) VALUES ("
+                        .$level.", '".$course_title."', '".$course_name."', '".$course_number."');";
+                    $coursePrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
 
-					//parse term and insert into academicquarters
-					$term=str_replace("\n", "", $student_courses_line[count($student_courses_line)-1]);
-					$selectquery="SELECT AcademicQuarterID FROM AcademicQuarters WHERE AcademicQuarterID='".$term."';";
-					$insertquery = parseterm($term); 
-					checkinsertdatabase($conn, $selectquery, $insertquery);
+                    //StudentTransferCourses table insert if it does not exist
+                    $selectquery="SELECT StudentTransferCourseID,StudentUserID,CourseName, UniversityID, Hours FROM StudentTransferCourses "
+                        ."WHERE StudentUserID=".$student_cwid." AND CourseName='".$course_title."' AND UniversityID=".$schoolnumber
+                        ." AND Hours=".$hours.";";
+                    $insertquery="INSERT INTO StudentTransferCourses ( StudentUserID,CourseName,UniversityID,Hours) VALUES ("
+                        .$student_cwid.", '".$course_title."', '".$schoolnumber."', '".$hours."');";
+                    $studentTransferPrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
 
-					//these next three lines are to determine whether the course is undergrad or graduate level
-					$level = 1;
-					if ((int)$course_number>500)
-						$level=2;
-					//create strings for the select and insert statements
-					$selectquery="SELECT CourseID,CourseName,CourseNumber FROM Courses WHERE CourseName='"
-						.$course_name."' AND CourseNumber='".$course_number."';";
-					$insertquery="INSERT INTO Courses ( CourseTypeID, CourseTitle, CourseName, CourseNumber) VALUES ("
-						.$level.", '".$course_title."', '".$course_name."', '".$course_number."');";
-					//This function checks to see if a record exists and if not inserts it then returns its primary key.
-					$coursePrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
+                    //StudentTransferCourseEquivilentCourses table insert if it does not exist
+                    $selectquery="SELECT StudentTransferCourseID,EquivilentCourseID FROM StudentTransferCourseEquivilentCourses".
+                        " WHERE StudentTransferCourseID='".$studentTransferPrimaryID."' AND EquivilentCourseID='".$coursePrimaryID."';";
+                    $insertquery="INSERT INTO StudentTransferCourseEquivilentCourses( StudentTransferCourseID,EquivilentCourseID) VALUES ("
+                        .$studentTransferPrimaryID.", '".$coursePrimaryID."');";
+                    $studentTransferPrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
+                }
+                else{//these are the transfer courses which are not yet mapped and only partial information is available for
+                    //print_r ($student_courses_line);
+                    $course_title = $student_courses_line[6];
+                    $hours = (int)(array_slice($student_courses_line, -4, 1) [0]);
+                    //Each array created for each line is of variable length
+                    //in order to fix this a filter is used and then a call to the remaining values.
+                    $student_courses_line=array_values(array_filter($student_courses_line));
+                    $schoolnumber = (string)(substr($student_courses_line[2],-7,7));
 
-					//CourseSections
-					$selectquery="SELECT CourseSectionID,CourseID,SectionName FROM CourseSections 
-						WHERE CourseID='".$coursePrimaryID."' AND SectionName='".$section_name."';";
-					$insertquery="INSERT INTO CourseSections ( CourseID,SectionName,Hours,AcademicQuarterID) VALUES ("
-						.$coursePrimaryID.", '".$section_name."', '".$hours."', '".$term."');";
-					$courseSectionPrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
-
-					//StudentCourseSections
-					//must update grades here
-					$insertquery="INSERT INTO StudentCourseSections(StudentUserID,CourseSectionID,Grade) VALUES ("
-						.$student_cwid.", '".$courseSectionPrimaryID."', '".$grade."') ON DUPLICATE KEY UPDATE Grade = '".$grade."';";
-					$result = mysqli_query($conn, $insertquery)or die(mysqli_error($conn)); 
-
-				}
-				else{//these are the transfer courses which are not yet mapped and only partail information is available for
-					//print_r ($student_courses_line);
-					/*
-					$course_name='';
-					$course_number =''; 
-					$section_name = '';
-					$course_title = $student_courses_line[6];
-					$hours = (int)(array_slice($student_courses_line, -4, 1) [0]);
-					$grade = "S";
-
-					//parse term and insert into academicquarters
-					$term=str_replace("\n", "", $student_courses_line[count($student_courses_line)-1]);
-					//these next three lines are to determine whether the course is undergrad or graduate level
-					$level = 1;
-					if ((int)$course_number>500)
-						$level=2;
-					//create strings for the select and insert statements
-					$selectquery="SELECT CourseID,CourseName,CourseNumber FROM Courses WHERE CourseName='"
-						.$course_name."' AND CourseNumber='".$course_number."';";
-					$insertquery="INSERT INTO Courses ( CourseTypeID, CourseTitle, CourseName, CourseNumber) VALUES ("
-						.$level.", '".$course_title."', '".$course_name."', '".$course_number."');";
-					echo $insertquery."\n";
-					//This function checks to see if a record exists and if not inserts it then returns its primary key.
-					$coursePrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
-
-					//CourseSections
-					$selectquery="SELECT CourseSectionID,CourseID,SectionName FROM CourseSections 
-						WHERE CourseID='".$coursePrimaryID."' AND SectionName='".$section_name."';";
-					$insertquery="INSERT INTO CourseSections ( CourseID,SectionName,Hours,AcademicQuarterID) VALUES ("
-						.$coursePrimaryID.", '".$section_name."', '".$hours."', '".$term."');";
-					$courseSectionPrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
-
-					//StudentCourseSections
-					//must update grades here
-					$insertquery="INSERT INTO StudentCourseSections(StudentUserID,CourseSectionID,Grade) VALUES ("
-						.$student_cwid.", '".$courseSectionPrimaryID."', '".$grade."') ON DUPLICATE KEY UPDATE Grade = '".$grade."';";
-					$result = mysqli_query($conn, $insertquery)or die(mysqli_error($conn)); 
-					 */
-				}
+                    //StudentTransferCourses table insert if it does not exist
+                    $selectquery="SELECT StudentUserID,CourseName, UniversityID, Hours FROM StudentTransferCourses
+                        WHERE StudentUserID='".$student_cwid."' AND CourseName='".$course_title."' AND UniversityID='".$schoolnumber
+                        ."' AND Hours='".$hours."';";
+                    $insertquery="INSERT INTO StudentTransferCourses ( StudentUserID,CourseName,UniversityID,Hours) VALUES ("
+                        .$student_cwid.", '".$course_title."', '".$schoolnumber."', '".$hours."');";
+                    $studentTransferPrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
+                }
 			}
 		}
 	}
@@ -309,11 +281,11 @@ function ParseFile($filePath){
 	mysqli_close($conn);
 	fclose($file);
 	
-	mysqli_commit($conn);
+	//mysqli_commit($conn);
 	
-	mysqli_autocommit($conn, true);
+	//mysqli_autocommit($conn, true);
 	
-	return null;
+	//return null;
 	//=============================================================================
 }
 //mainprogram();
