@@ -51,7 +51,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
             Manage Advisor & Advisee
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('Transfer_controller/index') ;?>">
             Manage Transfer Credits
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Coursemanager/index') ;?>">
