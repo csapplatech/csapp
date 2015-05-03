@@ -17,50 +17,85 @@ class Checklistexport extends CI_Controller
 	);
 
 	//Main Function
-	public function index($userID = NULL, $curriculumID = 1, $type = "xls")
-	{
-
-	    //Assuming a user with classes is passed and curriculum
-	    //	Must be valid!
+	public function index($userID = NULL)
+	{	    
 	    $this->load->model('User_model', 'Curriculum_model');
-	    
+	    $this->load->helper('url');
+
+	    //Loader user from passed ID and advisor from session ID
+	    // If the session id isn't the passed user or an advisor for the user, immediantly fail.
 	    $user = new User_Model();
 	    $user->loadPropertiesFromPrimaryKey($userID);
-	    $curriculum = new Curriculum_Model();
-	    $curriculum->loadPropertiesFromPrimaryKey($curriculumID);
-	   
+	    $advisor = new User_Model();
+	    if (!isset($_SESSION["UserID"]))
+	    	redirect('login');
+	    $advisor->loadPropertiesFromPrimaryKey($_SESSION["UserID"]);
+	    
+	    $flag = TRUE;
+	    foreach ($advisor->getAdvisees() as $student)
+	    	if ($student->getUserID() == $userID)
+		    $flag = FALSE;
+	    if ($advisor->getUserID() == $user->getUserID())
+	    	$flag = FALSE;
+	    if ($flag == TRUE)
+	    {
+	    	echo "YOU DON'T HAVE PERMISSION TO ACCESS THIS USER'S INFORMATION";
+		exit;
+	    }
+
+	    $curriculums = $user->getCurriculums();
+	    
+	    $degree = FALSE;
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+	    		$degree = TRUE;
+	    if (!$degree)
+	    {
+		echo "ERROR NO CURRICULUM SET FOR USER";
+		exit;
+	    }
+
 	    //Create excel file
 	    $Excel = new PHPExcel();
-	    $Excel->getProperties()->setCreator("Keen-Hjorth")
-				   ->setLastModifiedBy("Keen-Hjorth")
-				   ->setTitle("Test Checklist")
+	    $Excel->getProperties()->setCreator("CSC 404 - 2015 App")
+				   ->setLastModifiedBy("CSC 404 - 2015 App")
+				   ->setTitle($user->getName()." Checklist")
 				   ->setSubject("Advising Checklist")
 				   ->setDescription("Auto Generated Checklist")
 				   ->setCategory("Advisee checklist file");
 
 	    //Set global defaults
 	    $Excel->getDefaultStyle()->getFont()->setSize(10)->setName('Arial');
+	    $Excel->removeSheetByIndex(0);
+
+	    //Generate course sheets
+	    $sheetnumber = 0;
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+		{
+		    //Generate Checklist
+		    $checklist = $Excel->createSheet(NULL, $sheetnumber++);
+		    $checklist->setTitle("Checklist");
+		    $this->generatechecklist($checklist, $user, $c, $curriculums);
 	    
-	    //Generate course checklist sheet
-	    $checklist = $Excel->getActiveSheet();
-	    $checklist->setTitle("Checklist");
-	    $this->generatechecklist($checklist, $user, $curriculum);
+		    //Generate Quarter View
+		    $qview = $Excel->createSheet(NULL, $sheetnumber++);
+		    $qview->setTitle("Quarter View");
+		    $this->generate_quarter_view($qview, $user, $c);
+	   	    break;
+		}
 	    
 	    //Generate advisor checklist sheet
-	    $advcheck = $Excel->createSheet(NULL, 1);
+	    $advcheck = $Excel->createSheet(NULL, $sheetnumber++);
 	    $advcheck->setTitle("Advisor Checklist");
 	    $this->generateadvchecklist($advcheck);
-	    
-	    //Generate Quarter View
-	    $qview = $Excel->createSheet(NULL, 2);
-	    $qview->setTitle("Quarter View");
-	    $this->generate_quarter_view($qview, $user, $curriculum);
+
 
 	    //Download file object (PDF or XLS)
 	    $Excel->setActiveSheetIndex(0);
 	    $objWriter = PHPExcel_IOFactory::createWriter($Excel, 'Excel5');
 	    header("Content-type: application/vnd.ms-exel");
-	    header("Content-Disposition: attachment; filename=test.xls");
+	    header("Content-Disposition: attachment; filename=\"".$user->getName()." Checklist.xls\"");
 	    $objWriter->save('php://output');
 	}
 
@@ -157,7 +192,7 @@ class Checklistexport extends CI_Controller
 	}
 
 	//Generate Course Checklist
-	private function generatechecklist($checklist, $user, $curriculum)
+	private function generatechecklist($checklist, $user, $c, $curriculums)
 	{
 	    //Set column widths across the checklist
 	    $checklist->getColumnDimension('A')->setWidth(6.5);
@@ -179,8 +214,12 @@ class Checklistexport extends CI_Controller
 	    $this->checklistheader($checklist, $user->getName(), $user->getUserID(), 
 			  $user->getAdvisor()->getName(), "2014-15", $user->getEmailAddress());
 
+	    $minors = Array();
+	    foreach ($curriculums as $c)
+	    	if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_MINOR || $c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_CONCENTRATION)
+	    		$minors[] = $c;
 	    $coursesTaken = $user->getAllCoursesTaken();
-	    $this->checklistcore($checklist, $coursesTaken, $curriculum);
+	    $this->checklistcore($checklist, $coursesTaken, $c, $minors);
 	}
 
 	//Course Checklist Header
@@ -237,7 +276,7 @@ class Checklistexport extends CI_Controller
 	}
 
 	//Course Checklist Core
-	private function checklistcore($checklist, $coursesTaken, $curriculum)
+	private function checklistcore($checklist, $coursesTaken, $c, $minors)
 	{
 	    //Set an array for section headers
 	    //Get starting/title row for courses
@@ -253,26 +292,89 @@ class Checklistexport extends CI_Controller
 	    $checklist->getCell("I8")->setValue("*");
 	    $checklist->getCell("J8")->setValue("GRADE");
 
+	    $degree;
+	    if ($c->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+		$degree = $c;
+
 	    //for every course in the curriculum
-	    $requiredCourses = $curriculum->getCurriculumCourseSlots();
+	    $requiredCourses = $degree->getCurriculumCourseSlots();
 	    $row = 10;
 	    $prevCType = NULL;
 
+	    //Sort required courses
 	    $reqCour = array();
 	    foreach ($requiredCourses as $c)
-	    	$reqCour[$c->getName()] = $c;
+	    {
+	    	$name = $c->getName();
+		while (isset($reqCour[$name]))
+			$name = $c->getName().str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz");
+		$reqCour[$name] = $c;
+	    }
 	    ksort($reqCour);
 	    $requiredCourses = $reqCour;		
-		
+	    
+
+	    //Override duplicate (retaken) classes with the highest grade
+	    $i = 0;
+	    $gradeVal = array( //Possible grades for taken courses, ordered by importance for sorting
+	        'IP'=>$i++, 
+	    	'A' =>$i++, 
+	        'B' =>$i++, 
+	        'C' =>$i++, 
+	        'D' =>$i++, 
+                'F' =>$i++, 
+	        'NA'=>$i++, 
+	        'W' =>$i++,
+	        'AU'=>$i++
+	    );
+	    $courses = array();
+	    foreach ($coursesTaken as $key=>$taken)
+	    {
+		$courseID = $taken[0]->getCourse()->getCourseID();
+		if (isset($courses[$courseID]))
+		{
+			if ((isset($gradeVal[$taken[1]])) && isset($gradeVal[$courses[$courseID][1]]))
+				if ($gradeVal[$taken[1]] < $gradeVal[$courses[$courseID][1]])
+					$courses[$courseID] = $taken;
+	    	}
+		else
+			$courses[$courseID] = $taken;
+			
+	    }
+	    unset($coursesTaken);
+	    $coursesTaken = $courses;
+
+	    //Sort courses taken alphabetically
+	    $courses = array();
+	    foreach ($coursesTaken as $key=>$taken)
+	    {
+	    	$course = $taken[0]->getCourse();
+		$name = $course->getCourseName()." ".$course->getCourseNumber();
+		$name2 = $name;
+		while (isset($courses[$name2]))
+			$name2 = $name.str_shuffle("0123456789abcdefghijklmnopqrstuvwxyz");
+		$courses[$name2] = $taken;
+	    }
+	    ksort($courses);
+	    unset($coursesTaken);
+	    $coursesTaken = $courses;
+	    
+	    //For every course in the degree
 	    foreach ($requiredCourses as $reqCourse)
 	    {
+	    	$cType = "cType";
+		$cNum  = "cNum";
 	    	//Grab course name
 		$cName = $reqCourse->getName();
+		$cType = $cName;
 		$cNum  = strpbrk($cName, "0123456789");
-		$cType = substr($cName, 0, strpos($cName, $cNum));
+		if ($cNum == FALSE) //Failed to find numbers in course name
+			$cNum = "";
+		else
+			$cType = substr($cName, 0, strpos($cName, $cNum));
 
 		//Put course name into checklist
-		if (strcmp($cType, $prevCType) != 0)
+		if (strcasecmp($cType, $prevCType) != 0)
 		{
 	    		if ($prevCType != NULL)
 			{
@@ -283,45 +385,49 @@ class Checklistexport extends CI_Controller
 			$checklist->getCell("A$row")->setValue($cType);
 			$prevCType = $cType;
 		}
-		$checklist->getCell("B$row")->setValue($cNum);
+		if ($cNum == "")
+			$checklist->getCell("A$row")->setValue($cType);
+		else
+			$checklist->getCell("B$row")->setValue($cNum);
 
 		//Input Prerequisites
-		$course = new Course_model();
-//====================================================================== POTENTIAL ISSUE, ignoring valid courses after the first one
-		$course->loadPropertiesFromPrimaryKey($reqCourse->getValidCourseIDs()[0]);
-		foreach ($course->getPrerequisiteCourses() as $preReq)
+		foreach ($reqCourse->getPrequisiteCourseSlots() as $preReq)
 		{
 			$cell = $checklist->getCell("C$row");
-			$cell->setValue($cell->getValue()." ".$preReq->getCourseName());
+			$prevVal = $cell->getValue();
+			if ($prevVal != NULL)
+				$prevVal = $prevVal.", ";
+			$cell->setValue($prevVal.$preReq->getName());
+			$checklist->getStyle("C$row")->getFont()->setColor((new PHPExcel_Style_Color)->setRGB('808080'));
 		}
+		//Put in astrik if it's a prereq of another course
+		if (sizeof($reqCourse->getCourseSlotsPrerequisiteTo()) > 0)
+			$checklist->getCell("I$row")->setValue("*");
 		
 		//Put in all course credit information and term/year
 	        $checklist->getStyle("F$row:J$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		foreach ($coursesTaken as $key=>$taken)
-			foreach ($reqCourse->getValidCourseIDs() as $reqkey=>$prereqID)
+			foreach ($reqCourse->getValidCourseIDs() as $reqkey=>$reqID)
 			{
-				if ($prereqID == $taken[0]->getCourse()->getCourseID())
+				if ($reqID == $taken[0]->getCourse()->getCourseID())
 				{
 					$checklist->getCell("H$row")->setValue($taken[0]->getAcademicQuarter()->getYear());
 					$term = NULL;
 					switch ($taken[0]->getAcademicQuarter()->getName())
 					{
-						case 'Fall':   $term = 'F'; break;
-						case 'Winter': $term = 'W'; break;
-						case 'Summer': $term = 'Su'; break;
-						case 'Spring': $term = 'Sp'; break;
+						case Academic_quarter_model::NAME_FALL:   $term = 'F'; break;
+						case Academic_quarter_model::NAME_WINTER: $term = 'W'; break;
+						case Academic_quarter_model::NAME_SUMMER: $term = 'Su'; break;
+						case Academic_quarter_model::NAME_SPRING: $term = 'Sp'; break;
 						default: $term = '?';
 					}
 					$checklist->getCell("G$row")->setValue($term);
 					$checklist->getCell("J$row")->setValue($taken[1]);
-					unset($coursesTaken[$key]);
-				}
-				
-				if ($checklist->getCell("F$row")->getValue() == NULL)
 					$checklist->getCell("F$row")->setValue($taken[0]->getHours());
+					unset($coursesTaken[$key]);
+					break;
+				}
 			}
-		//Put in astrik if it's a prereq of another course
-		
 
 		//Set borders between columns for course information
 		$checklist->getStyle("B9:B$row")->getBorders()->getRight()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
@@ -347,8 +453,8 @@ class Checklistexport extends CI_Controller
 	    	$checklist->getStyle("$i$row")->getBorders()->getLeft()  ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    	$checklist->getStyle("$i$row")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    }
-	    
-	    //Put all left over classes into Additional Courses
+
+	    //Prepare Additional Courses section
 	    $checklist->getStyle("L8:P8")->applyFromArray($this->titlestyle);	
 	    $checklist->getStyle("L8:P8")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 	    $checklist->getCell("L8")->setValue("ADDITIONAL COURSE");
@@ -357,16 +463,7 @@ class Checklistexport extends CI_Controller
 	    $checklist->getCell("O8")->setValue("YEAR");
 	    $checklist->getCell("P8")->setValue("GRADE");
 
-	    //Sort courses for putting into Additional Course
-	    $courses = array();
-	    foreach ($coursesTaken as $key=>$taken)
-	    {
-	    	$course = $taken[0]->getCourse();
-	    	$courses[$course->getCourseName()." ".$course->getCourseNumber()] = $taken;
-	    }
-	    ksort($courses);
-
-	    //Insert into additional course
+	    //Insert left over courses into additional course
 	    $irow = 9;
 	    $cols = array('L', 'M', 'N', 'O', 'P');
 	    foreach ($cols as $col)
@@ -375,7 +472,7 @@ class Checklistexport extends CI_Controller
 	    	$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    }
 	    $irow++;
-	    foreach ($courses as $key=>$taken)
+	    foreach ($coursesTaken as $key=>$taken)
 	    {
 	    	foreach ($cols as $col)
 	    	{
@@ -383,8 +480,9 @@ class Checklistexport extends CI_Controller
 	    		$checklist->getStyle("$col$irow")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    	}
 	    	$checklist->getStyle("M$irow:P$irow")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-	    	$course = $taken[0]->getCourse();
-	    	$checklist->getCell("L$irow")->setValue($key);
+		$course = $taken[0]->getCourse();
+		$name = $course->getCourseName()." ".$course->getCourseNumber();
+	    	$checklist->getCell("L$irow")->setValue($name);
 	    	$checklist->getCell("O$irow")->setValue($taken[0]->getAcademicQuarter()->getYear());
 	    			
 	    	$term = NULL;
@@ -411,6 +509,8 @@ class Checklistexport extends CI_Controller
 	    	$checklist->getStyle("$col$irow")->getBorders()->getLeft()  ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    	$checklist->getStyle("$col$irow")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
 	    }
+	    
+
 	}
 
 	//Generate quarter view
@@ -440,8 +540,18 @@ class Checklistexport extends CI_Controller
 	//Quarter View Core
 	private function generate_quarter_view_core($sheet, $user, $curriculum)
 	{
+	    $degree;
+	    if ($curriculum->getCurriculumType() == Curriculum_model::CURRICULUM_TYPE_DEGREE)
+		$degree = $curriculum;
+	    
+	    if (!isset($degree))
+	    {
+		echo "ERROR USER CURRICULUM DEGREE ISN'T SET";
+	    	exit;
+	    }
+
 	    //Organize courses by year/quarter in an array $arr[$year][$quarter][$course]
-	    $currcourses = $curriculum->getCurriculumCourseSlots();
+	    $currcourses = $degree->getCurriculumCourseSlots();
 	    $courses = array();
 	    for ($i = 0; $i < 4; $i++)
 		$courses[] = array(array(), array(), array(), array());
@@ -532,7 +642,7 @@ class Checklistexport extends CI_Controller
 			foreach ($courses[$ykey][$qkey] as $cc)
 			{
 				$style = $sheet->getStyle("$nameCol$row:$creditCol$row");
-				   $style->applyFromArray($this->borderstyle);
+				$style->applyFromArray($this->borderstyle);
 				$sheet->getCell("$nameCol$row")->setValue($cc->getName());
 				$sheet->getCell("$titleCol$row")->setvalue($cc->getNotes());
 				$credit = '?';
@@ -559,9 +669,23 @@ class Checklistexport extends CI_Controller
 			$sheet->getStyle("$nameCol$row:$creditCol$row")->applyFromArray($this->borderstyle);
 			$strow -= 2; $enrow = $row-1;
 			$sheet->getCell("$creditCol$row")->setValue('=SUM('."$creditCol"."$strow".':'."$creditCol"."$enrow".')');
+			$sheet->getStyle("$creditCol$row")->getFont()->setBold(TRUE);
+		        $sheet->getStyle("$creditCol$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 			$row++;
 		    }
-		    $row++;
+		    $prevrow = $row-1;
+		    //Insert row showing total course credit for the year
+		    $sheet->getStyle("A$row:$creditCol$row")->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		    $sheet->getStyle("A$row:$creditCol$row")->getBorders()->getRight() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		    $temp = chr(ord($creditCol) - 1);
+		    $sheet->getCell("$temp$row")->setValue("TOTAL");
+		    $sheet->getStyle("$temp$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+		    $sheet->getStyle("$temp$row")->getFont()->setBold(TRUE);
+		    $sheet->getCell("$creditCol$row")->setValue('=SUM('."A"."$prevrow".':'."$creditCol"."$prevrow".')');
+		    $sheet->getStyle("$creditCol$row")->getFont()->setBold(TRUE);
+		    $sheet->getStyle("$creditCol$row")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		    $sheet->getStyle("$creditCol$row")->getBorders()->getLeft() ->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+		    $row += 2;
 		}
 	}
 
