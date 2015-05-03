@@ -44,7 +44,7 @@
 						
 						foreach($advisees as $advisee)
 						{
-							$name = $advisee->getName();
+							$slotName = $advisee->getName();
 							
 							$id = $advisee->getUserID();
 							
@@ -52,7 +52,7 @@
 							
 							$advisingFormUrl = site_url('Advisingform/index/' . $id);
 							
-							echo "<li class='list-group-item'><h4>$name</h4> <div class='pull-right'><a class='btn btn-primary' href='$exportListUrl'>Curriculum Checklist</a> <a class='btn btn-danger' href='$advisingFormUrl'>Advising Form</a></div></li>";
+							echo "<li class='list-group-item'><h4>$slotName</h4> <div class='pull-right'><a class='btn btn-primary' href='$exportListUrl'>Curriculum Checklist</a> <a class='btn btn-danger' href='$advisingFormUrl'>Advising Form</a></div></li>";
 						}
 						
 					?>
