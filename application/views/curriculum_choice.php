@@ -1,19 +1,58 @@
+<head>
+    <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
+    <style>
+
+button
+{
+	display: inline-block;
+}
+
+body
+{
+	padding-top: 50px;
+}
+form
+{
+	font-family: Courier;
+}
+	</style>
+</head>
+
+<body>
+    <?php include_once('application/views/Templates/navbar.php'); ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<h1>Curriculum</h1>
+<h1>Curriculum Choice</h1>
 
 <form method="POST">
-<p>Filter: <input type="currfilter" id="CurrFilter" /></p>
-  <select size='10' id="CurriculumSelect" name='curriculum'>
-    <?php
-      foreach($data as $row)
-	echo "<option value=\"$row[id]\">$row[name]</option>"; 
-    ?>
-  </select>
+	<div class = "container">
+<p><input type="currfilter" id="CurrFilter" class="form-control" placeholder="Filter" /></p>
+	<select size='10' id="CurriculumSelect" name='curriculum'>
+	<?php
+	$largestLen = 1;
+	foreach($data as $row)
+	{	
+		$len = strlen($row['name']);
+		if ($len > $largestLen)
+			$largestLen = $len;
+	}
+		
+	foreach($data as $row)
+	{	
+		$name = $row['name'];
+		for ($i = strlen($name); $i < $largestLen + 2; $i++)
+			$name = $name."&nbsp;";
+		
+		$string = $name.$row['date'];
+		echo "<option value=\"$row[id]\">$string</option>"; 
+	}	
+	?>
+	</select>
 <br /><br />
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
-<button type="sumbit" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
+<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/editCurriculum'); ?>">Edit</button>
+<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/newCurriculum'); ?>">New</button>
+<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/cloneCurriculum'); ?>">Clone</button>
+<button type="sumbit" class="btn btn-primary btn" formaction="<?php echo site_url('Curriculumcreator/deleteCurriculum'); ?>">Delete</button>
+
 </form>
 
 <script type="text/javascript"> //Uses jQuery
@@ -52,3 +91,6 @@ Filter.on("keyup", function ()
   FilterSelect(Select, userInput);
 });
 </script>
+		<?php include_once('application/views/Templates/footer.php');?>
+		</div>
+</body>
