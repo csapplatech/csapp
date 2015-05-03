@@ -810,6 +810,9 @@ class User_model extends CI_Model
             $this->db->delete('StudentAdvisors');
             
             $this->db->where('UserID', $this->userID);
+            $this->db->delete('UserCurriculums');
+            
+            $this->db->where('UserID', $this->userID);
             $this->db->delete('Users');
             
             return $this->db->affected_rows() > 0;

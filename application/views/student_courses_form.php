@@ -52,10 +52,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php
                 //Character to display when there is no section for a course slot.
                 $unassigned = '-';
+                //for each curriculum course slot of the currently selected student.
                 foreach ($curriculumSlots as $currSlot) {
                     $slotName = $currSlot->getName();
                     $sectionID = 0;
-                    //getting wrong values
+                    //filledSlots is an array where each member is the ID
+                    // of a course section taken by the student and the KEY
+                    // is the name of the slot filled with the course section.
                     if (isset($filledSlots[$slotName])) {
                         //ID of course section that fills the current curriculum slot.
                         $sectionID = $filledSlots[$slotName];
@@ -78,15 +81,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         $section->loadPropertiesFromPrimaryKey($sectionID);
                         $quarterName = $section->getAcademicQuarter()->getName();
                         $quarterYear = $section->getAcademicQuarter()->getYear();
+                        $grade = $student->getGradeForCourseSection($section);
                         echo '<td>' . $currSlot->getName() . '</td>'
                         . '<td>' . $quarterName . $quarterYear . '</td>'
                         . '<td>' . $section->getSectionName() . '</td>'
-                        . '<td>' . $student->getGradeForCourseSection($section) . '</td>';
+                        . '<td>' . $grade . '</td>';
                     } else {
                         echo 'value="   Add Course   " /></tc></td>'; // Need Curriculum Slot
                         echo '<td>' . $slotName . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>' . '<td>' . $unassigned . '</td>';
                     }
-                    echo '</tr>';
+                    echo '</tr></form>';
                 }
                 ?>
             </table>

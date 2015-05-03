@@ -67,7 +67,7 @@ class User extends CI_Controller {
             return $this->load->view('user_mgmt_list', $data);
         }
         foreach ($unfilteredList as $listUser) {
-            
+
             if (substr_count(strtoupper($listUser->getName()), strtoupper($searchStr)) > 0) {
                 array_push($filteredList, $listUser);
             }
@@ -258,14 +258,7 @@ class User extends CI_Controller {
      * @param int $uID ID of user to be modified, if this is null a new user should be created.
      */
     public function submitUserForm($uID = NULL) {
-        $user = new User_model;
-
-        if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
-            redirect('Login/logout');
-
-        if (!$user->isAdmin())
-            redirect('Login/logout');
-
+        $this->checkSec();
         $userData = array();
         $userData['uID'] = $this->input->post('userID');
         $userData['email'] = $this->input->post('email');
@@ -274,7 +267,6 @@ class User extends CI_Controller {
         $userData['lName'] = $this->input->post('lName');
         $userData['pass'] = $this->input->post('pass');
         $userData['confPass'] = $this->input->post('confPass');
-        $userData['user'] = $user;
 
         $roles = array();
         for ($i = 1; $i <= 4; $i++) {
@@ -284,6 +276,7 @@ class User extends CI_Controller {
                 $roles[$i] = false;
             }
         }
+
         $userData['roles'] = $roles;
         switch ($_SESSION['action']) {
             case 'create':
@@ -295,7 +288,7 @@ class User extends CI_Controller {
                 break;
 
             case 'remove':
-                $this->load->view('confirm_remove_user', $userData);
+                $this->removeUser($uID);
                 return;
         }
         //If the user is selected to have student role
@@ -306,7 +299,7 @@ class User extends CI_Controller {
             $userData['studentCurriculums'] = array();
             $this->load->view('student_info_form', $userData);
         } else {
-            redirect('Mainpage/index');
+            redirect('User/index');
         }
     }
 
@@ -351,7 +344,7 @@ class User extends CI_Controller {
         );
         $student = new User_model;
         $student->loadPropertiesFromPrimaryKey($sID);
-        $curriculums = $student->getCurriculums();  
+        $curriculums = $student->getCurriculums();
         $allCurriculumSlots = array();
         foreach ($curriculums as $curriculum) {
             $cSlots = $curriculum->getCurriculumCourseSlots();
@@ -385,6 +378,7 @@ class User extends CI_Controller {
     /*
      * Returns an array with each selected course and corresponding slot name.
      */
+
     private function getSelectedCourses($courses, $slots) {
         $selectedCourses = array();
         foreach ($slots as $slot) {
@@ -400,6 +394,7 @@ class User extends CI_Controller {
     /*
      * Returns the first course found in courses that can fill the selected slot.
      */
+
     private function getSelectedCourse($courses, $slot) {
         foreach ($courses as $course) {
             if (in_array($slot, $course->getAllCurriculumCourseSlots())) {
@@ -412,6 +407,7 @@ class User extends CI_Controller {
     /*
      * Gets a course section when given a course.
      */
+
     private function getSectionForCourse($course) {
         $sections = $this->Course_section_model->getAllCourseSections();
         foreach ($sections as $section) {
@@ -421,7 +417,7 @@ class User extends CI_Controller {
         }
         return false;
     }
-    
+
     public function prepareAddCourseSection($slotID) {
         $sID = $this->input->post('sID');
         $student = new User_model;
@@ -433,6 +429,7 @@ class User extends CI_Controller {
 
         $data = array(
             'sID' => $sID,
+            'slotID' =>$slotID,
             'action' => 'add',
             'slotName' => $name,
             'sections' => array()
@@ -471,12 +468,17 @@ class User extends CI_Controller {
     }
 
     //method to remove the selected user after confirmation
-    public function removeUser($uID) {
+    private function removeUser($uID) {
         $this->checkSec();
+        
         $remUser = new User_model();
-        $remUser->loadPropertiesFromPrimaryKey($uID);
-        $remUser->delete();
-        redirect('Mainpage/index');
+        if(!$remUser->loadPropertiesFromPrimaryKey($uID)) {
+            show_error('Failed to load selected user: ' . $uID);
+        }
+        if(!$remUser->delete()){
+            show_error('Failed to remove user: ' . $uID);
+        }
+        redirect('User/index');
     }
 
     private function collectCourseData($curriculumID) {
@@ -578,16 +580,22 @@ class User extends CI_Controller {
         $this->checkSec();
         $sID = $this->input->post('sID');
         $sectionID = $this->input->post('sectionID');
+        $slotID = $this->input->post('slotID');
+        $slot = new Curriculum_course_slot_model;
+        $slot->loadPropertiesFromPrimaryKey($slotID);
+        $section = new Course_section_model;
         $grade = $this->input->post('grade');
-        if (!isset($grade)) {
-            redirect('User/prepareAddCourses/' . $sID);
+        //Cannot add a grade to a slot if it doesn't meet the minimum grade requirement.
+        if (!isset($grade) || strcmp($grade, $slot->getMinimumGrade()) < 0) {
+            redirect('User/prepareAddCourseSection/' . $slotID);
         }
 
         $student = new User_model();
         $student->loadPropertiesFromPrimaryKey($sID);
-        $section = new Course_section_model;
-        $section->loadPropertiesFromPrimaryKey($sectionID);
-        $student->addCourseSection($section, $grade);
+        
+        if(!$student->addCourseSection($section, $grade)){
+            show_error('Failed to add Course section: ' . $section . ' with grade ' .$grade);
+        }
 
         redirect('User/prepareAddCourses/' . $sID);
     }
