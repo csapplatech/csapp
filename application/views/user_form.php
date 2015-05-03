@@ -36,37 +36,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </style>
     </head>
 
-    <body>
-<<<<<<< HEAD
-		<?php include_once('application/views/Templates/navbar.php'); ?>
-		<div class="container">
-			<p>Selected user with id: <?= $uID ?></p>
-			<form action="<?php echo site_url('User/submitUserForm/' . $uID); ?>" method="POST" >
-				<p><b>Please fill out user info.</b></p><br/>
-				<table>
-                                        <tr><p><input type="text" id="username" name="email" value="<?= $email ?>" class="form-control" placeholder="Email Address" style="margin-bottom:5px"></tr></p>
-                                        <tr><p><input type="text" name="pass" class="form-control" placeholder="Password" style="margin-bottom:5px"></tr></p
-                                        <tr><p><input type="text" name="confPass" class="form-control" placeholder="Confirm New Password" style="margin-bottom:5px"></tr></p>
-                                        <tr><p><input type="text" name="fName" class="form-control" placeholder="First Name (Middle Name Optional)" value="<?= $fName ?>" style="margin-bottom:5px"></tr></p>
-                                        <tr><p><input type="text" name="lName" class="form-control" placeholder="Last Name" value="<?= $lName ?>" style="margin-bottom:5px"></tr></p>
-				</table>
-				<p2><b>Please select user Roles.</b></p2><br/>
-				<?php
-				$roleNames = array(NULL, 'Administrator', 'Program Chair', 'Advisor', 'Student');
-				for ($i = 1; $i <= 4; $i++) {
-					echo '<input type="checkbox" name="' . $i . '" value="true" ';
-					if ($roles[$i]) {
-						echo 'checked';
-					}
-					echo ' />' . $roleNames[$i] . '<br />';
-				}
-				?>
-				<br />
-                                <button class="btn btn-primary btn" type="submit" style="margin-bottom:5px">NEXT</button>
-			</form>
-		</div>
-		<?php include_once('application/views/Templates/footer.php'); ?>
-=======
+    <body style="padding: 60px 0px;">
         <?php include_once('application/views/Templates/navbar.php'); ?>
         <div class="container">
             <form action="<?php echo site_url('User/submitUserForm/' . $uID); ?>" method="POST" >
@@ -133,7 +103,6 @@ for ($i = 1; $i <= 4; $i++) {
             </form>
         </div>
 <?php include_once('application/views/Templates/footer.php'); ?>
->>>>>>> origin/Nezat&York
     </body>
 </html>
 </body>

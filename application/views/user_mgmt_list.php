@@ -35,7 +35,7 @@ and open the template in the editor.
         </style>
     </head>
 
-    <body>
+    <body style="padding: 60px 0px;">
         <?php include_once('application/views/Templates/navbar.php'); ?>
         <div class='container'>
             <form action="<?php echo site_url('User/submitUserListQuery') ?>" method="POST" >
