@@ -299,6 +299,12 @@ else
 {
 	define("URL", "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
 }
+
+if(strpos(URL, "/", strlen(URL) - 1))
+{
+	define("URL", substr(URL, 0, strlen(URL) - 1));
+}
+
 define("CSS", URL."/css");                  //Static CSS URL
 define("IMG", URL."/image");                //Static Image URL
 define("JS", URL."/js");                    //Static JavaScript URL
