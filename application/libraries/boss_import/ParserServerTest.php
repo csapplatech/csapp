@@ -196,6 +196,11 @@ function ParseFile($filePath){
 					.$level.", '".$course_title."', '".$course_name."', '".$course_number."');";
 				//This function checks to see if a record exists and if not inserts it then returns its primary key.
 				$coursePrimaryID=checkinsertdatabase($conn, $selectquery, $insertquery);
+                
+                // Update title column this is to update the title column because sometimes courses         
+                // already exist from other sources with blank titles or incorrect ones     
+                $updatequery="UPDATE Courses  SET CourseTitle='".$course_title."' WHERE CourseID=".$coursePrimaryID." ;";       
+                $result = mysqli_query($conn, $updatequery) or die(mysqli_error($conn));
 
 				//AcademicQuarters
 				$term=str_replace("\n", "", $student_courses_line[count($student_courses_line)-1]);
