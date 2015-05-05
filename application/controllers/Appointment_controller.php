@@ -124,7 +124,11 @@ Class appointment_controller extends CI_Controller{
          
          else
          {
-             redirect('Mainpage/student');
+             echo '<script type="text/javascript">
+
+           alert("Your advisor has not created an advising schedule!"); 
+            window.location = "Mainpage/student"
+            </script>'; 
          }
     }
    
