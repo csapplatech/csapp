@@ -867,6 +867,8 @@ class User_model extends CI_Model
 	 */
 	public static function getAllStudents()
 	{
+		$db = get_instance()->db;
+		
 		$db->select('Users.UserID');
 		$db->from('Users');
 		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
