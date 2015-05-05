@@ -74,7 +74,7 @@ Class appointment_controller extends CI_Controller{
                 'app_Times'                 =>$app_Times,
                 'show_other_days'           => TRUE,
                 'show_next_prev'            => TRUE,
-                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+                'next_prev_url'             => site_url('Appointment_controller/index')
                 );
             $this->load->library('calendar',$prefs);
             $this->load->view("appointment_view", $Appointment_array);             
