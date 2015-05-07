@@ -1,19 +1,46 @@
 <?php
 class Activation extends CI_Controller
 {
+	public function index()
+	{
+		$user = new User_model;
+		
+		if (!$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+            redirect('Login/logout');
+		
+		if (!$user->isAdvisor())
+			redirect('Login/logout');
+		
+		$data = array(
+			'user' => $user
+		);
+		
+		$this->load->view('activation_index_view', $data);
+	}
+	
 	//Sets a user's password to a random password
 	//	Emails user the new password and their username
 	//		And a link to login
 	//	Email is either the user's set email, or if passed
 	//					the optional passed one
-	public function index($userID = NULL, $email = NULL)
+	public function send($userID = NULL, $email = NULL)
 	{
-		$this->load->model('User_model');
+		$session_user = new User_model;
+		
+		if (!$session_user->loadPropertiesFromPrimaryKey($_SESSION['UserID']))
+            redirect('Login/logout');
+		
+		if (!$session_user->isAdvisor())
+			redirect('Login/logout');
+		
 		$this->load->library('email');
 
-		$user = new User_Model();
+		$user = new User_model();
 		$user->loadPropertiesFromPrimaryKey($userID);
 
+		if($user->getAdvisor()->getUserID() != $session_user->getUserID())
+			redirect('Login/logout');
+		
 		//Loads user's email if optional email wasn't set
 		if ($email == NULL)
 			$email = $user->getEmailAddress();
@@ -73,12 +100,13 @@ class Activation extends CI_Controller
 		$this->email->subject('Subject');
 		$this->email->message('Email works great!');
 
-		if ($this->email->send())
-			echo "Success!";
+		if ($user->update() && $this->email->send())
+			$_SESSION['activation.message'] = "Success!";
 		else
 		{
-			echo "Email failed!\n";
-			echo $this->email->print_debugger();
+			$_SESSION['activation.error'] = "Sending email failed!<br />" . $this->email->print_debugger();
 		}
+		
+		redirect('Activation/index');
 	}
 }
