@@ -20,6 +20,24 @@
 			font-family: Courier;
 		}
     </style>
+	<script>
+	
+		function clearValidCourses()
+		{
+			$("#AvailCourseSelect option:selected").removeAttr("selected");
+		}
+		
+		function clearPrereqs()
+		{
+			$("#AvailCourseSlotPreReqs option:selected").removeAttr("selected");
+		}
+		
+		function clearCoreqs()
+		{
+			$("#AvailCourseSlotCoReqs option:selected").removeAttr("selected");
+		}
+	
+	</script>
 </head>
 <body>
     <?php include_once('application/views/Templates/navbar.php'); ?>
@@ -41,6 +59,7 @@
       }
     ?>
   </select>
+  <button type="button" class="btn btn-info btn-sm" onclick="clearValidCourses()">Clear</button>
 <br /><br />
 <p>Name:</p>
 <input name='name' class='form-control' value="<?php echo $data['name'];?>" style="margin-bottom:10px"/>
@@ -110,6 +129,7 @@ echo '>';
 	}
 	?>
 </select>
+<button type="button" class="btn btn-info btn-sm" onclick="clearPrereqs()">Clear</button>
 <br /><br />
 
 <p>Corequisites: </p>
@@ -126,6 +146,7 @@ echo '>';
 	}
 	?>
 </select>
+<button type="button" class="btn btn-info btn-sm" onclick="clearCoreqs()">Clear</button>
 <br /><br />
 
 <button class="btn btn-primary btn" type="sumbit" formaction="<?php echo site_url('Curriculumcreator/setCurriculumCourseSlot'); ?>">Save</button>
