@@ -7,17 +7,18 @@ class Curriculumcreator extends CI_Controller {
 	{
 		//load models
 		$this->load->model('Curriculum_model', 'Curriculum_course_slot_model', 'Course_model', 'User_model');
+		$this->load->helper('url');
 		$user = new User_model();
 		
-		//verify the user is valid and a program chair
-		//~ if (isset($_SESSION['UserID']))
-		//~ {	
-			//~ $user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
-			//~ if (!($user->isProgramChair()))
-				//~ exit;
-		//~ }
-		//~ else
-			//~ exit;
+		//~ //verify the user is valid and a program chair
+		if (isset($_SESSION['UserID']))
+		{	
+			$user->loadPropertiesFromPrimaryKey($_SESSION['UserID']);
+			if (!($user->isProgramChair()))
+				redirect('login');
+		}
+		else
+			redirect('login');
 		
 		$curriculum = new Curriculum_Model(); 
 		$_SESSION['maxCurriculumIndex'] = 1;
