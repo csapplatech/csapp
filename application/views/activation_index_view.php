@@ -81,11 +81,13 @@
 						{
 							$slotName = $advisee->getName();
 							
+							$email = $advisee->getEmailAddress();
+							
 							$id = $advisee->getUserID();
 							
 							$advisingFormUrl = site_url('Advisingform/index/' . $id);
 							
-							echo "<li class='list-group-item'><h4>$slotName</h4> <button type='button' class='btn btn-info pull-right' onclick='activate($id)'>Activate</button></li>";
+							echo "<li class='list-group-item'><h4>$slotName <small>$email</small></h4> <button type='button' class='btn btn-info pull-right' onclick='activate($id)'>Activate</button></li>";
 						}
 						
 					?>
