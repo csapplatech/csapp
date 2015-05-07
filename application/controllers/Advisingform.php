@@ -442,16 +442,21 @@ class AdvisingForm extends CI_Controller
             }
             $this->uid = $_SESSION['UserID'];
          }
-         
         
         $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
-        
         
         $previous_form = $this->loadAdvisingForm($this->uid);
         if ($previous_form !== false)
             $previous_form->delete();
         
         
+		if(!isset($_POST['data']))
+		{
+			header("Content-type: text/plain", true, 400);
+			echo "Missing data";
+			return;
+		}
+		
         //$data = $_POST['Info'];
         $data = json_decode($_POST['data']);//['data']);
 		

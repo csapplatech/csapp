@@ -116,7 +116,7 @@ $(document).ready(function() {
                 });
         }
         $.ajax({
-           url: rootURL + 'index.php/Advisingform/save',
+           url: rootURL + '/index.php/Advisingform/save',
            type: 'POST',
            //contentType : 'application/json',
            data: {data: JSON.stringify(SendInfo)},
