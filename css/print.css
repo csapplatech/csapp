@@ -9,14 +9,18 @@ and open the template in the editor.
 */
 
 #advise{
-    width:94%;
-    height:82%;
+    width:90%;
+    height:90%;
     border-radius:5px;
     border: 2px black solid;
-    margin-left: 3%;
-    margin-bottom: 3%;
-    position:relative;
+    margin-left: 4%;
+    margin-top: 3%;
+    position:absolute;
       
+}
+
+.logo {
+    height:45%;
 }
 
 @page {
