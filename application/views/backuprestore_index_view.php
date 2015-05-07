@@ -189,7 +189,9 @@
 								
 								$deleteUrl = site_url('Backuprestore/delete/' . $path);
 								
-								echo "<li style='text-align: left;'class='list-group-item'><h4 style='text-align: left; display: inline-block;'>$title</h4><div class='pull-right'><a onclick='loading()' href='$restoreUrl' class='btn btn-primary' style='color: white;'>Restore</a> <a href='$downloadUrl' class='btn btn-info'>Download</a> <a onclick='loading()' href='$deleteUrl' class='btn btn-danger'>Delete</a></div></li>";
+								$class = ($file['valid']) ? "" : " color: red; font-weight: bold;";
+								
+								echo "<li style='text-align: left;' class='list-group-item'><h4 style='text-align: left; display: inline-block;$class'>$title</h4><div class='pull-right'><a onclick='loading()' href='$restoreUrl' class='btn btn-primary' style='color: white;'>Restore</a> <a href='$downloadUrl' class='btn btn-info'>Download</a> <a onclick='loading()' href='$deleteUrl' class='btn btn-danger'>Delete</a></div></li>";
 							}
 							
 						?>

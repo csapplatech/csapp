@@ -515,7 +515,11 @@ class Backuprestore extends CI_Controller
 			
 			if($file_title)
 			{
-				array_push($arr, array("title" => $file_title, "file" => $file));
+				array_push($arr, array("title" => $file_title, "file" => $file, "valid" => true));
+			}
+			else
+			{
+				array_push($arr, array("title" => "Corrupt File", "file" => $file, "valid" => false));
 			}
 		}
 		

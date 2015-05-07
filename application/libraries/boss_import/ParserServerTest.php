@@ -279,16 +279,16 @@ function ParseFile($filePath){
 			}
 		}
 	}
-
+	
+	mysqli_commit($conn);
+	
+	mysqli_autocommit($conn, true);
+	
 	//=============================================================================
 	// Close file and SQL connection
 	//=============================================================================
 	mysqli_close($conn);
 	fclose($file);
-	
-	mysqli_commit($conn);
-	
-	mysqli_autocommit($conn, true);
 	
 	return null;
 	//=============================================================================
