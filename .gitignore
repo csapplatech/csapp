@@ -5,3 +5,5 @@
 /nbproject/
 /nbproject/private/
 nbproject
+/backups/*.key
+/backups/*.backup

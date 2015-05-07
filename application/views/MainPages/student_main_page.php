@@ -57,6 +57,9 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Advisingform/index') ;?>">
             Fill Advising Form
         </a>
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Selectcurriculum/index') ;?>">
+            Select Curriculum
+        </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Checklistexport/index/' . $user->getUserID()) ;?>">
             View Curriculum
         </a>

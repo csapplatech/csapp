@@ -401,6 +401,15 @@ class Curriculum_course_slot_model extends CI_Model
     }
     
 	/**
+     * Summary of removeAllValidCourseIDs
+     * Remove all course ids from the set of valid courses for this curriculum course slot model
+     */
+	public function removeAllValidCourseIDs()
+	{
+		$this->validCourseIDs = array();
+	}
+	
+	/**
 	 * Summary of getCourseSlotsPrerequisiteTo
 	 * Get all of the curriculum course slots that this curriculum course slot is a prerequisite for
 	 *
@@ -410,12 +419,11 @@ class Curriculum_course_slot_model extends CI_Model
 	{
 		$models = array();
 		
-		if($this->courseID != null)
+		if($this->curriculumCourseSlotID != null)
 		{
 			$this->db->select('CurriculumCourseSlotID');
 			$this->db->where('CourseRequisiteTypeID', self::COURSE_REQUISITE_PREREQUISITE);
-			$this->db->where('RequisiteCurriculumCourseSlotID', $this->courseID);
-
+			$this->db->where('RequisiteCurriculumCourseSlotID', $this->curriculumCourseSlotID);
 			
 			$results = $this->db->get('CurriculumCourseSlotRequisites');
 			

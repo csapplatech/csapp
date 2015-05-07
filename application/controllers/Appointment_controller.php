@@ -14,34 +14,40 @@ Class appointment_controller extends CI_Controller{
     
     $Advising_appointment= new Advising_appointment_model;
     
+    $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
+    
     
     if($User_model->isAdvisor()){           //If it is an advisor
-        if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), 1)){ //if there are appointments registered to this info
+        
+        
+        
+        if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID($User_model->getUserID(), $quarter)){ //if there are appointments registered to this info
            $All_apps= ($Advising_schedule->getAllAdvisingAppointments());     //retrieve all advising appointments that correspond to this advisor
-            
+            $All_Advisees=($User_model->getAdvisees());
              
             $startTime=0;
-            $endTime=0;
+            
              
            foreach ($All_apps as $key) //grabs each object inside array
                 {
                $startTime = $key->getStartTime();
-              
-               
                array_push($app_Times, $startTime);
-              
-               
-                
-            }
+               }
+            
+             
+             
+             
              
             $prefs = array(
+                'all_advisees'              =>$All_Advisees,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
                 'show_other_days'           => TRUE,
                 'show_next_prev'            => TRUE,
-                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
-                );
+                'next_prev_url'             => site_url('Appointment_controller/index')
+            );
          
             
              $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
@@ -55,18 +61,20 @@ Class appointment_controller extends CI_Controller{
             $app_Times=null;                                        //null app_Times array
             $Appointment_array=array('app_Times'=>($app_Times),'user'=>$User_model);
             $Advising_schedule->setAdvisorUserID($User_model->getUserID());   //use this to create a new advising shedule
-            $Advising_schedule->setAcademicQuarterID(1);                      //use this to create a new advising schedule
+            $Advising_schedule->setAcademicQuarterID($quarter);                      //use this to create a new advising schedule
             $Advising_schedule->create();                                     //CREATE the new advising schedule
+            $All_Advisees=($User_model->getAdvisees());
             
             $All_apps= ($Advising_schedule->getAllAdvisingAppointments()); //for the sake o defining all_apps. It will be null
             
              $prefs = array(
+                'all_advisees'              =>$All_Advisees,
                 'all_apps'                  =>$All_apps,
                 'user'                      =>$User_model,
                 'app_Times'                 =>$app_Times,
                 'show_other_days'           => TRUE,
                 'show_next_prev'            => TRUE,
-                'next_prev_url'             => 'http://localhost/index.php/appointment_controller/index'
+                'next_prev_url'             => site_url('Appointment_controller/index')
                 );
             $this->load->library('calendar',$prefs);
             $this->load->view("appointment_view", $Appointment_array);             
@@ -78,7 +86,7 @@ Class appointment_controller extends CI_Controller{
 		$getAdvisor=$User_model->getAdvisor();
 		
 	//print_r ($getAdvisor);
-         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), 1))
+         if( $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor->getUserID()), $quarter))
          {  
              
              $All_apps= ($Advising_schedule->getAllAdvisingAppointments());
@@ -116,7 +124,11 @@ Class appointment_controller extends CI_Controller{
          
          else
          {
-             redirect('Mainpage/student');
+             echo '<script type="text/javascript">
+
+           alert("Your advisor has not created an advising schedule!"); 
+            window.location = "Mainpage/student"
+            </script>'; 
          }
     }
    
@@ -135,21 +147,24 @@ public function fill()
      
      $Advising_schedule= new Advising_schedule_model();
      $Advising_appointment= new Advising_appointment_model;
+     
+      $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
 	
 	if($User_model->isStudent())
 	{
 		$getAdvisor=$User_model->getAdvisor();
 		$getAdvisor=$getAdvisor->getUserID();
                 
-                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), 1); //load the scedule that corresponds to the students advisor and the acedemic quarter
+                $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($getAdvisor), $quarter); //load the scedule that corresponds to the students advisor and the acedemic quarter
                 $all_Appointments=$Advising_schedule->getAllAdvisingAppointments();
-            if(($_POST['student_selection']))
+            if((!empty($_POST['student_selection']))) //if a student scheduled an appointment
             {
                   
                 foreach($all_Appointments as $selected) // Loop to store and display values of individual checked checkbox.
                 {
                    
-                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID'])&&($selected->isScheduled()))
+                    if(($selected->getScheduledStudentUserID() == $_SESSION['UserID'])&&($selected->isScheduled())) //doesn't let the student take another students slot
                      {
                       
                         $_POST['student_selection']=0;
@@ -171,10 +186,16 @@ public function fill()
                      
                 }
             }
+            
+            elseif(!empty($_POST['My_Schedule']))
+            {
+                
+                redirect('Appointment_controller/Student_Cancel');
+            }
         }
 	else if($User_model->isAdvisor())
 	{
-            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), 1); //load the schedule that corresponds to this advisor and this academic quarter
+            $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($User_model->getUserID()), $quarter); //load the schedule that corresponds to this advisor and this academic quarter
             $all_Appointments=$Advising_schedule->getAllAdvisingAppointments(); 
            
                 if(!empty($_POST['appointments']))// this will handle the cells that the advisor marked as available
@@ -228,8 +249,44 @@ public function fill()
     
    redirect('appointment_controller');
     }
+
+    
+    
+public function Student_Cancel()
+    {
+    $User_model= new User_model;              
+    $User_model->loadPropertiesFromPrimaryKey($_SESSION['UserID']); 
+    
+     $quarter = Academic_quarter_model::getLatestAcademicQuarter();
+        $quarter=$quarter->getAcademicQuarterID();
+
+    $Advising_schedule= new Advising_schedule_model();
+    $Advising_appointment= new Advising_appointment_model;
+    $advisor=$User_model->getAdvisor();
+    $advisor=$advisor->getUserID();
+    $Advising_schedule->loadPropertiesFromAdvisorIDAndAcademicQuarterID(($advisor), $quarter);
+    
+    $app_array=$Advising_schedule->getAllAdvisingAppointments();
+    
+    foreach ($app_array as $key)
+    {
+        if($key->getScheduledStudentUserID()==$_SESSION['UserID']&& $key->isScheduled())
+        {
+          
+            $Advising_appointment->loadPropertiesFromPrimaryKey($key->getAdvisingAppointmentID());
+            $Advising_appointment->setAdvisingAppointmentState(3);
+            $Advising_appointment->update();
+            break;
+        }
+    }
+    
+    
+    //SEND Optional Email
+    
+    redirect('appointment_controller');
+    }    
 }                
-              
+          
                 
                
         

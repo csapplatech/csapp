@@ -42,6 +42,8 @@ class AdvisingForm extends CI_Controller
 			redirect('Login');
 		}
         
+		$_SESSION['StudCWID'] = $this->uid;
+		
        // $uid = 10210078;
         //$year = 2015;
          $prev_form = $this->loadAdvisingForm($this->uid);
@@ -134,8 +136,26 @@ class AdvisingForm extends CI_Controller
                     if (!empty($value[0]->getCourse()->getAllCurriculumCourseSlots()))
                     {
                         $min_grade = $value[0]->getCourse()->getAllCurriculumCourseSlots()[0]->getMinimumGrade();
-                       
-                        if ($usermod->getGradeForCourseSection($value[0]) >= $min_grade)
+                        switch($min_grade)
+                        {
+                            case 4:
+                                $min_grade = 'A';
+                                break;
+                            case 3:
+                                $min_grade = 'B';
+                                break;
+                            case 2:
+                                $min_grade = 'C';
+                                break;
+                            case 1:
+                                $min_grade = 'D';
+                                break;
+                            default:
+                                $min_grade = 'ZZZZZZ';
+                                break;
+                        }
+                        
+                        if ($usermod->getGradeForCourseSection($value[0]) <= $min_grade)
                         {
                             array_push($courseIDs_passed, $value[0]->getCourse()->getCourseID());
                         }
@@ -422,16 +442,21 @@ class AdvisingForm extends CI_Controller
             }
             $this->uid = $_SESSION['UserID'];
          }
-         
         
         $currentquarter = academic_quarter_model::getLatestAcademicQuarter();
-        
         
         $previous_form = $this->loadAdvisingForm($this->uid);
         if ($previous_form !== false)
             $previous_form->delete();
         
         
+		if(!isset($_POST['data']))
+		{
+			header("Content-type: text/plain", true, 400);
+			echo "Missing data";
+			return;
+		}
+		
         //$data = $_POST['Info'];
         $data = json_decode($_POST['data']);//['data']);
 		
@@ -439,6 +464,22 @@ class AdvisingForm extends CI_Controller
         $mod->setStudentUserID(intval($this->uid));
         $mod->setAcademicQuarterID($currentquarter->getAcademicQuarterID());
         $mod->create();
+		
+		$entry = new Advising_log_entry_model;
+				
+		$student = new User_model;
+		
+		if($student->loadPropertiesFromPrimaryKey($this->uid))
+		{
+			$createdByAdvisor = ($this->uid != $_SESSION['UserID']);
+		
+			$entry->setStudentUser($student);
+			$entry->setAdvisorUser($student->getAdvisor());
+			$entry->setAdvisingLogEntryType(($createdByAdvisor) ? Advising_log_entry_model::ENTRY_TYPE_ADVISING_FORM_SAVED_BY_ADVISOR : Advising_log_entry_model::ENTRY_TYPE_ADVISING_FORM_SAVED_BY_STUDENT);
+			
+			$entry->create();
+		}
+		
         foreach($data->Info as $section)
         {
             //print_r($course->Type);
@@ -447,14 +488,15 @@ class AdvisingForm extends CI_Controller
             
             $sections = $currentquarter->getAllCourseSections();
             $target = new course_section_model();
-            foreach($sections as $sec)
+            /*foreach($sections as $sec)
             {
                 if ($sec->getCallNumber() === $callNum)
                 {
                     $target->loadPropertiesFromPrimaryKey($sec->getCourseSectionID());
                     break;
                 }
-            }
+            }*/
+            $target->loadPropertiesFromPrimaryKey($callNum);
            $state = ($section->Type == "norm") ? advising_form_model::COURSE_SECTION_STATE_PREFERRED
                    : advising_form_model::COURSE_SECTION_STATE_ALTERNATE;
            $mod->addCourseSection($target, $state);

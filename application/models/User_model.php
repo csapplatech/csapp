@@ -131,6 +131,34 @@ class User_model extends CI_Model
         return false;
     }
     
+	/**
+     * Summary of setUserID
+     * Sets the user id for the user model
+     * 
+     * @param int $userID The user id to set for this user model
+	 * @return boolean True if the user id provided is valid and bound to the model, false otherwise
+     */
+	public function setUserID($userID)
+	{
+		if($userID != null && filter_var($userID, FILTER_VALIDATE_INT))
+		{
+			$this->db->select('UserID');
+			$this->db->from('Users');
+			$this->db->where('UserID', $this->userID);
+			
+			$results = $this->db->get();
+			
+//			if($this->db->num_rows() == 0)
+                        if($results->num_rows() == 0)
+			{
+				$this->userID = $userID;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
     /**
      * Summary of setPassword
      * Sets the password for the user model and associates is hash with the passwordHash of the model
@@ -275,7 +303,7 @@ class User_model extends CI_Model
 		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
 			$data = array(
-				"UserID" => $this->userID,
+				"UserID" => $this->getUserID(),
 				"CurriculumID" => $curriculum->getCurriculumID()
 			);
 			
@@ -728,13 +756,27 @@ class User_model extends CI_Model
     {   
         if(filter_var($this->emailAddress, FILTER_VALIDATE_EMAIL) && filter_var($this->userStateID, FILTER_VALIDATE_INT))
         {
-            $data = array(
-				'EmailAddress' => $this->emailAddress, 
-				'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
-				'Name' => $this->name, 
-				'LastLogin' => $this->lastLogin,
-				'UserStateID' => $this->userStateID
-			);
+			if($this->userID != null)
+			{
+				$data = array(
+					'UserID' => $this->userID,
+					'EmailAddress' => $this->emailAddress, 
+					'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+					'Name' => $this->name, 
+					'LastLogin' => $this->lastLogin,
+					'UserStateID' => $this->userStateID
+				);
+			}	
+			else
+			{
+				$data = array(
+					'EmailAddress' => $this->emailAddress, 
+					'PasswordHash' => $this->passwordSalt . "$" . $this->passwordHash, 
+					'Name' => $this->name, 
+					'LastLogin' => $this->lastLogin,
+					'UserStateID' => $this->userStateID
+				);
+			}
             
             $this->db->insert('Users', $data);
             
@@ -758,12 +800,19 @@ class User_model extends CI_Model
             $this->db->where('UserID', $this->userID);
             $this->db->delete('UserRoles');
             
+			$this->db->where('StudentUserID', $this->userID);
+			$this->db->or_where('AdvisorUsrID', $this->userID);
+			$this->db->delete('AdvisingLogEntries');
+			
             $this->db->where('StudentUserID', $this->userID);
             $this->db->delete('StudentCourseSections');
             
             $this->db->where('StudentUserID', $this->userID);
             $this->db->or_where('AdvisorUserID', $this->userID);
             $this->db->delete('StudentAdvisors');
+            
+            $this->db->where('UserID', $this->userID);
+            $this->db->delete('UserCurriculums');
             
             $this->db->where('UserID', $this->userID);
             $this->db->delete('Users');
@@ -809,6 +858,86 @@ class User_model extends CI_Model
         
         return $finalFlag;
     }
+	
+	/**
+	 * Summary of getAllStudents
+	 * Get all of the users in the database with a student role
+	 *
+	 * @return Array An array containing all users who have a student role
+	 */
+	public static function getAllStudents()
+	{
+		$db = get_instance()->db;
+		
+		$db->select('Users.UserID');
+		$db->from('Users');
+		$db->join('UserRoles', 'Users.UserID = UserRoles.UserID', 'inner');
+		$db->where('UserRoles.RoleID', self::ROLE_STUDENT);
+		
+		$results = $db->get();
+		
+		$models = array();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
+	
+	/**
+	 * Summary of getAllUsers
+	 * Get all of the users in the database
+	 *
+	 * @param int $limit The maximum number of users to return
+	 * @param int $offset The starting index to begin finding users
+	 * @return Array An array containing all users
+	 */
+	public static function getAllUsers($limit = 0, $offset = 0)
+	{
+		$db = get_instance()->db;
+		
+		$db->select('UserID');
+		
+		if($offset > 0 && $limit > 0)
+		{
+			$results = $db->get('Users', $limit, $offset);
+		}
+		else if($limit > 0)
+		{
+			$results = $db->get('Users', $limit);
+		}
+		else
+		{
+			$results = $db->get('Users');
+		}
+		
+		$models = array();
+		
+		if($results->num_rows() > 0)
+		{
+			foreach($results->result_array() as $row)
+			{
+				$model = new User_model;
+				
+				if($model->loadPropertiesFromPrimaryKey($row['UserID']))
+				{
+					array_push($models, $model);
+				}
+			}
+		}
+		
+		return $models;
+	}
 	
 	/**
 	 * Summary of getAllAdvisors
@@ -880,4 +1009,3 @@ class User_model extends CI_Model
 		return $models;
 	}
 }
-

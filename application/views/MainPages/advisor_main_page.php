@@ -45,7 +45,7 @@
 
         <h3> Welcome to the Advisor Main Page, <?php echo $user->getName(); ?>!</h3>
 		
-         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Login/logout') ;?>">
+         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Activation/index') ;?>">
             Activate New Advisee
         </a>
          <a class="btn btn-sm btn-primary" href="<?php echo site_url('Changepassword') ;?>">
@@ -56,6 +56,9 @@
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('appointment_controller') ;?>">
             Advising Appointment Schedule
+        </a>
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Advisinglog/index') ;?>">
+            Advising Log
         </a>
         
         <p><img src= "<?php echo IMG."/tech_official_logo.jpg" ?>" alt="Tech Logo" style="width:300px;height:225px"</p>

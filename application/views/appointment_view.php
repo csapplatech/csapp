@@ -2,18 +2,28 @@
 <html>
     <head>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+        <!--<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>--> 
         <link rel="stylesheet" type="text/css" href="cdnjs.cloudflare.com/ajax/libs/animate.css/3.2.6/animate.min.css" />
-         <title>CSAPP Main Page</title>
+
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+       <title>CSAPP Main Page</title>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!--  The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+         The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags 
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="<?php echo IMG.'/icon.ico'; ?>">
         <link rel="stylesheet" href="<?php echo CSS.'/magic-bootstrapV2_1.css'; ?>" type="text/css">
         <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+        <script>
+          $(function() {
+    $( "#tabs" ).tabs();
+  });
+  
+  
+        </script>
     </head>
     <body onload = "hideTables()">
          <nav class="navbar navbar-default navbar-fixed-top">
@@ -109,8 +119,9 @@ else
             }
         </style>
         <style>
+       
             #calwrap {
-                height: 450px;
+                height: 500px;
                 width: 425px;
                 margin: 0 auto;
             }
@@ -120,6 +131,7 @@ else
             }
             body {
                 background-color: white;
+                
             }
             table th{
                 text-align: center
@@ -183,7 +195,7 @@ else
                 color: #8f8f8f;
                 text-align: center;
                 border-radius: 30%;
-                -webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41));
+                -webkit-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
                 -moz-box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
                 box-shadow: inset 1px 1px 5px 1px rgba(97, 97, 97, 0.41);
             }
@@ -203,6 +215,44 @@ else
                 visibility: hidden;
             }
             /* creates box size for label to sit in*/
+            .My_Schedule
+            {
+                 
+               
+                width: 40px;
+                height: 20px;
+                
+                position: relative;
+            }
+            
+            /* replaces orginal checkbox for styled checkbox*/
+            .My_Schedule label
+            {
+                display: block;
+                width: 40px;
+                height: 20px;
+                
+                -webkit-transition: all .8s ease;
+                -moz-transition: all .8s ease;
+                -o-transition: all .8s ease;
+                -ms-transition: all .8s ease;
+                transition: all .8s ease;
+                cursor: pointer;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                z-index: 1;
+                
+                background-color: #002f8b;
+            }
+            .My_Schedule label:hover {
+                background-color:#02032d ;
+            }
+            /* Create the checked state*/
+            .My_Schedule input[type=checkbox]:checked + label {
+                    background-color: black;
+            }
+            
             
              .Scheduled
             {
@@ -229,7 +279,7 @@ else
                 left: 0px;
                 z-index: 1;
                 
-                background-color: #ff482b;
+                background-color: #e31b23;
             }
             .Scheduled label:hover {
                 background-color: #ff2522;
@@ -272,7 +322,7 @@ else
             }
             /* Create the checked state*/
             .Open input[type=checkbox]:checked + label {
-                    background-color: black;
+                background-color:#f15b0f ;
             }
             
             
@@ -475,6 +525,39 @@ else
               animation-name: bounceInUp;
             }
         </style>
+        <style>
+            #tabs {
+                background-color: white;
+                width: 450px; /* should be same width as (#tabs ul) */
+                margin: 0 auto;
+                
+                
+            }
+            #tabs nav ul{
+                border:4px solid transparent;
+            }
+            #tabs ul {
+                
+                display: absolute;
+                width: 450px; /* should be same width as (#tabs) */
+                height: 25px;
+                font-size: 17px;
+                border-bottom: 1px solid black;
+                list-style: none;
+                
+            }
+            #tabs ul a {
+                color: black;        
+            }
+            #tabs ul li {
+                width: 100px;
+                background-color: white;
+                float: left;
+            }
+            #tabs p {
+               
+            }
+        </style>
         <script>
             // Change the selector if needed
             var $table = $('table.scroll'),
@@ -535,6 +618,8 @@ else
                             table.style.visibility = "hidden";
                         }
                     }
+                  
+                   
             }
             function nextOrPrev(inp) {
                 var table;
@@ -607,11 +692,6 @@ else
             }
         </script>
         <p> <img src= <?php echo IMG."/tech_official_logo.jpg" ?> alt="Tech Logo" style="width:300px;height:225px"> </p>
-        <footer>
-            <font color ="white"</font>
-            <p>Ruston, LA 2015</p> 
-            <p>Louisiana Tech University</p>
-            <p>Created by: Louisiana Tech's CSC 404 Class</p>
-        </footer>
+       <?php include_once('application/views/Templates/footer.php'); ?>
     </body>
 </html>

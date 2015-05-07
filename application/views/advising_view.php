@@ -104,7 +104,8 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
-                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
+                                $id = $sec->getCourseSectionID();
+                               echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='sug".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
@@ -135,14 +136,16 @@
                         echo "<ul class=\"toggleMe\" style=\"display:none\">";
                             foreach($cor->getSections() as $sec)
                             {
+                                $id = $sec->getCourseSectionID();
                                echo "<li style=\"font-size: 90% \"><span title=\"Professor: ". $sec->getInstructorName()."\">". $sec->getSectionName(). "  ". $sec->getCourseSectionTimesAsString() ."<button type=\"button\" class='button' id='".$id."'>Add</button></span></li>" ; echo "<div id='hidden'>".
                                 "<span id=\"a".$id."\">". $sub->getName(). "-" . $cor->getName() . "-".$sec->getSectionName(). "</span>".
                                 "<span id=\"b".$id."\">". $cor->getTitle(). "</span>".
                                 "<span id=\"c".$id."\">".$sec->getCallNumber(). "</span>".
                                 "<span id=\"d".$id."\">".$sec->getHours(). "</span>".
                                 "<span id=\"e".$id."\">". $sec->getCourseSectionTimesAsString() ."</span>".
+                                "<span id=\"y".$id."\">". $sec->getCourseSectionID() ."</span>".
                                      "</div>";
-                               if ($form !== false)
+                               /*if ($form !== false)
                                {
                                 foreach ($form->getPrefferedCourseSections() as $pref)
                                 {
@@ -158,12 +161,23 @@
                                         echo '<script>addALT('.$id.');</script>';
                                     }
                                 }
-                               }
+                               }*/
                                 $id++;
                             }
                         echo "</ul>";
                     }
                     echo "</ul>";
+                }
+                if ($form !== false)
+                {
+                    foreach($form->getPrefferedCourseSections() as $pref)
+                    {
+                        echo '<script>addMain('.$pref->getCourseSectionID().');</script>';
+                    }
+                    foreach($form->getAlternateCourseSections() as $alt)
+                    {
+                        echo '<script>addALT('.$alt->getCourseSectionID().');</script>';
+                    }
                 }
                 ?>
              </ul>  

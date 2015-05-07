@@ -137,4 +137,5 @@ $autoload['language'] = array();
 |	$autoload['model'] = array('first_model' => 'first');
 */
 
-$autoload['model'] = array('User_model', 'Course_model', 'Curriculum_model', 'Curriculum_course_slot_model', 'Course_section_model', 'Course_section_time_model', 'Advising_appointment_model', 'Advising_schedule_model', 'Academic_quarter_model','Advising_form_model');
+$autoload['model'] = array('User_model', 'Course_model', 'Curriculum_model', 'Curriculum_course_slot_model', 'Course_section_model', 'Course_section_time_model', 'Advising_appointment_model', 'Advising_schedule_model', 'Academic_quarter_model','Advising_form_model', 'Student_transfer_course_model', 'Advising_log_entry_model');
+

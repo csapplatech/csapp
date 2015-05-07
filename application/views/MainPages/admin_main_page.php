@@ -51,10 +51,7 @@
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Managepc') ;?>">
             Manage Program Chair
         </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/create') ;?>">
-            Create Users
-        </a>
-        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index/modify') ;?>">
+        <a class="btn btn-sm btn-primary" href="<?php echo site_url('User/index') ;?>">
             Manage Users
         </a>
 		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Futurecourses/index') ;?>">
@@ -62,6 +59,9 @@
         </a>
         <a class="btn btn-sm btn-primary" href="<?php echo site_url('Bossimport/index') ;?>">
             Bulk Update
+        </a>
+		<a class="btn btn-sm btn-primary" href="<?php echo site_url('Backuprestore/index') ;?>">
+            Backup / Restore
         </a>
         
         <p><img src= "<?php echo IMG."/tech_official_logo.jpg" ?>" alt="Tech Logo" style="width:300px;height:225px"</p>

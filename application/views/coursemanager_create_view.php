@@ -60,10 +60,10 @@
 								
 									foreach($courseTypes as $row)
 									{
-										$name = $row['Name'];
+										$slotName = $row['Name'];
 										$value = $row['CourseTypeID'];
 										
-										echo "<option value='$value'>$name</option>";
+										echo "<option value='$value'>$slotName</option>";
 									}
 								
 								?>

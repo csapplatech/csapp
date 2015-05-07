@@ -84,16 +84,16 @@
 								
 									foreach($courseTypes as $row)
 									{
-										$name = $row['Name'];
+										$slotName = $row['Name'];
 										$value = $row['CourseTypeID'];
 										
 										if($courseTypeID == $course->getCourseType())
 										{
-											echo "<option value='$value' selected='selected'>$name</option>";
+											echo "<option value='$value' selected='selected'>$slotName</option>";
 										}
 										else
 										{
-											echo "<option value='$value'>$name</option>";
+											echo "<option value='$value'>$slotName</option>";
 										}
 									}
 								
@@ -137,15 +137,15 @@
 											{
 												$id = $row->getCourseID();
 												
-												$name = $row->getCourseName() . " " . $row->getCourseNumber();
+												$slotName = $row->getCourseName() . " " . $row->getCourseNumber();
 												
 												if(in_array($row->getCourseID(), $coreq_ids))
 												{
-													echo "<option value='$id' selected='selected'>$name</option>";
+													echo "<option value='$id' selected='selected'>$slotName</option>";
 												}
 												else
 												{
-													echo "<option value='$id'>$name</option>";
+													echo "<option value='$id'>$slotName</option>";
 												}
 											}
 										
@@ -174,15 +174,15 @@
 											{
 												$id = $row->getCourseID();
 												
-												$name = $row->getCourseName() . " " . $row->getCourseNumber();
+												$slotName = $row->getCourseName() . " " . $row->getCourseNumber();
 												
 												if(in_array($row->getCourseID(), $prereqs_ids))
 												{
-													echo "<option value='$id' selected='selected'>$name</option>";
+													echo "<option value='$id' selected='selected'>$slotName</option>";
 												}
 												else
 												{
-													echo "<option value='$id'>$name</option>";
+													echo "<option value='$id'>$slotName</option>";
 												}
 											}
 										

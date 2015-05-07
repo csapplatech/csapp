@@ -293,12 +293,22 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
 $_SESSION['LAST_ACTIVITY'] = time();        //update last activity time stamp
 if(strpos($_SERVER['REQUEST_URI'], "index.php"))
 {
-	define("URL", "https://" . $_SERVER['HTTP_HOST'] . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], "index.php")));   //Static Base URL
+	$url = "https://" . $_SERVER['HTTP_HOST'] . substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], "index.php"));   //Static Base URL
 }
 else
 {
-	define("URL", "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+	$url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 }
+
+if(strpos($url, "/", strlen($url) - 1))
+{
+	define("URL", substr($url, 0, strlen($url) - 1));
+}
+else
+{
+	define("URL", $url);
+}
+
 define("CSS", URL."/css");                  //Static CSS URL
 define("IMG", URL."/image");                //Static Image URL
 define("JS", URL."/js");                    //Static JavaScript URL
