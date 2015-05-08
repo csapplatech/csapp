@@ -302,14 +302,26 @@ class User_model extends CI_Model
 	{
 		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
-			$data = array(
-				"UserID" => $this->getUserID(),
-				"CurriculumID" => $curriculum->getCurriculumID()
-			);
+			$this->db->where('UserID', $this->getUserID());
+			$this->db->where('CurriculumID', $this->getCurriculumID());
 			
-			$this->db->insert('UserCurriculums', $data);
+			$results = $this->db->get('UserCurriculums');
 			
-			return $this->db->affected_rows() > 0;
+			if($results->num_rows() > 0)
+			{
+				return false;
+			}
+			else
+			{
+				$data = array(
+					"UserID" => $this->getUserID(),
+					"CurriculumID" => $curriculum->getCurriculumID()
+				);
+				
+				$this->db->insert('UserCurriculums', $data);
+				
+				return $this->db->affected_rows() > 0;
+			}
 		}
 		else
 		{
