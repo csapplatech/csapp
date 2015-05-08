@@ -100,7 +100,8 @@ class AdvisingForm extends CI_Controller
         }
         
         //Then, we can remove courses whose prerequisites are not met
-        
+        $courseIDs_passed = array();
+		
         foreach($course_sections as $key => $value)
         {
             $prereqs = $value->getCourse()->getPrerequisiteCourses();
@@ -125,7 +126,6 @@ class AdvisingForm extends CI_Controller
         
         $courses_taken = $usermod->getAllCoursesTaken();
         
-        $courseIDs_passed = array();
         if (!empty($courses_taken))
         {
             //Populate an array of course IDs for which the course was passed by the student
