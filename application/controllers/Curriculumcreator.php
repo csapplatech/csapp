@@ -137,8 +137,10 @@ class Curriculumcreator extends CI_Controller {
 		}
 					
 		//find all current pre/coreqs and 			
-					
-		$courseSlots = $curriculum->getCurriculumCourseSlots();
+		$newCurr = new Curriculum_Model();
+		$newCurr->loadPropertiesFromPrimaryKey($curriculum->getCurriculumID());
+		
+		$courseSlots = $newCurr->getCurriculumCourseSlots();
 		
 		//find and delete old reqs and save new ones
 		if (isset($_SESSION['reqs']))
