@@ -303,7 +303,7 @@ class User_model extends CI_Model
 		if($curriculum != null && $curriculum->getCurriculumID() != null)
 		{
 			$this->db->where('UserID', $this->getUserID());
-			$this->db->where('CurriculumID', $this->getCurriculumID());
+			$this->db->where('CurriculumID', $curriculum->getCurriculumID());
 			
 			$results = $this->db->get('UserCurriculums');
 			
