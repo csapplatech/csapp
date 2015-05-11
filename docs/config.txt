@@ -1,0 +1,44 @@
+CS App Web Server Configuration Requirements
+
+Apache Web Server
+
+Required Enabled Web Server Modules:
+	php5_module
+	rewrite_module
+	ssl_module
+	mcrypt
+	
+PHP Module
+	5.5.9
+	
+MySQL Server
+	Version 5.5.43
+	
+Ports Required
+	80 (HTTP)
+	443 (HTTPS)
+	
+MySQL Configuration
+(can be changed in Code Igniter Configuration)
+Change configuration in application/config/database.php
+Also check the configuration in the Futurecourses, Backuprestore, and Bossimport controller files
+	Database: csc-webapp
+	User: root
+	Password: none 
+	Server: localhost
+	
+MySQL Configuration File needs to have the line:
+
+lower_case_table_names = 0
+
+Default Administrator User after loading initial database script:
+
+UserID: 1
+EmailAddress: admin@csapp.latech.edu
+Password: Password
+
+Default Guest User:
+
+UserID: 123
+EmailAddress: guest@csapp.latech.edu
+Password: N/A
